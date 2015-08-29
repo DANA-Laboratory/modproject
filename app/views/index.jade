@@ -1,0 +1,37 @@
+doctype html
+include head.jade
+  title  سیستم مدیریت درخواست انجام کار
+  body(ng-app='dashboardApp', ng-controller='navbarCont', ng-cloak)
+    .navbar.navbar-inverse.navbar-fixed-top(role='navigation')
+      .container-fluid
+        .navbar-header
+          .button.navbar-toggle(type="button", data-toggle="collapse", data-target="#myNavbar")
+            .span.icon-bar
+            .span.icon-bar
+            .span.icon-bar
+          a.navbar-brand.hidden-sm.hidden-xs(href='#') سیستم مدیریت درخواست انجام کار 
+        .navbar-collapse.collapse.text-center(id="myNavbar")
+          if !(user)
+            form.navbar-form.navbar-left(role='form', action='/login', method='post')
+              .form-group-sm
+                .label.label-warning(style='margin-left:5px') #{message}
+                input.form-control(type='text', name='username', placeholder='نام کاربری')
+                input.form-control(type='password', name='password', placeholder='کلمه عبور')
+                button.btn.btn-success(type='submit') ورود 
+                    span.glyphicon.glyphicon-log-in
+          else
+            include topnav.jade
+            include config.jade
+    if !(user)
+      .jumbotron
+        .container
+          h1 خوش آمدید!
+          p
+            | این پایگاه اینترنتی به منظور ثبت درخواست انجام کار، پیگیری درخواستهای ثبت شده و تهیه گزارشات مورد نیاز طراحی شده است، جهت ورود به پایگاه ابتدا نام کاربری و کلمه عبور خود را در قسمت بالا وارد نمایید.
+      include intro.jade
+    else
+      div(ng-init='currentUserFullName=\'#{user.name} #{user.family}\'; isOwner=#{user.isOwner}')
+      include dashboard.jade
+    include modals/uploadDataBase.jade
+    include modals/accountsManegement.jade
+    include foot.jade

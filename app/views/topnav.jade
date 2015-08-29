@@ -1,0 +1,14 @@
+.btn-group(ng-if='!isOwner')
+  .btn.navbar-btn.btn-success(href='#', ng-click='liclick(null)')  
+    span.glyphicon.glyphicon-send(style='margin-left: 2px')
+    | ارسالی
+    span.badge(style='margin-right: 1px')  {{ndata[1] + ndata[3]}}
+  .btn.navbar-btn(href='#', ng-repeat='i in [0,1,2,3]', ng-click='liclick(4+i)', ng-class='active[4+i]') {{requestStatus[i]}}
+    span.badge(style='margin-right: 1px')  {{ndata[1+2*i]}}
+.btn-group(ng-if='isOwner')
+  .btn.navbar-btn.btn-success(href='#', ng-click='liclick(null)')   
+    span.glyphicon.glyphicon-envelope(style='margin-left: 2px')
+    | دریافتی
+    span.badge(style='margin-right: 1px')  {{ndata[0] + ndata[2]}}
+  .btn.navbar-btn(href='#', ng-repeat='i in [0,1,2,3]', ng-click='liclick(i)', ng-class='active[i]') {{requestStatus[i]}} 
+    span.badge(style='margin-right: 1px')  {{ndata[i*2]}}

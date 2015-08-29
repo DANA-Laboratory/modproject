@@ -1,0 +1,4 @@
+label.btn-xs.btn-success.well-item(ng-hide='isOwner && requestLevel===2', ng-repeat='task in tasks', ng-if='task.selected'){{task.name}}
+button.btn.btn-xs.btn-success.well-item(ng-hide='!isOwner || requestLevel!==2', ng-repeat='task in tasks', ng-if='task.selected',ng-click='selectedtaskitemclick($index)'){{task.name}}
+  .span.glyphicon.glyphicon-remove
+

@@ -1,0 +1,12 @@
+#uploadDataBase.modal.fade(tabindex='-1')
+  .modal-dialog.modal-sm
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal')
+          span ×
+        h4.modal-title ارسال بانک پشتيبان
+      .modal-body
+        form#uploadForm(enctype="multipart/form-data", action="/admin/import", method="post")
+          .form-group
+            input.form-control.btn.btn-info(type="file", name="Requests.sqlite")
+          input.btn.btn-primary(type="submit", value="ارسال", name="submit")

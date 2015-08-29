@@ -1,0 +1,6 @@
+if (user.isOwner)
+  include itemutils.jade
+button.btn.btn-sm.btn-warning.well-item(ng-repeat='requestItem in requestItems', ng-click='toggleselection($index)')
+  span.glyphicon(ng-class='itemsclass(null)')
+  span.glyphicon(ng-show='itemsclass(null)===""', ng-class='(data.requestitems.indexOf(requestItem.name) > -1) ? ("glyphicon-check") : ("glyphicon-unchecked")')
+  |  {{requestItem.name}}

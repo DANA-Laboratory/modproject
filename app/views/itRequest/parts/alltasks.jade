@@ -1,0 +1,2 @@
+button.btn.btn-xs.btn-primary.well-item(ng-repeat='task in tasks', ng-if='!task.selected && !task.hide',ng-click='taskitemclick($index)'){{task.name}}
+  .span.glyphicon(ng-class='itemsclass(null)')

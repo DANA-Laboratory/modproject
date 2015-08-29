@@ -1,0 +1,32 @@
+.request.panel.panel-primary
+  .panel-heading
+    h3.panel-title
+      b فرم درخواست انجام کار واحد خدمات کامپیوتری
+      if (user.isOwner)
+        include parts/requestprimaryconfig.jade
+  .request.panel-body
+    .row
+      include parts/pagination.jade
+      .col-md-12
+        .row.form-group
+          - var captions = ['data.applicant', 'data.initdate', 'data.inittime']
+          include parts/datetime.jade
+          .col-md-4
+        .row
+          .col-md-3
+            label.control-label(for='checkboxes') موضوع درخواست
+        .well(ng-if='requestLevel<2 && isCreator', ng-controller='itemCont')
+          include parts/items.jade
+        .well(ng-if='requestLevel>1 || !isCreator')
+          include parts/itemsreadonly.jade
+        .row.form-group
+          label.col-md-2.control-label(for='textarea') توضیحات
+          .col-md-8
+            textarea#textarea.form-control(name='description', ng-model='data.description', ng-change='updaterequest()', ng-readonly='requestLevel>1 || !isCreator')       
+  .panel-footer  
+    .btn-group.btn-group-justified(role='group', ng-if='requestLevel===0')
+      .btn.btn-default(name='buttoncancel', ng-click='backclick()') انصراف
+        .span.glyphicon.glyphicon-remove(aria-hidden='true') 
+      .btn.btn-success(name='buttoninsert', ng-click='insertbtnclick()') ثبت درخواست
+        .span.glyphicon.glyphicon-ok
+    include parts/alertinfo.jade

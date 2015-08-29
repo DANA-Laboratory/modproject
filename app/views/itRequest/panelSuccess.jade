@@ -1,0 +1,23 @@
+.request.panel.panel-success(ng-controller = 'taskCont')
+  .panel-heading
+    h3.panel-title
+      b فرم درخواست انجام کار واحد خدمات کامپیوتری - شرح فعالیت ها
+      include parts/info.jade
+  .request.panel-body
+    .row
+      include parts/pagination.jade
+      .col-md-12
+        .form-group.input-group(ng-hide='requestLevel!==2 || !isOwner')
+          input.form-control(my-on-key-down-call="itemsfilter()", ng-model='filtertext', type='text', placeholder='با ورود عبارت مناسب، فعالیت مورد نظر خود را بیابید...Esc=لغو فیلتر و Enter=انتخاب.')
+          .span.input-group-btn
+            .btn.btn-info(type='button', ng-click='clearfilter()') نمایش همه 
+              .span.glyphicon.glyphicon-remove-circle(aria-hidden='true')
+        .well(style='height:190px;overflow:auto', ng-hide='requestLevel!==2 || !isOwner')
+          if (user.isOwner)
+            include parts/taskutils.jade
+          include parts/alltasks.jade
+        | با اشاره به فعالیت های انتخاب شده جزئییات را ویرایش یا حذف نمایید:
+        .well(style='height:100px;overflow:auto')
+          include parts/selectedtasks.jade
+  .panel-footer
+    include parts/alertinfo.jade

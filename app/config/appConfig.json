@@ -1,0 +1,20 @@
+{
+    "directories": {
+        "appDir": "/app",
+        "dataDir": "/data",
+        "publicDir": "/public",
+        "privateDir": "/private"
+    },
+    "app": {
+        "name": "RFPC Requests rendered by SQLite3, Angular, Jade, Node, Express and Grunt",
+        "rootPage": "app.js",
+        "dev": "_gen_dev",
+        "devPort": 3009,
+        "dist": "_gen_dist",
+        "distPort": 3009,
+        "livereloadPort": 1337,
+        "src": "app",
+        "srcPort": "3009"
+    },
+    "status": ["ثبت شده","در دست اقدام","خاتمه يافته","متوقف شده"] 
+}

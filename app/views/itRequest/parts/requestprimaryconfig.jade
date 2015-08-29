@@ -1,0 +1,5 @@
+a.btn.btn-xs.pull-left(ng-show='requestLevel>0', ng-click='showRequestConfig=!showRequestConfig')
+  span.glyphicon.glyphicon-cog
+a.btn.btn-xs.btn-danger.pull-left(ng-show='showRequestConfig', ng-click='deleterequest()')
+  span.glyphicon.glyphicon-remove
+  |  حذف درخواست 

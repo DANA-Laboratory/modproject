@@ -1,0 +1,26 @@
+.request.panel.panel-warning(ng-if='requestLevel>0 && requestLevel<3')
+  .panel-heading
+    h3.panel-title 
+      b فرم درخواست انجام کار واحد خدمات کامپیوتری - دستورات
+      include parts/info.jade
+  .request.panel-body
+    .row
+      include parts/pagination.jade
+      .col-sm-12
+        .well
+          .row.form-group(ng-if='isOwner')
+              .form-group
+                - var captions = ['currentUserFullName', 'data.actiondate', 'data.actiontime']
+                include parts/datetime.jade
+              .btn.btn-primary(type='button', ng-if='requestLevel===1', ng-click='updatestatus(1)') آغاز کار
+                .span.glyphicon.glyphicon-arrow-left(aria-hidden='true')
+              .btn.btn-success(type='button', ng-if='requestLevel===2', ng-click='updatestatus(2)') خاتمه
+                .span.glyphicon.glyphicon-ok(aria-hidden='true')
+          .input-group
+            input.form-control(type='text', placeholder='علت لغو...', ng-model='data.cancelwhy')
+            .span.input-group-btn
+              .btn.btn-warning(type='button', ng-click='updatestatus(3)') لغو درخواست
+                .span.glyphicon.glyphicon-remove(aria-hidden='true')
+  .panel-footer  
+    include parts/alertinfo.jade
+

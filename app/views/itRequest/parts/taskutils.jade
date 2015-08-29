@@ -1,0 +1,12 @@
+a.btn.btn-xs.well-item(ng-click='toggleconfig()')
+  span.glyphicon.glyphicon-cog
+span(ng-show='showConfig')
+  button.btn.btn-xs.btn-warning.well-item(data-toggle='modal', data-target='#addTaskModal')
+    span.glyphicon.glyphicon-plus
+  button.btn.btn-xs.btn-danger.well-item(ng-click='itemsclass("glyphicon-minus")')
+    span.glyphicon.glyphicon-minus
+  button.btn.btn-xs.btn-danger.well-item(ng-click='itemsclass("glyphicon-pencil")') 
+    span.glyphicon.glyphicon-pencil
+  button.btn.btn-xs.btn-info.well-item(ng-click='itemsclass("glyphicon-ok")')
+    span.glyphicon.glyphicon-ok
+include ../../modals/taskEditAdd.jade
