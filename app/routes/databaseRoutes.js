@@ -22,9 +22,10 @@ module.exports = function (app, io, appConfig, db) {
     var formatdata = function (row) {
         //replaceIDwithNameFamily
         replaceIDwithNameFamily(row);
-        row.init = row.initdate + ' ' + row.inittime;
-        row.end = row.enddate + ' ' + row.endtime;
-        row.start = row.startdate + ' ' + row.starttime;
+        row.init = row.initdate !== null ? row.initdate + ' ' + row.inittime : '-';
+        row.end = row.enddate !== null ? row.enddate + ' ' + row.endtime : '-';
+        row.start = row.startdate !== null ? row.startdate + ' ' + row.starttime : '-';
+        
         //remove formats from string
         if (row.requesttasks !== null) {
             row.requesttasks = row.requesttasks.replace(/[\"\[\]]/g, ' ');

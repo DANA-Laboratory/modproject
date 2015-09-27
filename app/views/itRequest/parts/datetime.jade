@@ -5,7 +5,7 @@
       button.btn.btn-default.dropdown-toggle.form-control(id='#{captions[0]}', type='button', data-toggle='dropdown')
         | {{#{captions[0]}}}
         span.caret
-      ul.dropdown-menu
+      ul.dropdown-menu.scrollable-menu
         each val in userNameIDs
           li
             a(href='', ng-click='setUserIdName(#{val[0]}, "#{val[1]}")') #{val[1]}
