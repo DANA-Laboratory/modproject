@@ -137,7 +137,7 @@ dashboardApp.service('itRequestService', function($http){
         }).success(function(data, status, headers, config) {
           callback(data);
         }).error(function(data, status, headers, config) {
-          console.log("error update request items");
+          console.log("error get users list");
         });
     };
     

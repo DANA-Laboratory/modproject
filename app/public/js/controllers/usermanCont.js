@@ -46,6 +46,16 @@ dashboardApp.controller('usermanCont', function ($scope, itRequestService) {
         }
         $scope.updateclass = 'disabled';
     }
+
+    $scope.resetuser = function() {
+        var data = {};
+        data.account = $scope.selectedUser;
+        if ($scope.selectedUser.id) {
+          data.id = $scope.selectedUser.id;
+          itRequestService.douser(data, $scope.onLoad, 'reset');
+        }
+        $scope.updateclass = 'disabled';
+    }
     
     $scope.updateclass = 'disabled';
     $scope.selectedUser = {};

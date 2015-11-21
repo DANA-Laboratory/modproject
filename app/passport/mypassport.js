@@ -110,12 +110,26 @@ exports.readAccounts = function () {
           for (var item in data) {
               var tmpAccount = JSON.parse(data[item].itemName);
               tmpAccount.id = data[item].id;
+              if (data[item].itemType === 2) {
+                tmpAccount.isItUser = true
+                tmpAccount.isMaliUser = false
+              } else {
+                if (data[item].itemType === 3) {
+                    tmpAccount.isItUser = false
+                    tmpAccount.isMaliUser = true
+                } else {
+                  if (data[item].itemType === 5) {
+                      tmpAccount.isItUser = true
+                      tmpAccount.isMaliUser = true                  
+                  }
+                }
+              }
               userAccounts.push(tmpAccount);
               if (tmpAccount.isOwner)
                   ownerRowID=tmpAccount.id;
           }
       };
-      db.all('SELECT * FROM config WHERE itemType=2', setUsers);
+      db.all('SELECT * FROM config WHERE itemType IN (2,3,5)', setUsers);
   }
 };
 

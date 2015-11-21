@@ -37,20 +37,20 @@ module.exports = function (app, db, readAppConfig) {
         if (req.user.isOwner) {
             res.json(mypassport.userAccounts());
         } else {
-            res.redirect('/');
+            res.json([req.user]);
         }
     });
     
     app.post('/admin/user/:whattodo', mypassport.ensureAuthenticated, function (req, res) {
+        var callback = function (err) {
+            if (err) {
+                console.log(req.params.whattodo + ' user error=', err);
+            } else {
+                mypassport.readAccounts();
+            }
+            res.sendStatus(200);
+        };
         if (req.user.isOwner) {
-            var callback = function (err) {
-                if (err) {
-                    console.log(req.params.whattodo + ' user error=', err);
-                } else {
-                    mypassport.readAccounts();
-                }
-                res.sendStatus(200);
-            };
             if (req.params.whattodo === 'delete' && req.user.id !== req.body.id) {
                 db.run('DELETE FROM config WHERE (id=? AND itemType=2)', [req.body.id], callback);
             } else {
@@ -59,11 +59,25 @@ module.exports = function (app, db, readAppConfig) {
                 } else {
                     if (req.params.whattodo === 'insert') {
                         db.run('INSERT INTO config (itemName,itemType) VALUES (?,2)', [JSON.stringify(req.body.account)], callback);
+                    } else {
+                        if (req.params.whattodo === 'reset') {
+                            req.body.account.password = req.body.account.defaultpass;
+                            db.run('UPDATE config SET itemName=? WHERE (id=? AND itemType=2)', [JSON.stringify(req.body.account), req.body.id], callback);
+                        }
                     }
                 }
             }
         } else {
-            res.redirect('/');
+            if (req.params.whattodo === 'update') {
+                db.run('UPDATE config SET itemName=? WHERE (id=? AND itemType=2)', [JSON.stringify(req.body.account), req.user.id], callback);
+            } else {
+                if (req.params.whattodo === 'reset') {
+                    req.user.password = req.user.defaultpass;
+                    db.run('UPDATE config SET itemName=? WHERE (id=? AND itemType=2)', [JSON.stringify(req.user), req.user.id], callback);
+                } else {
+                    res.redirect('/');
+                }
+            }
         }
     });
     

@@ -1,4 +1,4 @@
-.container-fluid(ng-controller='dashboardCont', ng-init='tasks=#{tasks}; requestItems=#{requestItems}')
+.container-fluid(ng-controller='dashboardCont',ng-show='userselect==1', ng-init='tasks=#{tasks}; requestItems=#{requestItems}')
   div(ng-hide='hidetable', style='margin : 10px')
     include tableplusnav.jade
   div(style='margin : 10px')

@@ -6,39 +6,48 @@
           span ×
         h4.modal-title مدیریت کاربران
       .modal-body
-        .row
-          .form-group
-            a.btn.col-md-1(type='button', ng-click='gotouser((selectedUserIndex>0) ? (selectedUserIndex-1) : (users.length-1))')
-              span.glyphicon.glyphicon-arrow-right
-            .col-md-10
-              .input-group
-                span.input-group-addon(id='sizing-addon1')
-                  span.glyphicon.glyphicon-search
-                input.form-control(type='text', ng-model='selected', typeahead-on-select='setUser($item)', typeahead=' user.name + " " + user.family for user in users | filter:$viewValue | limitTo:8', placeholder='جهت انتخاب از لیست کاربران، ابتدا بخشی از اطلاعات کاربری را وارد نمایید...')
-            a.btn.col-md-1(type='button', ng-click='gotouser((selectedUserIndex<users.length-1) ? (selectedUserIndex+1) : (0))')
-              span.glyphicon.glyphicon-arrow-left
-        hr
+        if (user.isOwner)
+          .row
+            .form-group
+              a.btn.col-md-1(type='button', ng-click='gotouser((selectedUserIndex>0) ? (selectedUserIndex-1) : (users.length-1))')
+                span.glyphicon.glyphicon-arrow-right
+              .col-md-10
+                .input-group
+                  span.input-group-addon(id='sizing-addon1')
+                    span.glyphicon.glyphicon-search
+                  input.form-control(type='text', ng-model='selected', typeahead-on-select='setUser($item)', typeahead=' user.name + " " + user.family for user in users | filter:$viewValue | limitTo:8', placeholder='جهت انتخاب از لیست کاربران، ابتدا بخشی از اطلاعات کاربری را وارد نمایید...')
+              a.btn.col-md-1(type='button', ng-click='gotouser((selectedUserIndex<users.length-1) ? (selectedUserIndex+1) : (0))')
+                span.glyphicon.glyphicon-arrow-left
+          hr
         .row.form-group
           .col-md-3
             label.control-label(for='in1') نام
             input.form-control(name='textinput', type='text', id='in1', ng-model='selectedUser.name', ng-change='updateclass = "";')
-          .col-md-3
+          .col-md-4
             label.control-label(for='in2') نام خانوادگی
             input.form-control(name='textinput', type='text', id='in2', ng-model='selectedUser.family', ng-change='updateclass = "";')
           .col-md-3
+            label.control-label(for='in5') کد پرسنلی
+            input.form-control(name='textinput', type='text', id='in5', style='text-align: left', ng-model='selectedUser.pid', ng-change='updateclass = "";')
+        .row.form-group
+          .col-md-3
             label.control-label(for='in3') نام کاربری
             input.form-control(name='textinput', type='text', id='in3', ng-model='selectedUser.username', ng-change='updateclass = "";')
-          .col-md-3
+          .col-md-4
             label.control-label(for='in4') کلمه عبور
-            input.form-control(name='textinput', type='text', id='in4', ng-model='selectedUser.password', ng-change='updateclass = "";')
-        .form-group
-          label.control-label(for='in5') آدرس الکترونیک
-          input.form-control(name='textinput', type='text', id='in5', style='text-align: left', ng-model='selectedUser.email', ng-change='updateclass = "";')
+            .input-group              
+              input.form-control(name='textinput', type='password', id='in4', ng-model='selectedUser.password', ng-change='updateclass = "";')
+              .input-group-btn
+                button.btn.btn-danger(type='button', ng-click='resetuser()') پیشفرض
+          .col-md-5
+            label.control-label(for='in6') آدرس الکترونیک
+            input.form-control(name='textinput', type='text', id='in6', style='text-align: left', ng-model='selectedUser.email', ng-change='updateclass = "";')
       .modal-footer
-        button.btn.btn-danger.pull-right(type='button', ng-click='deleteuser()') حذف کاربر 
-          span.glyphicon.glyphicon-remove
-        button.btn.btn-primary.pull-right(type='button', ng-click='insertuser()') تعریف کاربر جدید 
-          span.glyphicon.glyphicon-plus
-        button.btn.btn-default(type='button', data-dismiss='modal') انصراف
-        button.btn.btn-warning(type='button', ng-click='updateuser()', ng-class='updateclass') ثبت تغییرات 
+        if (user.isOwner)
+          button.btn.btn-sm.btn-danger.pull-right(type='button', ng-click='deleteuser()') حذف کاربر 
+            span.glyphicon.glyphicon-remove
+          button.btn.btn-sm.btn-primary.pull-right(type='button', ng-click='insertuser()') تعریف کاربر جدید 
+            span.glyphicon.glyphicon-plus
+        button.btn.btn-sm.btn-warning(type='button', ng-click='updateuser()', ng-class='updateclass') ثبت تغییرات 
           span.glyphicon.glyphicon-pencil
+        button.btn.btn-sm.btn-default(type='button', data-dismiss='modal') انصراف

@@ -8,8 +8,9 @@ body {
   padding-bottom: 20px;
   background-color: lightslategrey;
 }
-
-
+.fixed-table-container thead th .th-inner {
+  text-align: center;
+}
 /*
  * Global add-ons
  */

@@ -1,11 +1,11 @@
 form.navbar-form.navbar-left
-  if (user.isOwner)
-    .btn-group(style='margin-left:5px')
-      button.btn.btn-success.btn-xs.dropdown-toggle(type="button", data-toggle="dropdown")
-        span.glyphicon.glyphicon-cog
-        |  تنظيمات 
-        span.caret
-      ul.dropdown-menu.pull-right
+  .btn-group(style='margin-left:5px')
+    button.btn.btn-success.btn-xs.dropdown-toggle(type="button", data-toggle="dropdown")
+      span.glyphicon.glyphicon-cog
+      |  تنظيمات 
+      span.caret
+    ul.dropdown-menu.pull-right
+      if (user.isOwner)
         li
           a(href='/admin/backup')
             span.glyphicon.glyphicon-import
@@ -14,10 +14,10 @@ form.navbar-form.navbar-left
           a(href='#', data-toggle='modal', data-target='#uploadDataBase')
             span.glyphicon.glyphicon-export
             |  نصب بانک پشتيبان     
-        li
-          a(href='#', ng-click='accountsclick()')
-            span.glyphicon.glyphicon-cog
-            |  کاربران 
+      li
+        a(href='#', ng-click='accountsclick()')
+          span.glyphicon.glyphicon-cog
+          |  تنظیمات کاربری
   a.btn.btn-warning(href='/logout', data-toggle='tooltip', data-placement='bottom', title='خروج') 
     | #{user.username} 
     span.glyphicon.glyphicon-log-out
