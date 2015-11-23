@@ -4,7 +4,7 @@
 'use strict';
 
 var fs = require('fs');
-console.log(__dirname);
+//console.log("__dirname=", __dirname);
 var requestdb = __dirname + '/../database/Requests.sqlite';
 var malidb = __dirname + '/../database/Mali.sqlite';
 var exists1 = fs.existsSync(requestdb);

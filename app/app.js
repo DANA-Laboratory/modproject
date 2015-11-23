@@ -42,7 +42,7 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, appConfig.directories.publicDir)));
 
 app.use(function (req, res, next) {
-    console.log('req.body: ' + JSON.stringify(req.body));
+    //console.log('req.body: ' + JSON.stringify(req.body));
     next();
 });
 app.use(favicon(__dirname + '/public/images/favicon.ico'));

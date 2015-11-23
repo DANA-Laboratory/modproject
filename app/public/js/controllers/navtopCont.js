@@ -32,4 +32,18 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
     $scope.accountsclick = function() {
         $('#accountsManegement').modal('show');
     }; 
+    
+    //show state click
+    $scope.openstate = function() {
+        if($scope.selectedstatedate===$scope.statedate)
+            alert($scope.selectedstatedate);
+        else
+            alert('فیش حقوقی در تاریخ ' + $scope.statedate + ' وجود ندارد.')
+    };      
+    
+    //typeahead-on-select
+    $scope.setdate = function(item) {
+        $scope.selectedstatedate = item;
+    }   
+    
  });

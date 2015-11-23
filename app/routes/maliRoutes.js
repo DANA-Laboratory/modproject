@@ -23,9 +23,9 @@ module.exports = function (app, dbma) {
                 for (var id in req.body.datas) {
                     var d = req.body.datas[id];
                     if (req.body.overwrite === 'True') {
-                        dbma.run('DELETE FROM statements WHERE (personel=? AND mah=?)', [d[0], d[1]], callbackdelete);
+                        dbma.run('DELETE FROM statements WHERE (pid=? AND date=?)', [d[0], d[1]], callbackdelete);
                     }
-                    dbma.run('INSERT INTO statements (personel,mah,data) VALUES (?,?,?)', [d[0], d[1], d[2]], callback);
+                    dbma.run('INSERT INTO statements (pid,date,data) VALUES (?,?,?)', [d[0], d[1], JSON.stringify(d)], callback);
                 }
             });
             res.sendStatus(200);
@@ -34,12 +34,16 @@ module.exports = function (app, dbma) {
             console.log(req.connection.remoteAddress);
         }
     });
-    app.get('/mali/show', function (req, res) {
-        execute('xelatex -interaction=batchmode -output-directory=../xelatex  ../xelatex/statement.tex',
-            function (out) {
-                console.log(out);
-                res.sendFile('/home/rfpc/modproject/xelatex/statement.pdf');
-            }
+    app.post('/mali/show', function (req, res) {
+        var callback = function () {
+            //serilize
+            //createStatementTex(row);
+            execute('xelatex -interaction=batchmode -output-directory=../xelatex  ../xelatex/statement.tex',
+                function () {
+                    res.sendFile('/home/rfpc/modproject/xelatex/statement.pdf');
+                }
             );
+        };
+        dbma.get('SELECT data FROM statements WHERE pid=? AND date=?', [req.user.pid, req.body.date], callback);
     });
 };
