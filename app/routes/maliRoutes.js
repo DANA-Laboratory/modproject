@@ -23,9 +23,9 @@ module.exports = function (app, dbma) {
                 for (var id in req.body.datas) {
                     var d = req.body.datas[id];
                     if (req.body.overwrite === 'True') {
-                        dbma.run('DELETE FROM statements WHERE (pid=? AND date=?)', [d[0], d[1]], callbackdelete);
+                        dbma.run('DELETE FROM statements WHERE (pid=? AND date=?)', [d[0], req.body.date], callbackdelete);
                     }
-                    dbma.run('INSERT INTO statements (pid,date,data) VALUES (?,?,?)', [d[0], d[1], JSON.stringify(d)], callback);
+                    dbma.run('INSERT INTO statements (pid,date,data) VALUES (?,?,?)', [d[0], req.body.date, JSON.stringify(d)], callback);
                 }
             });
             res.sendStatus(200);
@@ -35,9 +35,22 @@ module.exports = function (app, dbma) {
         }
     });
     app.post('/mali/show', function (req, res) {
-        var callback = function () {
+        var callback = function (err, row) {
             //serilize
             //createStatementTex(row);
+            var stmdata = JSON.parse(row.data);
+            var texcommand = '';
+            var j = 97;
+            var achar = 'y';
+            for (var i in stmdata) {
+                texcommand = texcommand + '\\def\\' + achar + String.fromCharCode(j) + '{' + stmdata[i]  + '}\n';
+                j += 1;
+                if (j === 123) {
+                    j = 97;
+                    achar = 'z';
+                }
+            }
+            console.log(texcommand);
             execute('xelatex -interaction=batchmode -output-directory=../xelatex  ../xelatex/statement.tex',
                 function () {
                     res.sendFile('/home/rfpc/modproject/xelatex/statement.pdf');
@@ -45,5 +58,17 @@ module.exports = function (app, dbma) {
             );
         };
         dbma.get('SELECT data FROM statements WHERE pid=? AND date=?', [req.user.pid, req.body.date], callback);
+    });
+    
+    app.get('/mali/list', function (req, res) {
+        var callback = function (err, rows) {
+            if (!err) {
+                res.json(rows);
+            } else {
+                console.log('Error get list of dates for pid=' + req.user.pid);
+                res.sendStatus(400);
+            }
+        };
+        dbma.all('SELECT date FROM statements WHERE pid=?', [req.user.pid], callback);
     });
 };
