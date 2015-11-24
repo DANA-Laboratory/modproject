@@ -76,3 +76,9 @@ nosetests.xml
 # SublimeText project files
 *.sublime-workspace
 *.sublime-project
+
+#temp statements
+tmp-*.tex 
+tmp-??????.log
+tmp-??????.pdf 
+tmp-??????.aux 

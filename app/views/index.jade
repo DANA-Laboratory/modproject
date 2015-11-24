@@ -44,13 +44,13 @@ include head.jade
               else
                 button.btn.btn-default.disabled(type='button') درخواست خدمت از واحد کامپیوتر
             .col-md-6
-              if (user.isMaliUser)
-                input.form-control(type='text', ng-model='statedate', typeahead-on-select='openstate($item)', typeahead='date:["فروردین 94","اردیبهشت 94"]', placeholder='ماه و سال ...')
-                button.btn.btn-default(type='button', ng-click='openstate($statedate)') نمایش فیش حقوقی
-              else
-                .form-inline
-                  input.form-control(type='text', ng-model='statedate', typeahead-on-select='setdate($item)', typeahead='i for i in ["فروردین 94","اردیبهشت 94"] | filter:$viewValue', placeholder='ماه و سال ...')
-                  button.btn.btn-default(type='submit', ng-click='openstate()') نمایش فیش حقوقی                 
+              .form-inline
+                if (user.isMaliUser)          
+                  input.form-control(type='text', ng-init='maliuserlogin()', ng-model='statedate', typeahead-on-select='setdate($item)', typeahead='date for date in $scope.dates | filter:$viewValue', placeholder='ماه و سال ...')
+                  button.btn.btn-default(type='button', ng-click='openstate($statedate)') نمایش فیش حقوقی
+                else
+                    input.form-control.disabled(type='text', placeholder='ماه و سال ...')
+                    button.btn.btn-default.disabled(type='submit', ng-click='openstate()') نمایش فیش حقوقی                 
     if (user)
       div(ng-init='currentUserFullName=\'#{user.name} #{user.family}\'; isOwner=#{user.isOwner}')
       if (user.isItUser)

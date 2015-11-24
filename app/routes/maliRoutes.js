@@ -3,6 +3,9 @@
  e   */
 'use strict';
 var exec = require('child_process').exec;
+var fs = require('fs');
+var tmp = require('tmp');
+
 function execute(command, callback) {
     exec(command, function (error, stdout) {callback(stdout); });
 }
@@ -35,12 +38,12 @@ module.exports = function (app, dbma) {
         }
     });
     app.post('/mali/show', function (req, res) {
+//        execute('rm /home/rfpc/modproject/xelatex/tmp*.*', function (out) {
+//        });
         var callback = function (err, row) {
-            //serilize
-            //createStatementTex(row);
             var stmdata = JSON.parse(row.data);
-            var texcommand = '';
-            var j = 97;
+            var texcommand = '\\def\\ya{' + req.body.date  + '}\n';
+            var j = 98;
             var achar = 'y';
             for (var i in stmdata) {
                 texcommand = texcommand + '\\def\\' + achar + String.fromCharCode(j) + '{' + stmdata[i]  + '}\n';
@@ -50,20 +53,30 @@ module.exports = function (app, dbma) {
                     achar = 'z';
                 }
             }
-            console.log(texcommand);
-            execute('xelatex -interaction=batchmode -output-directory=../xelatex  ../xelatex/statement.tex',
-                function () {
-                    res.sendFile('/home/rfpc/modproject/xelatex/statement.pdf');
+            var path = '/home/rfpc/modproject/xelatex/'
+            var tempname = tmp.tmpNameSync( {template : path + 'tmp-XXXXXX.tex'} );
+            console.log(tempname);
+            fs.writeFileSync(tempname, texcommand);
+            fs.appendFileSync(tempname, fs.readFileSync( path + 'statement.tex' ))
+            execute('xelatex -interaction=batchmode -output-directory=' + path + ' ' + tempname,
+                function (out) {
+                    console.log(out);
+                    res.sendFile(tempname.slice(0,-3) + 'pdf');
                 }
-            );
+            );       
         };
-        dbma.get('SELECT data FROM statements WHERE pid=? AND date=?', [req.user.pid, req.body.date], callback);
+        console.log(req.user.pid, req.body.date);
+        dbma.get('SELECT data FROM statements WHERE pid=? AND date=?', [req.user.pid, req.body.date], callback);         
     });
     
     app.get('/mali/list', function (req, res) {
         var callback = function (err, rows) {
             if (!err) {
-                res.json(rows);
+                var dates = [];
+                for (var i in rows) {
+                    dates[i] = (rows[i].date);
+                }
+                res.json(dates);
             } else {
                 console.log('Error get list of dates for pid=' + req.user.pid);
                 res.sendStatus(400);

@@ -33,10 +33,22 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
         $('#accountsManegement').modal('show');
     }; 
     
+    //get list of dates of current user statements
+    $scope.maliuserlogin = function() {
+        itRequestService.getuserstatedates(function(dates) {
+            $scope.dates = dates;
+            if ($scope.dates.length>0) {
+                $scope.statedate = $scope.dates[$scope.dates.length-1];
+                // default selection is newest
+                $scope.selectedstatedate =  $scope.statedate;                
+            }
+        }); 
+    };
+    
     //show state click
     $scope.openstate = function() {
-        if($scope.selectedstatedate===$scope.statedate)
-            alert($scope.selectedstatedate);
+        if($scope.selectedstatedate && ($scope.selectedstatedate === $scope.statedate))
+            itRequestService.openuserstate({date : $scope.selectedstatedate});
         else
             alert('فیش حقوقی در تاریخ ' + $scope.statedate + ' وجود ندارد.')
     };      

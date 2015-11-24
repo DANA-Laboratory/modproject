@@ -18,7 +18,7 @@ dashboardApp.service('itRequestService', function($http){
       var selectedtasks = [];
       for (var task in tasks) {
         if (tasks[task].selected) {
-          selectedtasks.push(tasks[task].name);
+            selectedtasks.push(tasks[task].name);
         }
       }  
       $http({
@@ -80,91 +80,125 @@ dashboardApp.service('itRequestService', function($http){
   
     this.updatestatus = function (callback, data) {
         $http({
-          method: 'post',
-          url: '/data/updatestatus/' + selectedRequestId,
-          data: data
+            method: 'post',
+            url: '/data/updatestatus/' + selectedRequestId,
+            data: data
         }).success(function(data, status, headers, config) {
-          console.log("update status OK");
-          callback();
+            console.log("update status OK");
+            callback();
         }).error(function(data, status, headers, config) {
-          console.log("error update status");
+            console.log("error update status");
         });
     };
     
     this.insertrequest = function (callback, data) {
         $http({
-          method: 'post',
-          url: '/data/insertrequest/',
-          data: data
+            method: 'post',
+            url: '/data/insertrequest/',
+            data: data
         }).success(function(data, status, headers, config) {
-          console.log("insert request OK");
-          callback();
+            console.log("insert request OK");
+            callback();
         }).error(function(data, status, headers, config) {
-          console.log("error insert request");
+            console.log("error insert request");
         });
     };
     
     this.updaterequest = function (callback, data) {
         $http({
-          method: 'post',
-          url: '/data/updaterequest/',
-          data: data
+            method: 'post',
+            url: '/data/updaterequest/',
+            data: data
         }).success(function(data, status, headers, config) {
-          console.log("update request items OK");
-          callback();
+            console.log("update request items OK");
+            callback();
         }).error(function(data, status, headers, config) {
-          console.log("error update request items");
+            console.log("error update request items");
         });
     };
     
     this.deleterequest = function (callback) {
         $http({
-          method: 'post',
-          url: '/admin/deleterequest/',
-          data: {id: selectedRequestId}
+            method: 'post',
+            url: '/admin/deleterequest/',
+            data: {id: selectedRequestId}
         }).success(function(data, status, headers, config) {
-          console.log("delete request OK");
-          callback();
+            console.log("delete request OK");
+            callback();
         }).error(function(data, status, headers, config) {
-          console.log("delete request error");
+            console.log("delete request error");
         });
     };
     
     this.getusers = function (callback) {
         $http({
-          method: 'get',
-          url: '/admin/select/users/'
+            method: 'get',
+            url: '/admin/select/users/'
         }).success(function(data, status, headers, config) {
-          callback(data);
+            callback(data);
         }).error(function(data, status, headers, config) {
-          console.log("error get users list");
+            console.log("error get users list");
         });
     };
     
     this.douser = function (data, callback, whattodo) {
         $http({
-          method: 'post',
-          url: '/admin/user/' + whattodo,
-          data: data
+            method: 'post',
+            url: '/admin/user/' + whattodo,
+            data: data
         }).success(function(data, status, headers, config) {
-          console.log(whattodo + ' user account OK');
-          callback();
+            console.log(whattodo + ' user account OK');
+            callback();
         }).error(function(data, status, headers, config) {
-          console.log('error ' + whattodo + ' user account');
+            console.log('error ' + whattodo + ' user account');
         });
     };
     
     this.doitem = function (data, whattodo, callback) {
         $http({
-          method: 'post',
-          url: '/admin/item/' + whattodo,
-          data: data
+            method: 'post',
+            url: '/admin/item/' + whattodo,
+            data: data
         }).success(function(data, status, headers, config) {
-          console.log(whattodo + ' item OK');
-          if(callback)
-              callback(data);
+            console.log(whattodo + ' item OK');
+            if(callback)
+                callback(data);
         }).error(function(data, status, headers, config) {
-          console.log('error ' + whattodo + ' item');
+            console.log('error ' + whattodo + ' item');
+        });
+    };    
+    
+    this.openuserstate = function (data) {
+        $http({
+            method: 'post',
+            url: '/mali/show/',
+            responseType: 'arraybuffer',
+            data: data
+        }).success(function(data, status, headers, config) {
+            var file = new Blob([data], {type: 'application/pdf'});
+            var fileURL = URL.createObjectURL(file);
+            PopupCenter(fileURL, 'فیش حقوقی', 500, 600)
+  
+        }).error(function(data, status, headers, config) {
+            console.log('error Open state');
         });
     };
+    
+    this.getuserstatedates = function (callback) {
+        $http({
+            method: 'get',
+            url: '/mali/list/'
+        }).success(function(data, status, headers, config) {
+            callback(data);
+        }).error(function(data, status, headers, config) {
+            console.log("error get user state dates");
+        });
+    };
+    
+    function PopupCenter(pageURL, title, w, h) {
+        var left = (screen.width/2)-(w/2);
+        var top = 0;
+        var targetWin = window.open (pageURL, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
+        return targetWin;
+    };     
 });

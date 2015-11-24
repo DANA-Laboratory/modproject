@@ -1,4 +1,3 @@
-\input{/home/rfpc/modproject/xelatex/commands.tex}
 \documentclass{article}
 \pagenumbering{gobble}
 \usepackage[legalpaper, margin=10pt]{geometry}
@@ -6,7 +5,6 @@
 \usepackage{booktabs}
 \usepackage[framemethod=tikz,xcolor=true]{mdframed}
 \usepackage{graphicx}
-\graphicspath{{.}}
 \usepackage{xepersian}
 \settextfont{HMXKayhan}
 \def\dsh{\textemdash}
@@ -14,22 +12,22 @@
 \newcolumntype{'}{!{\vrule width 2pt}}
 \begin{document}
 \begin{figure}[t]
-\includegraphics[scale=0.7]{arm.PNG}
+\includegraphics[scale=0.7]{/home/rfpc/modproject/xelatex/arm.PNG}
 \centering
 \end{figure}
 شماره پرسنلی: 
 \makebox[3pt][r]{..............}
-\raisebox{0.8ex}{\ya}
+\raisebox{0.8ex}{\yb}
 
 \vspace{2mm}
 نام و نام خانوادگی:
 \makebox[3pt][r]{...........................}
-\raisebox{0.9ex}{\yb}
+\raisebox{0.9ex}{\yc}
 
 \begin{center}
 صورت حساب حقوق کارمند
-\makebox[3pt][r]{...........ماه}
-\raisebox{0.9ex}{\yc}
+\makebox[3pt][r]{...................}
+\raisebox{0.9ex}{\ya}
 \label{aggiungi}\centering
 \begin{normalsize}
 \begin{mdframed}[linewidth=2pt, innerleftmargin=4pt, innerrightmargin=4pt]
@@ -53,23 +51,23 @@
 حق اولاد ماهیانه & \yx & تعداد اولاد & \yy & حق اولاد & \yz &  اقساط وام دو ماه & \za\\
 \dsh & \dsh & \dsh & \dsh & نوبتکاری & \zb &  اقساط بلند مدت & \zc\\
 روزهای جمعه & \zd & نرخ جمعه کاری & \ze & جمعه کاری & \zf &  &  \\
-روزهای تعطیل & \zg & نرخ تعطیل کاری & \zh & تعطیل کاری & \zi &  &   \\
-\dsh & \dsh & \dsh & \dsh & کمک رفاهی & \zj &  &   \\
-\dsh & \dsh & \dsh & \dsh & سایر مزایا & \zk &  &   \\
-\dsh & \dsh & \dsh & \dsh & فوق العاده ترمیمی & \zl &  &   \\
-\dsh & \dsh & \dsh & \dsh & غذا & \zm &  &   \\
-\dsh & \dsh & \dsh & \dsh & فوق العاده حراستی & \zn &  &   \\
-\dsh & \dsh & \dsh & \dsh & ایاب وذهاب & \zo &  &   \\
-\dsh & \dsh & \dsh & \dsh & پاداش & \zp &  &   \\
-\dsh & \dsh & \dsh & \dsh & وام دو ماه حقوق & \zq &  &   \\
-\dsh & \dsh & \dsh & \dsh & وام بلند مدت & \zr &  &   \\
+روزهای تعطیل & \zh & نرخ تعطیل کاری & \zi & تعطیل کاری & \zj &  &   \\
+\dsh & \dsh & \dsh & \dsh & کمک رفاهی & \zk &  &   \\
+\dsh & \dsh & \dsh & \dsh & سایر مزایا & \zl &  &   \\
+\dsh & \dsh & \dsh & \dsh & فوق العاده ترمیمی & \zm &  &   \\
+\dsh & \dsh & \dsh & \dsh & غذا & \zn &  &   \\
+\dsh & \dsh & \dsh & \dsh & فوق العاده حراستی & \zo &  &   \\
+\dsh & \dsh & \dsh & \dsh & ایاب وذهاب & \zp &  &   \\
+\dsh & \dsh & \dsh & \dsh & پاداش & \zq &  &   \\
+\dsh & \dsh & \dsh & \dsh & وام دو ماه حقوق & \zr &  &   \\
+\dsh & \dsh & \dsh & \dsh & وام بلند مدت & \zs &  &   \\
 \cmidrule(rl){7-8}
 \cmidrule(rl){5-6}
 \cmidrule(rl){1-4}
-\multicolumn{4}{l'}{} & \textbf{جمع ناخالص}  & \zs & \textbf{جمع کسورات }& \zt\\
+\multicolumn{4}{l'}{} & \textbf{جمع ناخالص}  & \zv & \textbf{جمع کسورات }& \zg\\
 \cmidrule(rl){7-8}
 \cmidrule(rl){1-6}
-\multicolumn{6}{r'}{\small{مبلغ قابل پرداخت به حروف: \zu}} & \textbf{مانده} & \textbf{\zv}\\
+\multicolumn{6}{r'}{\small{مبلغ قابل پرداخت به حروف: \zu}} & \textbf{مانده} & \textbf{\zt}\\
 \end{tabular}
 \end{mdframed}
 \end{normalsize}
