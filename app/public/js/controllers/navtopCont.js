@@ -19,6 +19,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
         $scope.active = active(id);
         itRequestService.refreshTable(id);
         $scope.$broadcast('topnavClick');
+        $scope.userselect = 1;
     };
     
     $scope.active = active(null);
@@ -48,7 +49,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
     //show state click
     $scope.openstate = function() {
         if($scope.selectedstatedate && ($scope.selectedstatedate === $scope.statedate))
-            itRequestService.openuserstate({date : $scope.selectedstatedate});
+            $scope.pdfcontent = itRequestService.openuserstate({date : $scope.selectedstatedate}, function(pdfcontent) {$scope.pdfcontent=pdfcontent;});
         else
             alert('فیش حقوقی در تاریخ ' + $scope.statedate + ' وجود ندارد.')
     };      

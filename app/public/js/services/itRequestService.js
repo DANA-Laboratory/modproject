@@ -9,7 +9,7 @@ socket.on('update', function(data) {
 socket.on('error', console.error.bind(console));
 socket.on('message', console.log.bind(console));
 
-dashboardApp.service('itRequestService', function($http){
+dashboardApp.service('itRequestService', function($http, $sce){
     
     this.requestitems = {};
     this.requesttasks = {};
@@ -168,7 +168,7 @@ dashboardApp.service('itRequestService', function($http){
         });
     };    
     
-    this.openuserstate = function (data) {
+    this.openuserstate = function (data, callback) {
         $http({
             method: 'post',
             url: '/mali/show/',
@@ -177,8 +177,7 @@ dashboardApp.service('itRequestService', function($http){
         }).success(function(data, status, headers, config) {
             var file = new Blob([data], {type: 'application/pdf'});
             var fileURL = URL.createObjectURL(file);
-            PopupCenter(fileURL, 'فیش حقوقی', 500, 600)
-  
+            callback($sce.trustAsResourceUrl(fileURL));
         }).error(function(data, status, headers, config) {
             console.log('error Open state');
         });

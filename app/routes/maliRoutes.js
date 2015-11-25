@@ -53,20 +53,20 @@ module.exports = function (app, dbma) {
                     achar = 'z';
                 }
             }
-            var path = '/home/rfpc/modproject/xelatex/'
-            var tempname = tmp.tmpNameSync( {template : path + 'tmp-XXXXXX.tex'} );
+            var path = '/home/rfpc/modproject/xelatex/';
+            var tempname = tmp.tmpNameSync({template : path + 'tmp-XXXXXX.tex'});
             console.log(tempname);
             fs.writeFileSync(tempname, texcommand);
-            fs.appendFileSync(tempname, fs.readFileSync( path + 'statement.tex' ))
+            fs.appendFileSync(tempname, fs.readFileSync(path + 'statement.tex'));
             execute('xelatex -interaction=batchmode -output-directory=' + path + ' ' + tempname,
                 function (out) {
                     console.log(out);
-                    res.sendFile(tempname.slice(0,-3) + 'pdf');
+                    res.sendFile(tempname.slice(0, -3) + 'pdf');
                 }
-            );       
+            );
         };
         console.log(req.user.pid, req.body.date);
-        dbma.get('SELECT data FROM statements WHERE pid=? AND date=?', [req.user.pid, req.body.date], callback);         
+        dbma.get('SELECT data FROM statements WHERE pid=? AND date=?', [req.user.pid, req.body.date], callback);
     });
     
     app.get('/mali/list', function (req, res) {
