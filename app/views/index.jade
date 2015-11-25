@@ -51,8 +51,8 @@ include head.jade
             .col-md-6
               .form-inline
                 if (user.isMaliUser)          
-                  input.form-control(type='text', ng-init='maliuserlogin()', ng-model='statedate', typeahead-on-select='setdate($item)', typeahead='date for date in $scope.dates | filter:$viewValue', placeholder='ماه و سال ...')
-                  button.btn.btn-default(type='button', ng-click='userselect=2; openstate($statedate)') نمایش فیش حقوقی
+                  input.form-control(type='text', ng-init='maliuserlogin()', ng-model='statedate', typeahead-on-select='setdate($item)', typeahead='date for date in dates | filter:$viewValue', placeholder='ماه و سال ...')
+                  button.btn.btn-default(type='button', ng-click='openstate($statedate)') نمایش فیش حقوقی
                 else
                     input.form-control.disabled(type='text', placeholder='ماه و سال ...')
                     button.btn.btn-default.disabled(type='submit', ng-click='openstate()') نمایش فیش حقوقی                 
