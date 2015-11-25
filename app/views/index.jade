@@ -40,7 +40,7 @@ include head.jade
             .col-md-6
               | ثبت و پیگیری در خواست های انجام کار از واحد خدمات کامپیوتر شرکت از آبانماه 1394 بصورت مکانیزه انجام میگردد، و جهت انجام این امور میتوانید از این مسیر اقدام فرمایید.
             .col-md-6
-              | کلیه همکاران محترم که تا این تاریخ فیش حقوقی خود را تنها بصورت چاپ شده از امور مالی شرکت دریافت میکرند از آذر ماه 1394 امکان دسترسی برخط به فیش های حقوقی خویش را دارا میباشند.
+              | کلیه همکاران محترم که تا این تاریخ فیش حقوقی خود را تنها بصورت چاپ شده از امور مالی شرکت دریافت میکرده اند از آذر ماه 1394 امکان دسترسی برخط به فیش های حقوقی خویش را دارا میباشند.
           .row.text-center
             .col-md-6
               if (user.isItUser)
@@ -59,8 +59,10 @@ include head.jade
       if (user.isItUser)
         include dashboard.jade
       if (user.isMaliUser)
+        ng-pdf(templateurl='/partials/viewer.html')
         .embed-responsive.embed-responsive-16by9(ng-show='userselect==2')
-          iframe.embed-responsive-item(ng-src='{{pdfcontent}}')
+          //iframe.embed-responsive-item(ng-src='{{pdfcontent}}')
+          canvas(id='pdf-canvas')
       if (user.isOwner)
         include modals/uploadDataBase.jade
       include modals/accountsManegement.jade
