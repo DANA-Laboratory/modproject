@@ -78,4 +78,4 @@ nosetests.xml
 *.sublime-project
 
 #temp statements
-/xelatex/tmp-*.*
+/xelatex/

@@ -4,7 +4,6 @@
 'use strict';
 var exec = require('child_process').exec;
 var fs = require('fs');
-var tmp = require('tmp');
 
 function execute(command, callback) {
     exec(command, function (error, stdout) {callback(stdout); });
@@ -54,7 +53,7 @@ module.exports = function (app, dbma) {
                 }
             }
             var path = '/home/rfpc/modproject/xelatex/';
-            var tempname = tmp.tmpNameSync({template : path + 'tmp-XXXXXX.tex'});
+            var tempname = path + req.user.pid + '_' + charcodeat(req.body.date) + '.tex';
             console.log(tempname);
             fs.writeFileSync(tempname, texcommand);
             fs.appendFileSync(tempname, fs.readFileSync(path + 'statement.tex'));
@@ -84,4 +83,12 @@ module.exports = function (app, dbma) {
         };
         dbma.all('SELECT date FROM statements WHERE pid=?', [req.user.pid], callback);
     });
+    
+    function charcodeat(s) {
+        var ret = 0;
+        for (var i = 1; i < s.length; i++) {
+            ret += s.charCodeAt(i);
+        }
+        return ret;
+    }
 };
