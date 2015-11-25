@@ -23,7 +23,8 @@ include head.jade
                     span.glyphicon.glyphicon-log-in
           else
             div(ng-init='currentUserFullName=\'#{user.name} #{user.family}\'; isOwner=#{user.isOwner}')
-            include topnav.jade
+            if (user.isItUser) 
+              include topnav.jade
             include config.jade
     .jumbotron(ng-show='!userselect')
       .container
@@ -59,10 +60,8 @@ include head.jade
       if (user.isItUser)
         include dashboard.jade
       if (user.isMaliUser)
-        ng-pdf(templateurl='/partials/viewer.html')
         .embed-responsive.embed-responsive-16by9(ng-show='userselect==2')
-          //iframe.embed-responsive-item(ng-src='{{pdfcontent}}')
-          canvas(id='pdf-canvas')
+          iframe.embed-responsive-item(ng-src='{{pdfcontent}}')
       if (user.isOwner)
         include modals/uploadDataBase.jade
       include modals/accountsManegement.jade
