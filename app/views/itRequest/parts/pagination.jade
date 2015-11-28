@@ -8,7 +8,7 @@ div.pull-right
   .row(ng-hide='requestLevel<2')
     a.btn.btn-success.btn-circle(data-toggle='tooltip', title='فعالیت های انجام شده', ng-click='setpageid(2)', href='#success', ng-class='pageid===2 ? "btn-toggle" : ""')
       span.glyphicon.glyphicon-wrench
-  .row(ng-show='requestLevel===1 || (requestLevel===2 && isOwner)')
+  .row(ng-show='requestLevel>=1')
     a.btn.btn-warning.btn-circle(data-toggle='tooltip', title='دستورات', ng-click='setpageid(3)', href='#action', ng-class='pageid===3 ? "btn-toggle" : ""')
       span.glyphicon.glyphicon-exclamation-sign
 script.

@@ -33,7 +33,8 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         var date = new Date();
         $scope.data ={ description : "" , requestitems : [] } //owner for IT Requeststs
         $scope.data.initdate = gregorianToJalali(date, '/');
-        var minutes = (date.getMinutes()===0) ? ('00') : (date.getMinutes()<10 ? ('0' + date.getMinutes()) : date.getMinutes());
+        var minutes = date.getMinutes();
+        minutes = (minutes===0) ? ('00') : (minutes<10 ? ('0' + minutes) : minutes);
         $scope.data.inittime = date.getHours() + ':' + minutes;
         $scope.data.applicant = $scope.currentUserFullName;
         $scope.hidetableclick();
@@ -46,6 +47,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     
     $scope.openrequestclick = function (id) {
         $scope.hidetableclick();
+        $scope.setpageid(1);
     };
     
     $scope.toggleconfig = function () {
@@ -56,7 +58,6 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         $scope.hidetable =  true;
         $scope.hiderequest = false;
         $scope.showConfig = false;
-        $scope.$broadcast('showrequest');
     };
      
     $scope.backclick = function (id) {
@@ -90,7 +91,6 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     };
     
     $scope.insertbtnclick = function (id) {
-        //console.log($scope.data);
         itRequestService.insertrequest(function () {$scope.backclick(id);}, $scope.data);
     }
     
@@ -98,7 +98,9 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         $scope.data.status = requestStatus[id];
         var date = new Date();
         $scope.data.actiondate = gregorianToJalali(date , '/');
-        $scope.data.actiontime = date.getHours() + ':' + date.getMinutes();
+        var minutes = date.getMinutes();
+        minutes = (minutes===0) ? ('00') : (minutes<10 ? ('0' + minutes) : minutes);
+        $scope.data.actiontime = date.getHours() + ':' + minutes;
         itRequestService.updatestatus(function () {$scope.backclick(id);}, $scope.data);
     }
     
@@ -117,6 +119,18 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             } else {
                 $scope.tasks[task].selected = false;
             }
+        }
+        $scope.data.actionuser = $scope.currentUserFullName;
+        if ($scope.requestLevel === 3) {
+            $scope.data.actiondate = $scope.data.enddate;
+            $scope.data.actiontime = $scope.data.endtime;
+            $scope.data.actionuser = $scope.data.enduser;
+        }
+        if ($scope.requestLevel === 4) {
+            $scope.data.actiondate = $scope.data.canceldate;
+            $scope.data.actiontime = $scope.data.canceltime;
+            $scope.data.actionuser = $scope.data.canceluser;
+            $scope.data.cancelwhy  = $scope.data.actiondescription;
         }
     }
     

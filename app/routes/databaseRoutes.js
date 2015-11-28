@@ -11,10 +11,15 @@ module.exports = function (app, io, appConfig, db) {
         for (var user in userAccounts) {
             if ([user].id === row.owner) {
                 row.owner = userAccounts[user].name + ' ' + userAccounts[user].family;
-            } else {
-                if (userAccounts[user].id === row.user) {
-                    row.user = userAccounts[user].name + ' ' + userAccounts[user].family;
-                }
+            }
+            if (userAccounts[user].id === row.user) {
+                row.user = userAccounts[user].name + ' ' + userAccounts[user].family;
+            }
+            if (userAccounts[user].id === row.canceluser) {
+                row.canceluser = userAccounts[user].name + ' ' + userAccounts[user].family;
+            }
+            if (userAccounts[user].id === row.enduser) {
+                row.enduser = userAccounts[user].name + ' ' + userAccounts[user].family;
             }
         }
     };
@@ -92,10 +97,10 @@ module.exports = function (app, io, appConfig, db) {
             db.run('UPDATE requests SET status=?, startdate=?, starttime=?, startuser=? WHERE id=?', [req.body.status, req.body.actiondate, req.body.actiontime, req.user.id, req.params.requestID], callback);
         }
         if (req.body.status === appConfig.status[2]) {
-            db.run('UPDATE requests SET status=?, enddate=?, endtime=?, enduser=? WHERE id=?', [req.body.status, req.body.actiondate, req.body.actiontime, req.user.id, req.params.requestID], callback);
+            db.run('UPDATE requests SET status=?, enddate=?, endtime=?, enduser=?, actiondescription=? WHERE id=?', [req.body.status, req.body.actiondate, req.body.actiontime, req.user.id, req.body.actiondescription, req.params.requestID], callback);
         }
         if (req.body.status === appConfig.status[3]) {
-            db.run('UPDATE requests SET status=?, canceldate=?, canceltime=?, cancelwhy=?, canceluser=? WHERE id=?', [req.body.status, req.body.actiondate, req.body.actiontime, req.body.cancelwhy, req.user.id, req.params.requestID], callback);
+            db.run('UPDATE requests SET status=?, canceldate=?, canceltime=?, actiondescription=?, canceluser=? WHERE id=?', [req.body.status, req.body.actiondate, req.body.actiontime, req.body.cancelwhy, req.user.id, req.params.requestID], callback);
         }
     });
     

@@ -16,8 +16,8 @@
           if (user.isOwner)
             include parts/taskutils.jade
           include parts/alltasks.jade
-        | با اشاره به فعالیت های انتخاب شده جزئییات را ویرایش یا حذف نمایید:
-        .well(style='height:100px;overflow:auto')
+        label.control-label(for='selectedtasks') عناوین فعالیت های انجام شده:
+        .well#selectedtasks(style='height:100px;overflow:auto')
           include parts/selectedtasks.jade
   .panel-footer
     include parts/alertinfo.jade
