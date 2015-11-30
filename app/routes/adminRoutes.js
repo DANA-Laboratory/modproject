@@ -50,6 +50,7 @@ module.exports = function (app, db, readAppConfig) {
             }
             res.sendStatus(200);
         };
+        //It admin, can delete and update its users and reset common users pass
         if (req.user.isOwner) {
             if (req.params.whattodo === 'delete' && req.user.id !== req.body.id) {
                 db.run('DELETE FROM config WHERE (id=? AND itemType=2)', [req.body.id], callback);
@@ -62,18 +63,18 @@ module.exports = function (app, db, readAppConfig) {
                     } else {
                         if (req.params.whattodo === 'reset') {
                             req.body.account.password = req.body.account.defaultpass;
-                            db.run('UPDATE config SET itemName=? WHERE (id=? AND itemType=2)', [JSON.stringify(req.body.account), req.body.id], callback);
+                            db.run('UPDATE config SET itemName=? WHERE (id=? AND (itemType=2 OR itemType=5))', [JSON.stringify(req.body.account), req.body.id], callback);
                         }
                     }
                 }
             }
-        } else {
+        } else { //each user can update and reset its account pass OR data
             if (req.params.whattodo === 'update') {
-                db.run('UPDATE config SET itemName=? WHERE (id=? AND itemType=2)', [JSON.stringify(req.body.account), req.user.id], callback);
+                db.run('UPDATE config SET itemName=? WHERE (id=? AND itemType IN (2,3,5))', [JSON.stringify(req.body.account), req.user.id], callback);
             } else {
                 if (req.params.whattodo === 'reset') {
                     req.user.password = req.user.defaultpass;
-                    db.run('UPDATE config SET itemName=? WHERE (id=? AND itemType=2)', [JSON.stringify(req.user), req.user.id], callback);
+                    db.run('UPDATE config SET itemName=? WHERE (id=? AND itemType IN (2,3,5))', [JSON.stringify(req.user), req.user.id], callback);
                 } else {
                     res.redirect('/');
                 }
