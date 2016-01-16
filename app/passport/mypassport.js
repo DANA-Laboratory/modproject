@@ -23,9 +23,10 @@ function findById(id, fn) {
 }
 
 function findByUsername(username, fn) {
+  console.log('findByUsername: ',username)
   for (var i = 0, len = userAccounts.length; i < len; i++) {
     var user = userAccounts[i];
-    if (user.username === username) {
+    if (user.username == username) {
       return fn(null, user);
     }
   }
@@ -64,7 +65,7 @@ passport.use(new LocalStrategy(
             findByUsername(username, function (err, user) {
               if (err) { return done(err); }
               if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
-              if (user.password !== password) { return done(null, false, { message: 'Invalid password' }); }
+              if (user.password != password) { return done(null, false, { message: 'Invalid password' }); }
               return done(null, user);
             });
           });
@@ -108,28 +109,18 @@ exports.readAccounts = function () {
       var setUsers = function (error, data) {
           userAccounts = [];
           for (var item in data) {
-              var tmpAccount = JSON.parse(data[item].itemName);
-              tmpAccount.id = data[item].id;
-              if (data[item].itemType === 2) {
-                tmpAccount.isItUser = true
-                tmpAccount.isMaliUser = false
-              } else {
-                if (data[item].itemType === 3) {
-                    tmpAccount.isItUser = false
-                    tmpAccount.isMaliUser = true
-                } else {
-                  if (data[item].itemType === 5) {
-                      tmpAccount.isItUser = true
-                      tmpAccount.isMaliUser = true                  
-                  }
-                }
-              }
-              userAccounts.push(tmpAccount);
-              if (tmpAccount.isOwner)
+              var tmpAccount = data[item];
+              if (tmpAccount.isItAdmin) {
                   ownerRowID=tmpAccount.id;
+                  tmpAccount.isOwner = true;
+              }
+              else
+                  tmpAccount.isOwner = false
+              userAccounts.push(tmpAccount);
+              //db.run('INSERT INTO users(id,username,password,name,family,melicode,pcode,isSysAdmin,isItAdmin,isMaliAdmin,isItUser,isMaliUser,isKarshenas,isGuest,isTeacher,defaultpass,email) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)' ,[tmpAccount.id,tmpAccount.username,tmpAccount.password,tmpAccount.name,tmpAccount.family,'',tmpAccount.pid,tmpAccount.isOwner,false,false,tmpAccount.isItUser,tmpAccount.isMaliUser,false,false,false,tmpAccount.defaultpass,tmpAccount.email],callback);             
           }
       };
-      db.all('SELECT * FROM config WHERE itemType IN (2,3,5)', setUsers);
+      db.all('SELECT * FROM users', setUsers);
   }
 };
 

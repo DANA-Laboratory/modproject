@@ -1,6 +1,9 @@
 /**
  * Created by Reza Afzalan.
  */
+//user types, in users table:
+//isSysAdmin, isItAdmin, isMaliAdmin, isItUser, isMaliUser, isKarshenas, isGuest, isTeacher
+ 
 'use strict';
 var mypassport = require('../passport/mypassport');
 var multer = require('multer');
