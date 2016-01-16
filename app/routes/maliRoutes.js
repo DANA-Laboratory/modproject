@@ -10,7 +10,7 @@ function execute(command, callback) {
 }
 module.exports = function (app, dbma) {
     app.post('/mali/sendstatement', function (req, res) {
-        if (((req.connection.remoteAddress === '172.18.1.10') || (req.connection.remoteAddress === '172.18.1.234')) && (req.body.pass === '123')) {
+        if (((req.connection.remoteAddress === '172.18.1.10') || (req.connection.remoteAddress === '172.18.1.234')) && (req.body.pass === '02122315')) {
             var callback = function (err) {
                 if (err) {
                     console.log('insert statements error=', err);
