@@ -37,25 +37,22 @@ include head.jade
             | کاربر محترم 
             u {{currentUserFullName}} 
             | لطفا گزینه مورد نظر خود را انتخاب فرمایید:
-          .row.text-right
-            .col-md-6
-              | ثبت و پیگیری در خواست های انجام کار از واحد خدمات کامپیوتر شرکت از آبانماه 1394 بصورت مکانیزه انجام میگردد، و جهت انجام این امور میتوانید از این مسیر اقدام فرمایید.
-            .col-md-6
-              | کلیه همکاران محترم که تا این تاریخ فیش حقوقی خود را تنها بصورت چاپ شده از امور مالی شرکت دریافت میکرده اند از آذر ماه 1394 امکان دسترسی برخط به فیش های حقوقی خویش را دارا میباشند.
-          .row.text-center
-            .col-md-6
-              if (user.isItUser)
+          if (user.isItUser)
+            .row.text-right
+              .col-md-6
+                | - ثبت و پیگیری در خواست های انجام کار از واحد خدمات کامپیوتر شرکت از آبانماه 1394 بصورت مکانیزه انجام میگردد، و جهت انجام این امور میتوانید از این مسیر اقدام فرمایید.
+              .col-md-6
                 button.btn.btn-default(type='button', ng-click='liclick(0)') درخواست خدمت از واحد کامپیوتر
-              else
-                button.btn.btn-default.disabled(type='button') درخواست خدمت از واحد کامپیوتر
-            .col-md-6
-              .form-inline
-                if (user.isMaliUser)          
+          if (user.isMaliUser)               
+            .row.text-right.top-buffer
+              .col-md-6
+                | - کلیه همکاران محترم که تا این تاریخ فیش حقوقی خود را تنها بصورت چاپ شده از امور مالی شرکت دریافت میکرده اند از آذر ماه 1394 امکان دسترسی برخط به فیش های حقوقی خویش را دارا میباشند.
+              .col-md-6
+                .form-inline
+                  if (user.isMaliAdmin)
+                    input.form-control(type='text', ng-init='maliadminlogin()', ng-model='maliusersid', typeahead-on-select='setpid($item)', typeahead='pid for pid in pids | filter:$viewValue', placeholder='کد پرسنلی')                 
                   input.form-control(type='text', ng-init='maliuserlogin()', ng-model='statedate', typeahead-on-select='setdate($item)', typeahead='date for date in dates | filter:$viewValue', placeholder='ماه و سال ...')
                   button.btn.btn-default(type='button', ng-click='openstate($statedate)') نمایش فیش حقوقی
-                else
-                    input.form-control.disabled(type='text', placeholder='ماه و سال ...')
-                    button.btn.btn-default.disabled(type='submit', ng-click='openstate()') نمایش فیش حقوقی                 
     if (user)
       if (user.isItUser)
         include dashboard.jade
