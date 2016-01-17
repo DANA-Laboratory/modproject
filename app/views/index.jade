@@ -26,33 +26,7 @@ include head.jade
             if (user.isItUser) 
               include topnav.jade
             include config.jade
-    .jumbotron(ng-show='!userselect')
-      .container
-        if !(user)
-          h1 خوش آمدید!
-          p
-            | این سامانه جهت تسهیل فعالیتهای کاری در شرکت ره آوران با استفاده از ابزارهای الکترونیک راه اندازی شده است، جهت ورود به پایگاه ابتدا نام کاربری و کلمه عبور خود را در قسمت بالا وارد نمایید.
-        else
-          h3 
-            | کاربر محترم 
-            u {{currentUserFullName}} 
-            | لطفا گزینه مورد نظر خود را انتخاب فرمایید:
-          if (user.isItUser)
-            .row.text-right
-              .col-md-6
-                | - ثبت و پیگیری در خواست های انجام کار از واحد خدمات کامپیوتر شرکت از آبانماه 1394 بصورت مکانیزه انجام میگردد، و جهت انجام این امور میتوانید از این مسیر اقدام فرمایید.
-              .col-md-6
-                button.btn.btn-default(type='button', ng-click='liclick(0)') درخواست خدمت از واحد کامپیوتر
-          if (user.isMaliUser)               
-            .row.text-right.top-buffer
-              .col-md-6
-                | - کلیه همکاران محترم که تا این تاریخ فیش حقوقی خود را تنها بصورت چاپ شده از امور مالی شرکت دریافت میکرده اند از آذر ماه 1394 امکان دسترسی برخط به فیش های حقوقی خویش را دارا میباشند.
-              .col-md-6
-                .form-inline
-                  if (user.isMaliAdmin)
-                    input.form-control(type='text', ng-init='maliadminlogin()', ng-model='maliusersid', typeahead-on-select='setpid($item)', typeahead='pid for pid in pids | filter:$viewValue', placeholder='کد پرسنلی')                 
-                  input.form-control(type='text', ng-init='maliuserlogin()', ng-model='statedate', typeahead-on-select='setdate($item)', typeahead='date for date in dates | filter:$viewValue', placeholder='ماه و سال ...')
-                  button.btn.btn-default(type='button', ng-click='openstate($statedate)') نمایش فیش حقوقی
+    include jumbotron.jade
     if (user)
       if (user.isItUser)
         include dashboard.jade
