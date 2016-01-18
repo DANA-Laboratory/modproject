@@ -53,35 +53,78 @@ module.exports = function (app, db, readAppConfig) {
             }
             res.sendStatus(200);
         };
-        //It admin, can delete and update its users and reset common users pass
-        if (req.user.isOwner) {
-            if (req.params.whattodo === 'delete' && req.user.id !== req.body.id) {
-                db.run('DELETE FROM config WHERE (id=? AND itemType=2)', [req.body.id], callback);
-            } else {
-                if (req.params.whattodo === 'update') {
-                    db.run('UPDATE config SET itemName=? WHERE (id=? AND itemType=2)', [JSON.stringify(req.body.account), req.body.id], callback);
-                } else {
-                    if (req.params.whattodo === 'insert') {
-                        db.run('INSERT INTO config (itemName,itemType) VALUES (?,2)', [JSON.stringify(req.body.account)], callback);
-                    } else {
-                        if (req.params.whattodo === 'reset') {
-                            req.body.account.password = req.body.account.defaultpass;
-                            db.run('UPDATE config SET itemName=? WHERE (id=? AND (itemType=2 OR itemType=5))', [JSON.stringify(req.body.account), req.body.id], callback);
-                        }
-                    }
-                }
-            }
-        } else { //each user can update and reset its account pass OR data
+        //Check if user want do somthing with his account
+        if (req.user.id === req.body.id) {
+            //Each user could 1-update his account informations or 2-reset his password
             if (req.params.whattodo === 'update') {
-                db.run('UPDATE config SET itemName=? WHERE (id=? AND itemType IN (2,3,5))', [JSON.stringify(req.body.account), req.user.id], callback);
+                db.run('UPDATE users SET password=?, name=?, family=?, melicode=?, pid=?, email=? WHERE id=?', [req.body.password, req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.user.id], callback);
             } else {
                 if (req.params.whattodo === 'reset') {
                     req.user.password = req.user.defaultpass;
-                    db.run('UPDATE config SET itemName=? WHERE (id=? AND itemType IN (2,3,5))', [JSON.stringify(req.user), req.user.id], callback);
+                    db.run('UPDATE users SET password=defaultpass WHERE id=?', [req.user.id], callback);
                 } else {
                     res.redirect('/');
                 }
             }
+        } else {
+          if (req.params.whattodo === 'insert') {
+            if (req.user.isItAdmin) {
+              db.run('INSERT INTO users (username, password, name, family, melicode, pid, email, defaultpass, isItUser) VALUES (?,?,?,?,?,?,?,?,?)', [req.body.username, req.body.password, req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.body.password, 1], callback);
+            }
+            if (req.user.isMaliAdmin) {
+              //username==pid
+              db.run('INSERT INTO users (username, password, name, family, melicode, pid, email, defaultpass, isMaliUser) VALUES (?,?,?,?,?,?,?,?,?)', [req.body.username, req.body.password, req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.body.password, 1], callback);
+            }
+            if (req.user.isKarshenas) {
+              //username==melicode
+              db.run('INSERT INTO users (username, password, name, family, melicode, pid, email, defaultpass, isGuest) VALUES (?,?,?,?,?,?,?,?,?)', [req.body.username, req.body.password, req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.body.password, 1], callback);
+            }
+            if (req.user.isSysAdmin) {
+              db.run('INSERT INTO users (username, password, name, family, melicode, pid, email, defaultpass, isGuest, isItUser, isMaliUser, isItAdmin, isMaliAdmin, isKarshenas, isTeacher) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [req.body.username, req.body.password, req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.body.password, req.body.isGuest, req.body.isItUser, req.body.isMaliUser, req.body.isItAdmin, req.body.isMaliAdmin, req.body.isKarshenas, req.body.isTeacher], callback);
+            }          
+          }
+          if (req.params.whattodo === 'delete') {
+            if (req.user.isItAdmin) {
+              db.run('DELETE FROM users WHERE(id=? AND isGuest+isTeacher+isMaliUser+isItAdmin+isMaliAdmin+isKarshenas=0)', [req.body.id], callback);
+            }
+            if (req.user.isMaliAdmin) {
+              db.run('DELETE FROM users WHERE(id=? AND isGuest+isTeacher+isItUser+isItAdmin+isMaliAdmin+isKarshenas=0)', [req.body.id], callback);
+            }
+            if (req.user.isKarshenas) {
+              db.run('DELETE FROM users WHERE(id=? AND isItUser+isMaliUser+isItAdmin+isMaliAdmin+isKarshenas=0)', [req.body.id], callback);
+            }
+            if (req.user.isSysAdmin) {
+              db.run('DELETE FROM users WHERE(id=?)', [req.body.id], callback);
+            }          
+          }
+          if (req.params.whattodo === 'update') {
+            if (req.user.isItAdmin) {
+              db.run('UPDATE users SET password=?, name=?, family=?, melicode=?, pid=?, email=? WHERE (id=? AND isItUser=1)', [req.body.password, req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.user.id], callback);
+            }
+            if (req.user.isMaliAdmin) {
+              db.run('UPDATE users SET password=?, name=?, family=?, melicode=?, pid=?, email=? WHERE (id=? AND isMaliUser=1)', [req.body.password, req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.user.id], callback);
+            }
+            if (req.user.isKarshenas) {
+              db.run('UPDATE users SET password=?, name=?, family=?, melicode=?, pid=?, email=? WHERE (id=? AND isTeacher+isGuest>0)', [req.body.password, req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.user.id], callback);
+            }
+            if (req.user.isSysAdmin) {
+              db.run('UPDATE users SET password=?, name=?, family=?, melicode=?, pid=?, email=?, isGuest=?, isItUser=?, isMaliUser=?, isItAdmin=?, isMaliAdmin=?, isKarshenas=?, isTeacher=? WHERE (id=?)', [req.body.password, req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.body.isGuest, req.body.isItUser, req.body.isMaliUser, req.body.isItAdmin, req.body.isMaliAdmin, req.body.isKarshenas, req.body.isTeacher, req.user.id], callback);
+            }
+          }
+          if (req.params.whattodo === 'reset') {
+            if (req.user.isItAdmin) {
+              db.run('UPDATE users SET password=defaultpass WHERE (id=? AND isItUser=1)', [req.user.id], callback);
+            }
+            if (req.user.isMaliAdmin) {
+              db.run('UPDATE users SET password=defaultpass WHERE (id=? AND isMaliUser=1)', [req.user.id], callback);
+            }
+            if (req.user.isKarshenas) {
+              db.run('UPDATE users SET password=defaultpass WHERE (id=? AND isTeacher+isGuest>0)', [req.user.id], callback);
+            }
+            if (req.user.isSysAdmin) {
+              db.run('UPDATE users SET password=defaultpass WHERE (id=?)', [req.user.id], callback);
+            }
+          }
         }
     });
     

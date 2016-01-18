@@ -36,5 +36,6 @@ include head.jade
       if (user.isOwner)
         include modals/uploadDataBase.jade
       include modals/accountsManegement.jade
-    include intro.jade
+    else
+      include intro.jade
     include foot.jade

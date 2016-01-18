@@ -21,27 +21,31 @@
           hr
         .row.form-group
           .col-md-3
-            label.control-label(for='in1') نام
-            input.form-control(name='textinput', type='text', id='in1', ng-model='selectedUser.name', ng-change='updateclass = "";')
-          .col-md-4
-            label.control-label(for='in2') نام خانوادگی
-            input.form-control(name='textinput', type='text', id='in2', ng-model='selectedUser.family', ng-change='updateclass = "";')
+            label.control-label(for='in1') نام کاربری
+            input.form-control(name='textinput', type='text', id='in1', ng-model='selectedUser.username', ng-change='updateclass = "";', readonly)
           .col-md-3
-            label.control-label(for='in5') کد پرسنلی
-            input.form-control(name='textinput', type='text', id='in5', style='text-align: left', ng-model='selectedUser.pid', ng-change='updateclass = "";', readonly)
+            label.control-label(for='in2') کد پرسنلی
+            input.form-control(name='textinput', type='text', id='in2', style='text-align: left', ng-model='selectedUser.pid', ng-change='updateclass = "";', readonly)
+          .col-md-3
+            label.control-label(for='in3') کد ملی
+            input.form-control(name='textinput', type='text', id='in3', style='text-align: left', ng-model='selectedUser.melicode', ng-change='updateclass = "";', readonly)
         .row.form-group
           .col-md-3
-            label.control-label(for='in3') نام کاربری
-            input.form-control(name='textinput', type='text', id='in3', ng-model='selectedUser.username', ng-change='updateclass = "";')
+            label.control-label(for='in4') نام
+            input.form-control(name='textinput', type='text', id='in4', ng-model='selectedUser.name', ng-change='updateclass = "";')
+          .col-md-3
+            label.control-label(for='in5') نام خانوادگی
+            input.form-control(name='textinput', type='text', id='in5', ng-model='selectedUser.family', ng-change='updateclass = "";')
           .col-md-4
-            label.control-label(for='in4') کلمه عبور
+            label.control-label(for='in6') کلمه عبور
             .input-group              
-              input.form-control(name='textinput', type='password', id='in4', ng-model='selectedUser.password', ng-change='updateclass = "";')
+              input.form-control(name='textinput', type='password', id='in6', ng-model='selectedUser.password', ng-change='updateclass = "";')
               .input-group-btn
                 button.btn.btn-danger(type='button', ng-click='resetuser()') پیشفرض
+        .row.form-group
           .col-md-5
-            label.control-label(for='in6') آدرس الکترونیک
-            input.form-control(name='textinput', type='text', id='in6', style='text-align: left', ng-model='selectedUser.email', ng-change='updateclass = "";')
+            label.control-label(for='in7') آدرس الکترونیک
+            input.form-control(name='textinput', type='text', id='in7', style='text-align: left', ng-model='selectedUser.email', ng-change='updateclass = "";')
       .modal-footer
         if (user.isOwner)
           button.btn.btn-sm.btn-danger.pull-right(type='button', ng-click='deleteuser()') حذف کاربر 

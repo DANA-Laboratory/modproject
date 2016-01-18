@@ -37,7 +37,7 @@ dashboardApp.controller('usermanCont', function ($scope, itRequestService) {
     
     $scope.updateuser = function() {
         var data = {};
-        data.account = $scope.selectedUser;
+        data = $scope.selectedUser;
         if ($scope.selectedUser.id) {
           data.id = $scope.selectedUser.id;
           itRequestService.douser(data, $scope.onLoad, 'update');
