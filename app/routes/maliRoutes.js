@@ -39,6 +39,12 @@ module.exports = function (app, dbma) {
     app.post('/mali/show', function (req, res) {
 //        execute('rm /home/rfpc/modproject/xelatex/tmp*.*', function (out) {
 //        });
+        var pid = '';
+        if (req.user.isMaliAdmin) {
+            pid = req.body.pid;
+        } else {
+            pid = req.user.pid;
+        }
         var callback = function (err, row) {
             var stmdata = JSON.parse(row.data);
             var texcommand = '\\def\\ya{' + req.body.date  + '}\n';
@@ -53,7 +59,7 @@ module.exports = function (app, dbma) {
                 }
             }
             var path = '/home/rfpc/modproject/xelatex/';
-            var tempname = path + req.user.pid + '_' + charcodeat(req.body.date) + '.tex';
+            var tempname = path + pid + '_' + charcodeat(req.body.date) + '.tex';
             console.log(tempname);
             fs.writeFileSync(tempname, texcommand);
             fs.appendFileSync(tempname, fs.readFileSync(path + 'statement.tex'));
@@ -64,24 +70,50 @@ module.exports = function (app, dbma) {
                 }
             );
         };
-        console.log(req.user.pid, req.body.date);
-        dbma.get('SELECT data FROM statements WHERE pid=? AND date=?', [req.user.pid, req.body.date], callback);
+        dbma.get('SELECT data FROM statements WHERE pid=? AND date=?', [pid, req.body.date], callback);
     });
     
     app.get('/mali/list', function (req, res) {
-        var callback = function (err, rows) {
+        var data = {};
+        var callbackpid = function (err, rows) {
+            if (!err) {
+                var pids = [];
+                for (var i in rows) {
+                    pids[i] = (rows[i].pid);
+                }
+                data.pids = pids;
+                if (data.dates) {
+                    res.json(data);
+                }
+            } else {
+                console.log('Error get list of pid for pid=' + req.user.pid);
+                res.sendStatus(400);
+            }
+        };
+        var callbackdate = function (err, rows) {
             if (!err) {
                 var dates = [];
                 for (var i in rows) {
                     dates[i] = (rows[i].date);
                 }
-                res.json(dates);
+                data.dates = dates;
+                if (!req.user.isMaliAdmin) {
+                    res.json(data);
+                } else {
+                    if (data.pids) {
+                        res.json(data);
+                    }
+                }
             } else {
                 console.log('Error get list of dates for pid=' + req.user.pid);
-                res.sendStatus(400);
             }
         };
-        dbma.all('SELECT date FROM statements WHERE pid=?', [req.user.pid], callback);
+        if (req.user.isMaliAdmin) {
+            dbma.all('SELECT DISTINCT pid FROM statements', callbackpid);
+            dbma.all('SELECT DISTINCT date FROM statements', callbackdate);
+        } else {
+            dbma.all('SELECT date FROM statements WHERE pid=?', [req.user.pid], callbackdate);
+        }
     });
     
     function charcodeat(s) {

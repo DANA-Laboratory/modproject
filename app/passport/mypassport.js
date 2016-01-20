@@ -84,16 +84,48 @@ exports.ensureAuthenticated =  function (req, res, next) {
   res.redirect('/');
 };
 
-exports.users =  function () {
-  var userNameIDs = [];
+exports.itUserNameIDs =  function () {
+  var itUserNameIDs = [];
   for (var user in userAccounts) {
-      userNameIDs.push([userAccounts[user].id, userAccounts[user].name + ' ' + userAccounts[user].family]);
+      if (userAccounts[user].isItUser) {
+          itUserNameIDs.push([userAccounts[user].id, userAccounts[user].name + ' ' + userAccounts[user].family]);
+      }    
   }
-  return userNameIDs;
+  return itUserNameIDs;
 };
 
 exports.userAccounts = function () { 
   return userAccounts;
+};
+
+exports.maliAccounts = function () {
+    var maliAccounts = [];
+    for (var user in userAccounts) {
+        if (userAccounts[user].isMaliUser) {
+            maliAccounts.push(userAccounts[user]);
+        }
+    }
+    return maliAccounts;
+};
+
+exports.itAccounts = function () {
+    var itAccounts = [];
+    for (var user in userAccounts) {
+        if (userAccounts[user].isItUser) {
+            itAccounts.push(userAccounts[user]);
+        }
+    }
+    return itAccounts;
+};
+
+exports.teachAccounts = function () {
+  var teachAccounts = [];
+  for (var user in userAccounts) {
+      if (userAccounts[user].isGuest || userAccounts[user].isTeacher) {
+          teachAccounts.push(userAccounts[user]);
+      }
+  }
+  return teachAccounts;
 };
 
 exports.ownerRowID = function () {

@@ -35,14 +35,27 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
     }; 
     
     //get list of dates of current user statements
-    $scope.maliuserlogin = function() {
-        itRequestService.getuserstatedates(function(dates) {
-            if (dates.length>0) {
-                $scope.dates = dates;
+    $scope.malilogin = function() {
+        itRequestService.getuserstatedates(function(data) {
+            if (data.pids.length>0) {
+                $scope.dates = data.dates;
+                $scope.pids = data.pids;
+                $scope.pid = $scope.pids[0];
                 $scope.statedate = $scope.dates[$scope.dates.length-1];
                 // default selection is newest
                 $scope.selectedstatedate =  $scope.statedate;  
-                console.log($scope.dates);
+                $scope.selectedpid =  $scope.pid;  
+            }
+        });
+    };
+    
+    $scope.karshenaslogin = function() {
+        itRequestService.getusers(function(data) {
+            $scope.users = [];
+            for (var itm in data) {
+                if (data[itm].isGuest || data[itm].isTeacher) {
+                    $scope.users.push(data[itm]);
+                }
             }
         }); 
     };
@@ -50,14 +63,77 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
     //show state click
     $scope.openstate = function() {
         if($scope.selectedstatedate && ($scope.selectedstatedate === $scope.statedate))
-            $scope.pdfcontent = itRequestService.openuserstate({date : $scope.selectedstatedate}, function(pdfcontent) {$scope.pdfcontent=pdfcontent; $scope.userselect = 2;});
+            $scope.pdfcontent = itRequestService.openuserstate({date : $scope.selectedstatedate, pid : $scope.selectedpid}, function(pdfcontent) {$scope.pdfcontent = pdfcontent; $scope.userselect = 2;});
         else
-            alert('فیش حقوقی در تاریخ ' + $scope.statedate + ' وجود ندارد.')
+            alert('فیش حقوقی در تاریخ ' + $scope.statedate + ' وجود ندارد.');
     };      
     
-    //typeahead-on-select
+    //typeaheads-on-select
     $scope.setdate = function(item) {
         $scope.selectedstatedate = item;
-    }   
+    }
     
+    $scope.setpid = function(item) {
+        $scope.selectedpid = item;
+    }
+    
+    $scope.setmelicode = function(item) {
+        $scope.selectedmelicode = $scope.melicode;
+        /*TODO somthing with selected teacher*/
+    }
+    
+    $scope.addguestuser = function() {
+        if ($scope.melicode) {
+            if($scope.selectedmelicode !== $scope.melicode)
+            {
+                if (String($scope.melicode).length===10 && !isNaN($scope.melicode)) {
+                    var data = {};
+                    data.username=$scope.melicode;
+                    data.password=$scope.melicode;
+                    data.defaultpass=$scope.melicode;
+                    data.melicode=$scope.melicode;
+                    data.isGuest=1;
+                    itRequestService.douser(data, $scope.karshenaslogin, 'insert');
+                }
+                else
+                    alert('کد ملی باید یک عدد 10 رقمی باشد');
+            } 
+            else
+                alert('کاربر مورد نظر وجود دارد!');
+        }
+        else
+            alert('ورود کد ملی الزامی است');
+    }
+    
+    var teacherexists = function() {
+        if ($scope.melicode) {
+            if (String($scope.melicode).length===10 && !isNaN($scope.melicode)) {
+                var itm=0;
+                while ($scope.users[itm].melicode !== $scope.melicode && itm < $scope.users.length) {
+                    itm+=1;
+                }
+                if (itm < $scope.users.length) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        }
+        return -1;
+    }
+    
+    $scope.removeguestuser = function() {
+        var te = teacherexists();
+        if (te === 1) {
+            var data = {};
+            data.username=$scope.melicode;
+            itRequestService.douser(data, $scope.karshenaslogin, 'delete');
+        } else {
+            if (te === 0) {
+                alert('کاربر مورد نظر وجود ندارد!');
+            } else {
+                alert('ورود کد ملی بصورت یک عدد 10 رقمی الزامی است');
+            }
+        }
+    }
  });

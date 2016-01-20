@@ -35,6 +35,8 @@ include head.jade
           iframe.embed-responsive-item(ng-src='{{pdfcontent}}')
       if (user.isOwner)
         include modals/uploadDataBase.jade
+      if (user.isGuest || user.isTeacher || user.isKarshenas)
+        include contact/panelPrimary.jade
       include modals/accountsManegement.jade
     else
       include intro.jade

@@ -24,7 +24,7 @@
           .col-md-3
             strong اساتید محترم
             | - از بهمن ماه 1394 پس از دریافت نام کاربری و کلمه عبور از اداره آموزش، میتوانند از طریق این سامانه اقدام به تکمیل مدارک خود و تهیه قرارداد نمایند.
-          .col-md-3 
+          .col-md-3
             strong کارشناسان آموزش 
             | - از بهمن ماه 1394 میتوانند با تعریف اطلاعات کاربری اساتید در این سامانه، انعقاد قرارداد و تکمیل مدارک مربوطه را بصورت الکترونیک پیگیری نمایند. 
     else
@@ -35,94 +35,22 @@
       if (user.isItUser)
         .form-inline
           ثبت درخواست خدمت از واحد خدمات IT: 
-          button.btn.btn-default(type='button', ng-click='liclick(0)') درخواست جدید
+          button.btn.btn-default(type='button', ng-click='liclick(0)') نمایش کارتابل
       if (user.isMaliUser)               
         .form-inline.top-buffer
           دریافت فیش حقوقی: 
           if (user.isMaliAdmin)
-            input.form-control(type='text', ng-init='maliadminlogin()', ng-model='maliusersid', typeahead-on-select='setpid($item)', typeahead='pid for pid in pids | filter:$viewValue', placeholder='کد پرسنلی')                 
-          input.form-control(type='text', ng-init='maliuserlogin()', ng-model='statedate', typeahead-on-select='setdate($item)', typeahead='date for date in dates | filter:$viewValue', placeholder='ماه و سال ...')
-          button.btn.btn-default(type='button', ng-click='openstate($statedate)') نمایش فیش حقوقی
+            input.form-control(type='text', ng-model='pid', typeahead-on-select='setpid($item)', typeahead='pid for pid in pids | filter:$viewValue', placeholder='کد پرسنلی ...')                 
+          input.form-control(type='text', ng-init='malilogin()', ng-model='statedate', typeahead-on-select='setdate($item)', typeahead='date for date in dates | filter:$viewValue', placeholder='ماه و سال ...')
+          button.btn.btn-default(type='button', ng-click='openstate($statedate, $pid)') نمایش فیش حقوقی
       if (user.isKarshenas)
         .form-inline.top-buffer
-          تعریف کاربری اساتید: 
-          input.form-control(type='text', ng-init='maliuserlogin()', ng-model='statedate', typeahead-on-select='setdate($item)', typeahead='date for date in dates | filter:$viewValue', placeholder='کد ملی ...')
-          button.btn.btn-success(type='button') کاربر جدید
-          button.btn.btn-danger(type='button') حذف
+            تعریف کاربری اساتید:
+            input.form-control(type='text', ng-init='karshenaslogin()', ng-model='melicode', typeahead-on-select='setmelicode($item)', typeahead='user.melicode for user in users', placeholder='کد ملی جستجو ...')
+            button.btn.btn-success(type='button', ng-click='addguestuser()') کاربر جدید
+            button.btn.btn-danger(type='button', ng-click='removeguestuser()') حذف
       if (user.isGuest)
         .form-inline.top-buffer
           تهیه قراداد تدریس: 
-          button.btn.btn-default(type='button') نمایش فرم
+          button.btn.btn-default(type='button', ng-click='userselect=3') نمایش فرم
           button.btn.btn-default(type='button') ارسال مدارک
-        .panel(ng-view='false')
-          .panel-heading
-            h4 فرم قراداد تدریس 
-          .panel-body
-            .form
-              .col-md-12.well
-                .col-md-3
-                  .form-group
-                    label(for="name")نام 
-                    input.form-control(type='text', id="name")
-                .col-md-3
-                  .form-group
-                    label(for="family")نام خانوادگی 
-                    input.form-control(type='text', id="family")
-                .col-md-3
-                  .form-group
-                    label(for="fname")نام پدر  
-                    input.form-control(type='text', id="fname")
-                .col-md-3
-                  .form-group
-                    label(for="pcode")کد ملی 
-                    input.form-control(type='text', id="pcode", disabled)
-                .col-md-3
-                  .form-group
-                    label(for="madrak")مدرک تحصیلی
-                    input.form-control(type='text', id="madrak")
-                .col-md-6
-                  .form-group
-                    label(for="address")نشانی  
-                    input.form-control(type='text', id="address")
-                .col-md-3
-                  .form-group
-                    label(for="tel")تلفن 
-                    input.form-control(type='text', id="tel")
-              .col-md-12.well
-                .col-md-2
-                  نام دوره های آموزشی:
-                .col-md-10
-                  .form-group
-                    .col-md-5
-                        input.form-control(type='text', id="c1", placeholder="عنوان 1")
-                    .col-md-5
-                        input.form-control(type='text', id="c2", placeholder="عنوان 2")        
-                  .form-group
-                    .col-md-5
-                        input.form-control(type='text', id="c3", placeholder="عنوان 3")
-                    .col-md-5
-                        input.form-control(type='text', id="c4", placeholder="عنوان 4")
-              .col-md-12.well
-                .col-md-2
-                  اطلاعات بانکی:
-                .col-md-4
-                  .form-inline
-                    label(for="tel")شعبه 
-                    input.form-control(type='text', id="branch")
-                .col-md-4
-                  .form-inline
-                    label(for="tel")شماره حساب 
-                    input.form-control(type='text', id="accountnumber")
-              .col-md-12.form-group
-                .form-inline
-                  مدت قرارداد:
-                  از تاریخ 
-                  input.form-control(type='text', id="start", disabled)
-                  &nbsp;لغایت&nbsp;
-                  input.form-control(type='text', id="accountnumber", disabled)
-                  &nbsp;میباشد.
-              .col-md-12.form-group
-                .form-inline
-                  مبلغ قرارداد:&nbsp;
-                  input.form-control(type='text', id="accountnumber", disabled)
-                  &nbsp;ریال به ازای روز/ساعت آموزش تعیین میگردد.

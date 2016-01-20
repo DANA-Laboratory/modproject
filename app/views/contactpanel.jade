@@ -1,0 +1,73 @@
+.container-fluid(ng-show='userselect==3')
+  div(style='margin : 10px')
+    div.col-md-12(style='margin: 10px')
+      .request.panel.panel-primary
+        .panel-heading
+          h3.panel-title
+            b فرم قراداد تدريس 
+        .request.panel-body
+          .form
+              .col-md-2
+                .form-group
+                  label(for="name")نام 
+                  input.form-control(type='text', id="name")
+              .col-md-2
+                .form-group
+                  label(for="family")نام خانوادگي 
+                  input.form-control(type='text', id="family")
+              .col-md-2
+                .form-group
+                  label(for="fname")نام پدر  
+                  input.form-control(type='text', id="fname")
+              .col-md-2
+                .form-group
+                  label(for="pcode")کد ملي 
+                  input.form-control(type='text', id="pcode", disabled)
+              .col-md-2
+                .form-group
+                  label(for="madrak")مدرک تحصيلي
+                  input.form-control(type='text', id="madrak")
+              .col-md-4
+                .form-group
+                  label(for="address")نشاني  
+                  input.form-control(type='text', id="address")
+              .col-md-2
+                .form-group
+                  label(for="tel")تلفن 
+                  input.form-control(type='text', id="tel")
+            .col-md-12.well
+              .col-md-2
+                نام دوره هاي آموزشي:
+              .col-md-10
+                .form-group
+                  .col-md-5
+                      input.form-control(type='text', id="c1", placeholder="عنوان 1")
+                  .col-md-5
+                      input.form-control(type='text', id="c2", placeholder="عنوان 2")        
+                .form-group
+                  .col-md-5
+                      input.form-control(type='text', id="c3", placeholder="عنوان 3")
+                  .col-md-5
+                      input.form-control(type='text', id="c4", placeholder="عنوان 4")
+            .col-md-12.well
+              .col-md-2
+                .form-group
+                  label(for="branch")شعبه بانک
+                  input.form-control(type='text', id="branch")
+              .col-md-3
+                .form-group
+                  label(for="accountnumber")شماره حساب بانکی
+                  input.form-control(type='text', id="accountnumber")
+              .col-md-2.col-md-offset-2
+                .form-group
+                  label(for="startdate")تاریخ شروع قرارداد
+                  input.form-control(type='text', id="startdate", disabled)
+              .col-md-2
+                .form-group
+                  label(for="enddate")تاریخ پایان قرارداد 
+                  input.form-control(type='text', id="enddate", disabled)
+            .col-md-12.form-group
+              .form-inline
+                مبلغ قرارداد:&nbsp;
+                input.form-control(type='text', id="accountnumber", disabled)
+                &nbsp;ريال به ازاي روز/ساعت آموزش تعيين ميگردد.
