@@ -45,10 +45,33 @@
           button.btn.btn-default(type='button', ng-click='openstate($statedate, $pid)') نمایش فیش حقوقی
       if (user.isKarshenas)
         .form-inline.top-buffer
-            تعریف کاربری اساتید:
-            input.form-control(type='text', ng-init='karshenaslogin()', ng-model='melicode', typeahead-on-select='setmelicode($item)', typeahead='user.melicode for user in users', placeholder='کد ملی جستجو ...')
-            button.btn.btn-success(type='button', ng-click='addguestuser()') کاربر جدید
-            button.btn.btn-danger(type='button', ng-click='removeguestuser()') حذف
+          تعریف کاربری اساتید:
+          input.form-control(type='text', ng-init='karshenaslogin()', ng-model='melicode', typeahead-on-select='setmelicode($item)', typeahead='user.melicode for user in users', placeholder='کد ملی جستجو ...')
+          button.btn.btn-success(type='button', ng-click='addguestuser()', ng-hide='selectedmelicode===melicode') کاربر جدید
+          button.btn.btn-info(type='button', ng-click='showaddnewcontact=true', ng-show='melicode && selectedmelicode===melicode') قرارداد جدید
+          button.btn.btn-danger(type='button', ng-click='addnewcontact()', ng-show='melicode && selectedmelicode===melicode') حذف
+        form.top-buffer(ng-show='showaddnewcontact', role='form', action='/contact/addnew', method='post')
+          .col-md-12.well
+            .col-md-2
+              .form-group
+                label(for="startdate")&nbsp;تاریخ شروع قرارداد:
+                input.form-control(type='text', id="startdate", name="startdate")
+            .col-md-2
+              .form-group
+                label(for="enddate")&nbsp;تاریخ پایان قرارداد:
+                input.form-control(type='text', id="enddate", name="enddate")
+            .col-md-2
+              .form-group
+                label(for="mablagh")&nbsp;مبلغ قرارداد:
+                input.form-control(type='text', id="mablagh", name="mablagh")
+            .col-md-1
+              .form-group
+                label(for="mablaghtype")&nbsp;به ازای:
+                input.form-control(type='text', id="mablaghtype", name="mablaghtype")
+            .col-md-2
+              .form-group
+                &nbsp;تعیین میگردد
+                button.btn.btn-success.pull-left(type='submit', ng-click='showaddnewcontact=false') تهیه قرارداد 
       if (user.isGuest)
         .form-inline.top-buffer
           تهیه قراداد تدریس: 

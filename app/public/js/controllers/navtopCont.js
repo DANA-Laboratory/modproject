@@ -57,6 +57,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
                     $scope.users.push(data[itm]);
                 }
             }
+            $scope.selectedmelicode = $scope.melicode;
         }); 
     };
     
@@ -109,7 +110,8 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
         if ($scope.melicode) {
             if (String($scope.melicode).length===10 && !isNaN($scope.melicode)) {
                 var itm=0;
-                while ($scope.users[itm].melicode !== $scope.melicode && itm < $scope.users.length) {
+                console.log($scope.users[0]);
+                while (itm < $scope.users.length && String($scope.users[itm].melicode) !== String($scope.melicode)) {
                     itm+=1;
                 }
                 if (itm < $scope.users.length) {
@@ -127,6 +129,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
         if (te === 1) {
             var data = {};
             data.username=$scope.melicode;
+            $scope.melicode="";
             itRequestService.douser(data, $scope.karshenaslogin, 'delete');
         } else {
             if (te === 0) {

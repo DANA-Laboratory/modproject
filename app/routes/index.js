@@ -4,7 +4,7 @@
 'use strict';
 
 var fs = require('fs');
-//console.log("__dirname=", __dirname);
+//console.log('__dirname=', __dirname);
 var requestdb = __dirname + '/../database/Requests.sqlite';
 var malidb = __dirname + '/../database/Mali.sqlite';
 var exists1 = fs.existsSync(requestdb);
@@ -47,4 +47,5 @@ module.exports = function (app, passport, io) {
     require('./mapRoutes')(app, dbre);
     require('./adminRoutes')(app, dbre, readAppConfig);
     require('./maliRoutes')(app, dbma);
+    require('./contactRoutes')(app);
 };

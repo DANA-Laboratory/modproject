@@ -8,69 +8,70 @@
         .request.panel-body
           .row
             include parts/pagination.jade
-            .col-md-12
-              .form
+            form.col-md-12(role='form', action='/contact/show', method='post')
+              div
                 .col-md-2
                   .form-group
                     label(for="name")نام 
-                    input.form-control(type='text', id="name")
+                    input.form-control(type='text', id="name", name="name")
                 .col-md-2
                   .form-group
                     label(for="family")نام خانوادگي 
-                    input.form-control(type='text', id="family")
+                    input.form-control(type='text', id="family", name="family")
                 .col-md-2
                   .form-group
                     label(for="fname")نام پدر  
-                    input.form-control(type='text', id="fname")
+                    input.form-control(type='text', id="fname", name="fname")
                 .col-md-2
                   .form-group
                     label(for="pcode")کد ملي 
-                    input.form-control(type='text', id="pcode", disabled)
+                    input.form-control(type='text', id="pcode", name="pcode", disabled)
                 .col-md-2
                   .form-group
                     label(for="madrak")مدرک تحصيلي
-                    input.form-control(type='text', id="madrak")
+                    input.form-control(type='text', id="madrak", name="madrak")
                 .col-md-4
                   .form-group
                     label(for="address")نشاني  
-                    input.form-control(type='text', id="address")
+                    input.form-control(type='text', id="address", name="address")
                 .col-md-2
                   .form-group
                     label(for="tel")تلفن 
-                    input.form-control(type='text', id="tel")
+                    input.form-control(type='text', id="tel", name="tel")
               .col-md-12.well
                 .col-md-2
                   نام دوره هاي آموزشي:
                 .col-md-10
                   .form-group
                     .col-md-5
-                        input.form-control(type='text', id="c1", placeholder="عنوان 1")
+                        input.form-control(type='text', id="c1", name="c1", placeholder="عنوان 1")
                     .col-md-5
-                        input.form-control(type='text', id="c2", placeholder="عنوان 2")        
+                        input.form-control(type='text', id="c2", name="c2", placeholder="عنوان 2")        
                   .form-group
                     .col-md-5
-                        input.form-control(type='text', id="c3", placeholder="عنوان 3")
+                        input.form-control(type='text', id="c3", name="c3", placeholder="عنوان 3")
                     .col-md-5
-                        input.form-control(type='text', id="c4", placeholder="عنوان 4")
+                        input.form-control(type='text', id="c4", name="c4", placeholder="عنوان 4")
               .col-md-12.well
                 .col-md-2
                   .form-group
                     label(for="branch")شعبه بانک
-                    input.form-control(type='text', id="branch")
+                    input.form-control(type='text', id="branch", name="branch")
                 .col-md-3
                   .form-group
                     label(for="accountnumber")شماره حساب بانکی
-                    input.form-control(type='text', id="accountnumber")
+                    input.form-control(type='text', id="accountnumber", name="accountnumber")
                 .col-md-2.col-md-offset-2
                   .form-group
                     label(for="startdate")تاریخ شروع قرارداد
-                    input.form-control(type='text', id="startdate", disabled)
+                    input.form-control(type='text', id="startdate", name="startdate", disabled)
                 .col-md-2
                   .form-group
                     label(for="enddate")تاریخ پایان قرارداد 
-                    input.form-control(type='text', id="enddate", disabled)
-              .col-md-12.form-group
+                    input.form-control(type='text', id="enddate", name="enddate", disabled)
+              .col-md-12
                 .form-inline
                   مبلغ قرارداد:&nbsp;
-                  input.form-control(type='text', id="accountnumber", disabled)
+                  input.form-control(type='text', id="mablagh", name="mablagh", disabled)
                   &nbsp;ريال به ازاي روز/ساعت آموزش تعيين ميگردد.
+              button.btn.btn-success.pull-left(type='submit') تهیه قرارداد 

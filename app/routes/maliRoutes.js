@@ -2,14 +2,14 @@
  *  * Created by Reza Afzalan.
  e   */
 'use strict';
-var exec = require('child_process').exec;
-var fs = require('fs');
+//console.log('__dirname2=', __dirname);
 
-function execute(command, callback) {
-    exec(command, function (error, stdout) {callback(stdout); });
-}
+var path = require('path');
+var xelatexapi = require(path.join(__dirname, '..', 'xelatexapi', 'xelatexapi.js'));
+
 module.exports = function (app, dbma) {
     app.post('/mali/sendstatement', function (req, res) {
+		// TODO: remove hardcoded pass, use userpass instead
         if (((req.connection.remoteAddress === '172.18.1.10') || (req.connection.remoteAddress === '172.18.1.234')) && (req.body.pass === '02122315')) {
             var callback = function (err) {
                 if (err) {
@@ -37,8 +37,6 @@ module.exports = function (app, dbma) {
         }
     });
     app.post('/mali/show', function (req, res) {
-//        execute('rm /home/rfpc/modproject/xelatex/tmp*.*', function (out) {
-//        });
         var pid = '';
         if (req.user.isMaliAdmin) {
             pid = req.body.pid;
@@ -58,17 +56,10 @@ module.exports = function (app, dbma) {
                     achar = 'z';
                 }
             }
-            var path = '/home/rfpc/modproject/xelatex/';
-            var tempname = path + pid + '_' + charcodeat(req.body.date) + '.tex';
+            var statementpath = path.join(__dirname, '..', '..', 'xelatex', 'statement');
+            var tempname = path.join(statementpath, pid + '_' + charcodeat(req.body.date) + '.tex');
             console.log(tempname);
-            fs.writeFileSync(tempname, texcommand);
-            fs.appendFileSync(tempname, fs.readFileSync(path + 'statement.tex'));
-            execute('xelatex -interaction=batchmode -output-directory=' + path + ' ' + tempname,
-                function (out) {
-                    console.log(out);
-                    res.sendFile(tempname.slice(0, -3) + 'pdf');
-                }
-            );
+            xelatexapi.writecommandexectex(tempname, texcommand, statementpath, function (pathtopdf) {res.sendFile(pathtopdf); });
         };
         dbma.get('SELECT data FROM statements WHERE pid=? AND date=?', [pid, req.body.date], callback);
     });
