@@ -1,0 +1,37 @@
+.row
+  .col-md-3
+    label.control-label &nbsp;این قسمت توسط کارشناس شرکت ره آوران تکمیل گردد:
+.col-md-12.well
+  .row
+    .col-md-2
+      .form-group
+        label(for='name')نام 
+        input.form-control(type='text', id='name', ng-model='data.name')
+    .col-md-2
+      .form-group
+        label(for='family')نام خانوادگي 
+        input.form-control(type='text', id='family', ng-model='data.family')
+  .row
+    .col-md-2
+      .form-group
+        label(for='melicode')کد ملی 
+        input.form-control(type='text', id='melicode', ng-model='data.melicode', ng-disabled='{{user.isKarshenas}}')
+    .col-md-2
+      .form-group
+        label(for='startdate')&nbsp;تاریخ شروع قرارداد:
+        input.form-control(type='text', id='startdate', ng-model='data.startdate', ng-disabled='{{user.isKarshenas}}')
+    .col-md-2
+      .form-group
+        label(for='enddate')&nbsp;تاریخ پایان قرارداد:
+        input.form-control(type='text', id='enddate', ng-model='data.enddate', ng-disabled='{{user.isKarshenas}}')
+    .col-md-2
+      .form-group
+        label(for='mablagh')&nbsp;مبلغ قرارداد:
+        input.form-control(type='text', id='mablagh', ng-model='data.mablagh', ng-disabled='{{user.isKarshenas}}')
+    .col-md-2
+      .form-group
+        label(for='mablaghtype')&nbsp;به ازای هر:
+        select.form-control(id='mablaghtype', ng-model='data.mablaghtype', ng-disabled='{{user.isKarshenas}}')
+          option(value='1') روز آموزش
+          option(value='2') دوره
+          option(value='3', selected='')  ساعت آموزش

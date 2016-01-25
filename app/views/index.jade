@@ -28,15 +28,12 @@ include head.jade
             include config.jade
     include jumbotron.jade
     if (user)
-      if (user.isItUser)
-        include dashboard.jade
+      include dashboard.jade
       if (user.isMaliUser)
         .embed-responsive.embed-responsive-16by9(ng-show='userselect==2')
           iframe.embed-responsive-item(ng-src='{{pdfcontent}}')
       if (user.isOwner)
         include modals/uploadDataBase.jade
-      if (user.isGuest || user.isTeacher || user.isKarshenas)
-        include contact/panelPrimary.jade
       include modals/accountsManegement.jade
     else
       include intro.jade
