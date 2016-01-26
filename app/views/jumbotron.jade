@@ -55,9 +55,9 @@
           .col-md-2
             input.form-control(type='text', ng-init='karshenaslogin()', ng-model='melicode', typeahead-on-select='setmelicode($item)', typeahead='user.melicode for user in users | filter:$viewValue | limitTo:5', placeholder='کد ملی جستجو ...')
           button.btn.btn-success.col-md-2(type='button', ng-click='addguestuser()', ng-hide='selectedmelicode===melicode') کاربر جدید
-          button.btn.btn-info.col-md-2(type='button', ng-click='userselect=3; $broadcast("newcontactclick");', ng-show='melicode && selectedmelicode===melicode') قرارداد جدید
+          button.btn.btn-info.col-md-2(type='button', ng-click='userselect=3; $broadcast("opencontractclick", melicode);', ng-show='melicode && selectedmelicode===melicode') قرارداد جدید
           button.btn.btn-danger.col-md-2(type='button', ng-click='removeguestuser()', ng-show='melicode && selectedmelicode===melicode') حذف
       if (user.isGuest)
         .row
           b تهیه قراداد تدریس: 
-          button.btn.btn-info(type='button', ng-click='userselect=3; $broadcast("newcontactclick");') تکمیل قرارداد
+          button.btn.btn-info(type='button', ng-click='userselect=3; $broadcast("opencontractclick", melicode);') تکمیل قرارداد

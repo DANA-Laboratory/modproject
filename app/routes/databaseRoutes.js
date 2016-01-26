@@ -157,6 +157,6 @@ module.exports = function (app, io, appConfig, db) {
             res.json(rows);
         };
         db.get('SELECT requests.* FROM requests where requests.applicant=' + req.params.melicode + '  AND (user=' + req.user.id  + ' OR owner=' + req.user.id + ')', callback);
-    });    
+    });
 
 };

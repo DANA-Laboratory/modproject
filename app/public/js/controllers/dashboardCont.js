@@ -24,8 +24,8 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     $scope.hiderequest = true;
     $scope.showConfig = false;
 
-    $scope.$on('newcontactclick', function () {
-        $scope.newrequestclick();
+    $scope.$on('opencontractclick', function (event, melicode) {
+        $scope.newrequestclick(melicode);
     });    
 
     $scope.setpageid = function (pid) {
@@ -47,7 +47,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             var sd = $scope.data.initdate.split('/');
             $scope.data.enddate = parseInt(sd[0]) + 1 + '/' + sd[1] + '/' + sd[2];
             $scope.data.mablaghtype = 'ساعت آموزش';
-            $scope.data.melicode = $scope.$parent.melicode;
+            $scope.data.melicode = id;
             $scope.data.startdate = $scope.data.initdate;
         }        
 
