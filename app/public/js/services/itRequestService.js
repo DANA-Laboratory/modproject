@@ -23,7 +23,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
       }  
       $http({
           method: 'post',
-          url: '/data/updatetasks/'+selectedRequestId,
+          url: '/data/updatetasks/' + selectedRequestId,
           data: {tasks: selectedtasks}
       }).success(function(data, status, headers, config) {
           console.log("tasks updated");
@@ -68,7 +68,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
         if (selectedRequestId!==-1) {
             $http({
                 method: 'GET',
-                url: '/data/'+selectedRequestId
+                url: '/data/' + selectedRequestId
             }).success(function(data, status, headers, config) {
                 data.requestitems = JSON.parse(data.requestitems);
                 callback(data);

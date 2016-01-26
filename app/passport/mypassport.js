@@ -23,7 +23,6 @@ function findById(id, fn) {
 }
 
 function findByUsername(username, fn) {
-  console.log('findByUsername: ',username)
   for (var i = 0, len = userAccounts.length; i < len; i++) {
     var user = userAccounts[i];
     if (user.username == username) {
@@ -155,5 +154,17 @@ exports.readAccounts = function () {
       db.all('SELECT * FROM users', setUsers);
   }
 };
+
+exports.findIdByMeliCode = function(melicode) {
+  var idx = 0;
+  while (idx<userAccounts.length && userAccounts[idx].melicode!==melicode) {
+    idx++;
+  }
+  if (userAccounts[idx]) {
+    return userAccounts[idx].id;
+  } else {
+    return null;
+  }
+}
 
 this.readAccounts();

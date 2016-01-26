@@ -110,7 +110,13 @@ module.exports = function (app, io, appConfig, db) {
             io.emit('update');
             res.sendStatus(200);
         };
-        db.run('INSERT INTO requests (requestitems,owner,user,status,initdate,inittime,description,applicant) VALUES (?,?,?,?,?,?,?,?)', [JSON.stringify(req.body.requestitems), mypassport.ownerRowID(), req.user.id, appConfig.status[0], req.body.initdate, req.body.inittime, req.body.description, req.body.applicant], callback);
+        if (req.body.requesttype === 'contract') {
+            var requestitems = {melicode: req.body.melicode, startdate: req.body.startdate, enddate: req.body.enddate, mablagh: req.body.mablagh, mablaghtype: req.body.mablaghtype, modat: req.body.modat, mablaghword: req.body.mablaghword};
+            var requesttasks = {name: req.body.name, family: req.body.family, fname: req.body.fname, madrak: req.body.madrak, address: req.body.address, tel: req.body.tel, c1: req.body.c1, c2: req.body.c2, c3: req.body.c3, c4: req.body.c4, branch: req.body.branch, accountnumber: req.body.accountnumber};
+            db.run('INSERT INTO requests (requestitems,requesttasks,owner,user,status,initdate,inittime,description,applicant) VALUES (?,?,?,?,?,?,?,?,?)', [JSON.stringify(requestitems), JSON.stringify(requesttasks), mypassport.findIdByMeliCode(req.body.melicode), req.user.id, appConfig.status[0], req.body.initdate, req.body.inittime, req.body.description, req.body.melicode], callback);
+        } else {
+            db.run('INSERT INTO requests (requestitems,owner,user,status,initdate,inittime,description,applicant) VALUES (?,?,?,?,?,?,?,?)', [JSON.stringify(req.body.requestitems), mypassport.ownerRowID(), req.user.id, appConfig.status[0], req.body.initdate, req.body.inittime, req.body.description, req.body.applicant], callback);
+        }
     });
     
     app.post('/data/updaterequest', mypassport.ensureAuthenticated, function (req, res) {
@@ -118,7 +124,12 @@ module.exports = function (app, io, appConfig, db) {
             console.log('update request error=', err);
             res.sendStatus(200);
         };
-        db.run('UPDATE requests SET requestitems=?, description=? WHERE (id=? AND user=?)', [JSON.stringify(req.body.requestitems), req.body.description, req.body.id, req.user.id], callback);
+        if (req.body.requesttype === 'contract') {
+            var requesttasks = {name: req.body.name, family: req.body.family, fname: req.body.fname, madrak: req.body.madrak, address: req.body.address, tel: req.body.tel, c1: req.body.c1, c2: req.body.c2, c3: req.body.c3, c4: req.body.c4, branch: req.body.branch, accountnumber: req.body.accountnumber};
+            db.run('UPDATE requests SET requesttasks=? WHERE (id=?)', [JSON.stringify(requesttasks), req.body.id], callback);
+        } else {
+            db.run('UPDATE requests SET requestitems=?, description=? WHERE (id=? AND user=?)', [JSON.stringify(req.body.requestitems), req.body.description, req.body.id, req.user.id], callback);
+        }
     });
     
     app.get('/data/:requestID', mypassport.ensureAuthenticated, function (req, res) {
@@ -134,5 +145,18 @@ module.exports = function (app, io, appConfig, db) {
         };
         db.get('SELECT * from requests where id=' + req.params.requestID + '  AND (user=' + req.user.id  + ' OR owner=' + req.user.id + ')', callback);
     });
+
+    app.get('/data/findcontract/:melicode', mypassport.ensureAuthenticated, function (req, res) {
+        var callback = function (err, rows) {
+            //console.log(rows.user,req.user.id);
+            if (rows.user === req.user.id) {
+                rows.isCreator = true;
+            } else {
+                rows.isCreator = false;
+            }
+            res.json(rows);
+        };
+        db.get('SELECT requests.* FROM requests where requests.applicant=' + req.params.melicode + '  AND (user=' + req.user.id  + ' OR owner=' + req.user.id + ')', callback);
+    });    
 
 };

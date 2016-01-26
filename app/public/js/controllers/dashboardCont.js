@@ -47,7 +47,8 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             var sd = $scope.data.initdate.split('/');
             $scope.data.enddate = parseInt(sd[0]) + 1 + '/' + sd[1] + '/' + sd[2];
             $scope.data.mablaghtype = 'ساعت آموزش';
-            $scope.data.melicode= $scope.$parent.melicode;
+            $scope.data.melicode = $scope.$parent.melicode;
+            $scope.data.startdate = $scope.data.initdate;
         }        
 
         var minutes = date.getMinutes();
@@ -112,7 +113,11 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     };
     
     $scope.insertbtnclick = function (id) {
-        console.log($scope.data);
+        if ($scope.userselect==3) {
+            $scope.data.modat = $scope.getmodat();
+            $scope.data.mablaghword = $scope.getmablagh();
+            $scope.data.requesttype = 'contract';
+        }
         itRequestService.insertrequest(function () {$scope.backclick(id);}, $scope.data);
     }
     
@@ -132,7 +137,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     
     $scope.getmodat = function() {
         if ($scope.data) {
-            var d = $scope.data.initdate.split('/');
+            var d = $scope.data.startdate.split('/');
             var id = jalaliToGregorian(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]), '/');
             d = id.split('/'); 
             var idd = new Date(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]), 0, 0, 0, 0);
