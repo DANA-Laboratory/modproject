@@ -47,10 +47,10 @@ module.exports = function (app, db, readAppConfig) {
             if (req.user.isItAdmin) {
                 accounts = accounts.concat(mypassport.itAccounts());
             }
-            if (req.user.isItKarshenas) {
+            if (req.user.isKarshenas) {
                 accounts = accounts.concat(mypassport.teachAccounts());
             }
-            if (!req.user.isMaliAdmin && !req.user.isItAdmin && !req.user.isItKarshenas) {
+            if (!req.user.isMaliAdmin && !req.user.isItAdmin && !req.user.isKarshenas) {
                 res.json([req.user]);
             } else {
                 res.json(accounts);

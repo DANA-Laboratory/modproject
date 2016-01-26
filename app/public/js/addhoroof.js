@@ -1,10 +1,10 @@
-var sVAVs = " و " ;
-var sefr = "صفر" ;
-var farsi_a = [" تریلیون"," میلیارد"," میلیون"," هزار",""];
-var farsi_b = ["","یكصد", "دویست", "سیصد", "چهارصد", "پانصد", "ششصد","هفتصد","هشتصد","نهصد"];
-var farsi_c = [ "ده", "یازده", "دوازده", "سیزده", "چهارده", "پانزده", "شانزده","هفده", "هجده", "نوزده"];
-var farsi_d = [ "","", "بیست", "سی", "چهل", "پنجاه" , "شصت", "هفتاد", "هشتاد","نود"];
-var farsi_e = [ "","یك", "دو", "سه", "چهار", "پنج" , "شش", "هفت", "هشت", "نه"];
+var sVAVs = ' و ' ;
+var sefr = 'صفر' ;
+var farsi_a = [' تریلیون',' میلیارد',' میلیون',' هزار',''];
+var farsi_b = ['','یكصد', 'دویست', 'سیصد', 'چهارصد', 'پانصد', 'ششصد','هفتصد','هشتصد','نهصد'];
+var farsi_c = [ 'ده', 'یازده', 'دوازده', 'سیزده', 'چهارده', 'پانزده', 'شانزده','هفده', 'هجده', 'نوزده'];
+var farsi_d = [ '','', 'بیست', 'سی', 'چهل', 'پنجاه' , 'شصت', 'هفتاد', 'هشتاد','نود'];
+var farsi_e = [ '','یك', 'دو', 'سه', 'چهار', 'پنج' , 'شش', 'هفت', 'هشت', 'نه'];
 function Adad(num) {
     if (num == 0) {
         return sefr;
@@ -18,11 +18,11 @@ function Adad(num) {
     S = (num + '').trim();
     L = S.length;
     if (L > 15) {
-        return "بسیار بزرگ";
+        return 'بسیار بزرگ';
     }
 
     for (var i = 0; i < (  15 - L); i++) {
-        S = "0" + S;
+        S = '0' + S;
     }
     for (var i = 0; i < 5; i++) {
         K[i] = 0;
@@ -32,7 +32,7 @@ function Adad(num) {
         K[5 - i - 1] = Number(S.substring(xxx, xxx + 3));
     }
     Flag = false;
-    S = "";
+    S = '';
 
     for (var I = 0; I < 5; I++) {
         if (K[I] != 0) {
@@ -42,22 +42,22 @@ function Adad(num) {
                     Flag = true;
                     break;
                 case 1:
-                    S = S + (Flag ? sVAVs : "");
+                    S = S + (Flag ? sVAVs : '');
                     S = S + Three(K[I]) + farsi_a[1];
                     Flag = true;
                     break;
                 case 2:
-                    S = S + (Flag ? sVAVs : "");
+                    S = S + (Flag ? sVAVs : '');
                     S = S + Three(K[I]) + farsi_a[2];
                     Flag = true;
                     break;
                 case 3:
-                    S = S + (Flag ? sVAVs : "");
+                    S = S + (Flag ? sVAVs : '');
                     S = S + Three(K[I]) + farsi_a[3];
                     Flag = true;
                     break;
                 case 4:
-                    S = S + (Flag ? sVAVs : "");
+                    S = S + (Flag ? sVAVs : '');
                     S = S + Three(K[I]) + farsi_a[4];
                     Flag = true;
             }
@@ -69,12 +69,12 @@ function Adad(num) {
 }//end function
 
 function Three(num) {
-    var S = "";
+    var S = '';
     var L;
     var h = new Array(3);
     L = (('' + num).trim()).length;
     if (num == 0) {
-        return "";
+        return '';
     }
 
     if (num == 100) {
@@ -111,11 +111,11 @@ function Three(num) {
             S = S + sVAVs + farsi_d[h[1]];
             break;
     }
-    if (h[1] != 1) {
+    if (h[1] != 1 && h[2] != 0) {
         S = S + sVAVs + farsi_e[h[2]];
 
     }//end if
-    S = (L < 3 ? S.substring(13, S.length) : S);
+    S = (L < 3 ? S.substring(3, S.length) : S);
     return S;
 }
 
