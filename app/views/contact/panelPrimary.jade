@@ -1,4 +1,4 @@
-.request.panel.panel-primary
+form.request.panel.panel-primary(ng-submit='insertbtnclick()')
   .panel-heading
     h3.panel-title
       b فرم قراداد تدريس
@@ -9,9 +9,8 @@
         include parts/karshenas.jade
       .col-md-12
         include parts/teacher.jade
-  .panel-footer  
-    .btn-group.btn-group-justified(role='group')
-      .btn.btn-default(name='buttoncancel', ng-click='backclick()') انصراف
-        .span.glyphicon.glyphicon-remove
-      .btn.btn-success(name='buttoninsert', ng-click='insertbtnclick()') ثبت گردد
-        .span.glyphicon.glyphicon-ok
+  .panel-footer
+    .btn.btn-default(name='buttoncancel', ng-click='backclick()') انصراف
+      .span.glyphicon.glyphicon-remove
+    button.btn.btn-success.pull-left(name='buttoninsert', type='submit') ثبت گردد
+      .span.glyphicon.glyphicon-ok

@@ -33,24 +33,31 @@
         u {{currentUserFullName}} 
         | لطفا گزینه مورد نظر خود را انتخاب فرمایید:
       if (user.isItUser)
-        .form-inline
-          ثبت درخواست خدمت از واحد خدمات IT: 
-          button.btn.btn-default(type='button', ng-click='liclick(0)') نمایش کارتابل
-      if (user.isMaliUser)               
-        .form-inline.top-buffer
-          دریافت فیش حقوقی: 
+        .row
+          b ثبت درخواست خدمت از واحد خدمات IT: 
+          button.btn.btn-info(type='button', ng-click='liclick(0)') نمایش کارتابل
+      if (user.isMaliUser)
+        .row.top-buffer
+          b دریافت فیش حقوقی:
+          | (برای مشاهده فهرست فیش های موجود در سال 1394، کافی است در مستطیل مورد نظر عبارت 94 را وارد فرمایید.)
+        .col-md-12.well
           if (user.isMaliAdmin)
-            input.form-control(type='text', ng-model='pid', typeahead-on-select='setpid($item)', typeahead='pid for pid in pids | filter:$viewValue', placeholder='کد پرسنلی ...')                 
-          input.form-control(type='text', ng-init='malilogin()', ng-model='statedate', typeahead-on-select='setdate($item)', typeahead='date for date in dates | filter:$viewValue', placeholder='ماه و سال ...')
-          button.btn.btn-default(type='button', ng-click='openstate($statedate, $pid)') نمایش فیش حقوقی
+            .col-md-2
+              input.form-control(type='text', ng-model='pid', typeahead-on-select='setpid($item)', typeahead='pid for pid in pids | filter:$viewValue | limitTo:5', placeholder='کد پرسنلی ...')                        
+          .col-md-2
+            input.form-control(type='text', ng-init='malilogin()', ng-model='statedate', typeahead-on-select='setdate($item)', typeahead='date for date in dates | filter:$viewValue | limitTo:5', placeholder='ماه و سال ...')
+          .col-md-2
+            button.btn.btn-info(type='button', ng-click='openstate($statedate, $pid)') نمایش فیش حقوقی
       if (user.isKarshenas)
-        .form-inline.top-buffer
-          تعریف کاربری اساتید:
-          input.form-control(type='text', ng-init='karshenaslogin()', ng-model='melicode', typeahead-on-select='setmelicode($item)', typeahead='user.melicode for user in users', placeholder='کد ملی جستجو ...')
-          button.btn.btn-success(type='button', ng-click='addguestuser()', ng-hide='selectedmelicode===melicode') کاربر جدید
-          button.btn.btn-info(type='button', ng-click='userselect=3', ng-show='melicode && selectedmelicode===melicode') قرارداد جدید
-          button.btn.btn-danger(type='button', ng-click='removeguestuser()', ng-show='melicode && selectedmelicode===melicode') حذف
+        .row
+          b تعریف کاربری اساتید:
+        .col-md-12.well
+          .col-md-2
+            input.form-control(type='text', ng-init='karshenaslogin()', ng-model='melicode', typeahead-on-select='setmelicode($item)', typeahead='user.melicode for user in users | filter:$viewValue | limitTo:5', placeholder='کد ملی جستجو ...')
+          button.btn.btn-success.col-md-2(type='button', ng-click='addguestuser()', ng-hide='selectedmelicode===melicode') کاربر جدید
+          button.btn.btn-info.col-md-2(type='button', ng-click='userselect=3; $broadcast("newcontactclick");', ng-show='melicode && selectedmelicode===melicode') قرارداد جدید
+          button.btn.btn-danger.col-md-2(type='button', ng-click='removeguestuser()', ng-show='melicode && selectedmelicode===melicode') حذف
       if (user.isGuest)
-        .form-inline.top-buffer
-          تهیه قراداد تدریس: 
-          button.btn.btn-default(ng-controller='dashboardCont', type='button', ng-click='userselect=3') تکمیل قرارداد
+        .row
+          b تهیه قراداد تدریس: 
+          button.btn.btn-info(type='button', ng-click='userselect=3; $broadcast("newcontactclick");') تکمیل قرارداد
