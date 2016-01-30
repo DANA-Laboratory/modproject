@@ -3,6 +3,7 @@
  */
 'use strict';
 var mypassport = require('../passport/mypassport');
+var path = require('path');
 
 module.exports = function (app, io, appConfig, db) {
 
@@ -118,7 +119,7 @@ module.exports = function (app, io, appConfig, db) {
             db.run('INSERT INTO requests (requestitems,owner,user,status,initdate,inittime,description,applicant) VALUES (?,?,?,?,?,?,?,?)', [JSON.stringify(req.body.requestitems), mypassport.ownerRowID(), req.user.id, appConfig.status[0], req.body.initdate, req.body.inittime, req.body.description, req.body.applicant], callback);
         }
     });
-    
+       
     app.post('/data/updaterequest', mypassport.ensureAuthenticated, function (req, res) {
         var callback = function (err) {
             console.log('update request error=', err);

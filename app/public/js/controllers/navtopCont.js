@@ -64,7 +64,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
     //show state click
     $scope.openstate = function() {
         if($scope.selectedstatedate && ($scope.selectedstatedate === $scope.statedate))
-            $scope.pdfcontent = itRequestService.openuserstate({date : $scope.selectedstatedate, pid : $scope.selectedpid}, function(pdfcontent) {$scope.pdfcontent = pdfcontent; $scope.userselect = 2;});
+            $scope.pdfcontent = itRequestService.openpdf({date : $scope.selectedstatedate, pid : $scope.selectedpid}, function(pdfcontent) {$scope.pdfcontent = pdfcontent; $scope.userselect = 2;}, $scope.userselect);
         else
             alert('فیش حقوقی در تاریخ ' + $scope.statedate + ' وجود ندارد.');
     };      

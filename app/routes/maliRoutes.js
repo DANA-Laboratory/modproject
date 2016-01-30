@@ -59,7 +59,7 @@ module.exports = function (app, dbma) {
             var statementpath = path.join(__dirname, '..', '..', 'xelatex', 'statement');
             var tempname = path.join(statementpath, pid + '_' + charcodeat(req.body.date) + '.tex');
             console.log(tempname);
-            xelatexapi.writecommandexectex(tempname, texcommand, statementpath, function (pathtopdf) {res.sendFile(pathtopdf); });
+            xelatexapi.writecommandexectex(tempname, texcommand, statementpath, 'statement.tex', function (pathtopdf) {res.sendFile(pathtopdf); });
         };
         dbma.get('SELECT data FROM statements WHERE pid=? AND date=?', [pid, req.body.date], callback);
     });

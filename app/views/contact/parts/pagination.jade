@@ -6,7 +6,7 @@ div.pull-right
     a.btn.btn-primary.btn-circle(data-toggle='tooltip', title='درخواست', ng-click='setpageid(1)', href='#primary', ng-class='pageid===1 ? "btn-toggle" : ""')
       span.glyphicon.glyphicon-pencil
   .row(ng-hide='requestLevel<2')
-    a.btn.btn-success.btn-circle(data-toggle='tooltip', title='تصویر قرارداد', ng-click='setpageid(2)', href='#success', ng-class='pageid===2 ? "btn-toggle" : ""')
+    a.btn.btn-success.btn-circle(data-toggle='tooltip', title='تصویر قرارداد', ng-click='setpageid(2)', href='#printpreview', ng-class='pageid===2 ? "btn-toggle" : ""')
       span.glyphicon.glyphicon-camera
   .row(ng-show='requestLevel>=1')
     a.btn.btn-warning.btn-circle(data-toggle='tooltip', title='دستورات', ng-click='setpageid(3)', href='#action', ng-class='pageid===3 ? "btn-toggle" : ""')

@@ -78,8 +78,8 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         $scope.showConfig = false;
     };
      
-    $scope.backclick = function (id) {
-        if ($scope.userselect==1) {
+    $scope.backclick = function () {
+        if ($scope.userselect == 1) {
             $scope.data = {};
             selectedRequestId = -1;
             $scope.isCreator = null;
@@ -112,13 +112,21 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         }
     };
     
-    $scope.insertbtnclick = function (id) {
+    $scope.insertbtnclick = function () {
         if ($scope.userselect==3) {
-            $scope.data.modat = $scope.getmodat();
+            $scope.data.moddat = $scope.getmodat();
             $scope.data.mablaghword = $scope.getmablagh();
             $scope.data.requesttype = 'contract';
         }
-        itRequestService.insertrequest(function () {$scope.backclick(id);}, $scope.data);
+        itRequestService.insertrequest($scope.backclick, $scope.data);
+    }
+    
+    $scope.printbtnclick = function () {
+        if ($scope.userselect==3) {
+            $scope.data.moddat = $scope.getmodat();
+            $scope.data.mablaghword = $scope.getmablagh();
+            $scope.pdfcontent = itRequestService.openpdf($scope.data, function(pdfcontent) {$scope.pdfcontent = pdfcontent}, $scope.userselect);
+        }
     }
     
     $scope.updatestatus = function (id) {
@@ -128,7 +136,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         var minutes = date.getMinutes();
         minutes = (minutes===0) ? ('00') : (minutes<10 ? ('0' + minutes) : minutes);
         $scope.data.actiontime = date.getHours() + ':' + minutes;
-        itRequestService.updatestatus(function () {$scope.backclick(id);}, $scope.data);
+        itRequestService.updatestatus($scope.backclick, $scope.data);
     }
     
     $scope.setUserIdName = function(index, val) {

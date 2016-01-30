@@ -47,5 +47,5 @@ module.exports = function (app, passport, io) {
     require('./mapRoutes')(app, dbre);
     require('./adminRoutes')(app, dbre, readAppConfig);
     require('./maliRoutes')(app, dbma);
-    require('./contactRoutes')(app);
+    require('./contractRoutes')(app);
 };

@@ -11,9 +11,9 @@ function execute(command, callback) {
     exec(command, function (error, stdout) {callback(stdout); });
 }
 
-exports.writecommandexectex = function (tempname, texcommand, outputdirectory, callback) {
+exports.writecommandexectex = function (tempname, texcommand, outputdirectory, texfile, callback) {
 	fs.writeFileSync(tempname, texcommand);
-	fs.appendFileSync(tempname, fs.readFileSync(path.join(outputdirectory, 'statement.tex')));
+	fs.appendFileSync(tempname, fs.readFileSync(path.join(outputdirectory, texfile)));
 	execute('xelatex -interaction=batchmode -output-directory=' + outputdirectory + ' ' + tempname,
 		function (out) {
 			console.log(out);

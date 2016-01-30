@@ -5,8 +5,8 @@
   .row
     .col-md-2
       .form-group
-        label(for='fname')نام پدر  
-        input.form-control(type='text', id='fname', ng-model='data.fname', ng-required='#{user.isGuest}')
+        label(for='farzand')نام پدر  
+        input.form-control(type='text', id='farzand', ng-model='data.farzand', ng-required='#{user.isGuest}')
     .col-md-2
       .form-group
         label(for='madrak')مدرک تحصيلي
@@ -25,14 +25,14 @@
     .col-md-10
       .form-group
         .col-md-5
-            input.form-control(type='text', id='c1', ng-model='data.c1', placeholder='عنوان 1', ng-required='#{user.isGuest}')
+            input.form-control(type='text', id='c1', ng-model='data.courseA', placeholder='عنوان 1', ng-required='#{user.isGuest}')
         .col-md-5
-            input.form-control(type='text', id='c2', ng-model='data.c2', placeholder='عنوان 2')        
+            input.form-control(type='text', id='c2', ng-model='data.courseB', placeholder='عنوان 2')        
       .form-group
         .col-md-5
-            input.form-control(type='text', id='c3', ng-model='data.c3', placeholder='عنوان 3')
+            input.form-control(type='text', id='c3', ng-model='data.courseC', placeholder='عنوان 3')
         .col-md-5
-            input.form-control(type='text', id='c4', ng-model='data.c4', placeholder='عنوان 4')
+            input.form-control(type='text', id='c4', ng-model='data.courseD', placeholder='عنوان 4')
   .row
     .col-md-2
       .form-group
@@ -40,5 +40,5 @@
         input.form-control(type='text', id='branch', ng-model='dta.branch', ng-required='#{user.isGuest}')
     .col-md-3
       .form-group
-        label(for='accountnumber')شماره حساب بانکی
-        input.form-control(type='text', pattern='[0-9]+', id='accountnumber', ng-model='data.accountnumber', ng-required='#{user.isGuest}', placeholder='تنها عدد قابل قبول است')
+        label(for='account')شماره حساب بانکی
+        input.form-control(type='text', pattern='[0-9]+', id='account', ng-model='data.account', ng-required='#{user.isGuest}', placeholder='تنها عدد قابل قبول است')

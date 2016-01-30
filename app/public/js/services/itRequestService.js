@@ -103,7 +103,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
             console.log("error insert request");
         });
     };
-    
+       
     this.updaterequest = function (callback, data) {
         $http({
             method: 'post',
@@ -168,10 +168,15 @@ dashboardApp.service('itRequestService', function($http, $sce){
         });
     };    
     
-    this.openuserstate = function (data, callback) {
+    //open contract && statement
+    this.openpdf = function (data, callback, userselect) {
+        var addr = 'mali';
+        if (userselect === 3) {
+            addr = 'contract';
+        }
         $http({
             method: 'post',
-            url: '/mali/show/',
+            url: '/' + addr + '/show/',
             responseType: 'arraybuffer',
             data: data
         }).success(function(data, status, headers, config) {
