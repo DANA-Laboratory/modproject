@@ -14,6 +14,9 @@ dashboardApp.config(['$routeProvider', function($routeProvider) {
     .when('/action', {
       templateUrl: 'itRequest/panelAction'
     })
+    .when('/printpreview', {
+      templateUrl: 'contract/panelPrintPreview'
+    })
   }]);
 
 dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
@@ -125,7 +128,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         if ($scope.userselect==3) {
             $scope.data.moddat = $scope.getmodat();
             $scope.data.mablaghword = $scope.getmablagh();
-            $scope.pdfcontent = itRequestService.openpdf($scope.data, function(pdfcontent) {$scope.pdfcontent = pdfcontent}, $scope.userselect);
+            $scope.pdfcontent = itRequestService.openpdf($scope.data, function(pdfcontent) {$scope.pdfcontent = pdfcontent; $scope.printpreview = true;}, $scope.userselect);
         }
     }
     
