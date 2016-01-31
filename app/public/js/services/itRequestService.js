@@ -91,6 +91,18 @@ dashboardApp.service('itRequestService', function($http, $sce){
         });
     };
     
+    this.selectuserrequests = function (callback) {
+        $http({
+            method: 'GET',
+            url: '/data/table/0'
+        }).success(function(data, status, headers, config) {
+            console.log("get user requests OK");
+            callback(data);
+        }).error(function(data, status, headers, config) {
+            console.log("error get user requests");
+        });
+    };
+    
     this.insertrequest = function (callback, data) {
         $http({
             method: 'post',

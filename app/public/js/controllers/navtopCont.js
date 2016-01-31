@@ -49,7 +49,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
         });
     };
     
-    $scope.karshenaslogin = function() {
+    $scope.contractuserlogin = function() {
         itRequestService.getusers(function(data) {
             $scope.users = [];
             for (var itm in data) {
@@ -94,7 +94,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
                     data.defaultpass=$scope.melicode;
                     data.melicode=$scope.melicode;
                     data.isGuest=1;
-                    itRequestService.douser(data, $scope.karshenaslogin, 'insert');
+                    itRequestService.douser(data, $scope.contractuserlogin, 'insert');
                 }
                 else
                     alert('کد ملی باید یک عدد 10 رقمی باشد');
@@ -130,7 +130,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
             var data = {};
             data.username=$scope.melicode;
             $scope.melicode="";
-            itRequestService.douser(data, $scope.karshenaslogin, 'delete');
+            itRequestService.douser(data, $scope.contractuserlogin, 'delete');
         } else {
             if (te === 0) {
                 alert('کاربر مورد نظر وجود ندارد!');

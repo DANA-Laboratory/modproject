@@ -88,25 +88,25 @@ module.exports = function (app, db, readAppConfig) {
                     res.sendStatus(403);
                 } else {
                     if (req.body.isGuest == null) {
-                        req.body.isGuest = false;
+                        req.body.isGuest = 0;
                     }
                     if (req.body.isItUser == null) {
-                        req.body.isItUser = false;
+                        req.body.isItUser = 0;
                     }
                     if (req.body.isMaliUser == null) {
-                        req.body.isMaliUser = false;
+                        req.body.isMaliUser = 0;
                     }
                     if (req.body.isItAdmin == null) {
-                        req.body.isItAdmin = false;
+                        req.body.isItAdmin = 0;
                     }
                     if (req.body.isMaliAdmin == null) {
-                        req.body.isMaliAdmin = false;
+                        req.body.isMaliAdmin = 0;
                     }
                     if (req.body.isKarshenas == null) {
-                        req.body.isKarshenas = false;
+                        req.body.isKarshenas = 0;
                     }
                     if (req.body.isTeacher == null) {
-                        req.body.isTeacher = false;
+                        req.body.isTeacher = 0;
                     }
                     db.run('INSERT INTO users (username, password, name, family, melicode, pid, email, defaultpass, isGuest, isItUser, isMaliUser, isItAdmin, isMaliAdmin, isKarshenas, isTeacher) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [req.body.username, req.body.password, req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.body.password, req.body.isGuest, req.body.isItUser, req.body.isMaliUser, req.body.isItAdmin, req.body.isMaliAdmin, req.body.isKarshenas, req.body.isTeacher], callback);
                 }

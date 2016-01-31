@@ -31,7 +31,13 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     $scope.showConfig = false;
 
     $scope.$on('opencontractclick', function (event, melicode) {
+        // TODO: check if contract draft exists
+        // $scope.data = contractdraftexists(melicode)
+        // if ($scope.data) {
+        // 
+        // } else {
         $scope.newrequestclick(melicode);
+        // }
     });    
 
     $scope.setpageid = function (pid) {
@@ -93,7 +99,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             $scope.hidetable =  false;
             $scope.hiderequest = true;
         } else {
-            $scope.$parent.userselect=false;
+            $scope.$parent.userselect = false;
         };
     };
     
@@ -123,6 +129,8 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             $scope.data.moddat = $scope.getmodat();
             $scope.data.mablaghword = $scope.getmablagh();
             $scope.data.requesttype = 'contract';
+        } else {
+            $scope.data.requesttype = 'itrequest';
         }
         itRequestService.insertrequest($scope.backclick, $scope.data);
     }
