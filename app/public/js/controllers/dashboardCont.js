@@ -31,13 +31,15 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     $scope.showConfig = false;
 
     $scope.$on('opencontractclick', function (event, melicode) {
-        // TODO: check if contract draft exists
-        // $scope.data = contractdraftexists(melicode)
-        // if ($scope.data) {
-        // 
-        // } else {
-        $scope.newrequestclick(melicode);
-        // }
+        itRequestService.selectusercontracts(melicode, function callback(data) {
+            if(data.length > 0) {
+                $scope.data = JSON.parse(data[0].requestitems).concat(JSON.parse(data[0].requesttasks));
+                $scope.hidetableclick();
+                console.log($scope.data);
+            } else {
+                $scope.newrequestclick(melicode);
+            }
+        })
     });    
 
     $scope.setpageid = function (pid) {

@@ -56,11 +56,11 @@ dashboardApp.service('itRequestService', function($http, $sce){
       });
     };
     
-    this.refreshTable = function (id) {
-        if (null==id) {
-            $('#requestsTable').bootstrapTable('refresh', {url: '/data/table'});
+    this.refreshTable = function (status) {
+        if (null==status) {
+            $('#requestsTable').bootstrapTable('refresh', {url: '/data/table/itrequest'});
         } else {
-            $('#requestsTable').bootstrapTable('refresh', {url: '/data/table/' + id});
+            $('#requestsTable').bootstrapTable('refresh', {url: '/data/table/itrequest/' + status});
         }
     }
     
@@ -91,10 +91,10 @@ dashboardApp.service('itRequestService', function($http, $sce){
         });
     };
     
-    this.selectuserrequests = function (callback) {
+    this.selectusercontracts = function (melicode, callback) {
         $http({
             method: 'GET',
-            url: '/data/table/0'
+            url: '/data/findcontract/' + melicode
         }).success(function(data, status, headers, config) {
             console.log("get user requests OK");
             callback(data);
