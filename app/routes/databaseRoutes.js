@@ -153,17 +153,21 @@ module.exports = function (app, io, appConfig, db) {
 
     app.get('/data/findcontract/:melicode', mypassport.ensureAuthenticated, function (req, res) {
         var callback = function (err, rows) {
-            console.log(err);
-            for (var row in rows) {
-                if (row.user === req.user.id) {
-                    row.isCreator = true;
-                } else {
-                    row.isCreator = false;
+            if (err) {
+                console.log(err);
+                res.sendStatus(404);
+            } else {
+                for (var row in rows) {
+                    if (row.user === req.user.id) {
+                        row.isCreator = true;
+                    } else {
+                        row.isCreator = false;
+                    }
                 }
+                res.json(rows);
             }
-            res.json(rows);
         };
         console.log(req.user.id, req.params.melicode);
-        db.all('SELECT * from requests WHERE applicant=2222222222', [req.user.id, req.user.id, req.params.melicode], callback);
+        db.all('SELECT max(id) from requests WHERE requesttype="contract"', [req.user.id, req.user.id, req.params.melicode], callback);
     });
 };
