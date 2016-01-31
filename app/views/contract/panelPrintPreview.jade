@@ -1,2 +1,10 @@
-.embed-responsive.embed-responsive-16by9()
-  iframe.embed-responsive-item(ng-src='{{pdfcontent}}')
+.request.panel.panel-primary
+  .panel-heading
+    h3.panel-title
+      b فرم قراداد تدريس
+  .request.panel-body
+    .row
+      include parts/pagination.jade
+      .col-md-12
+        .embed-responsive.embed-responsive-16by9()
+          iframe.embed-responsive-item(ng-src='{{pdfcontent}}')

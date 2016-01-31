@@ -26,6 +26,10 @@ module.exports = function (app, passport, appConfig) {
     app.get('/itRequest/:page', mypassport.ensureAuthenticated, function (req, res) {
         res.render('itRequest/' + req.params.page, { userNameIDs: mypassport.itUserNameIDs(), user: req.user, 'pathToAssets' : '/bower_components', message: req.flash('error') });
     });
+
+    app.get('/contract/:page', mypassport.ensureAuthenticated, function (req, res) {
+        res.render('contract/' + req.params.page, { userNameIDs: mypassport.itUserNameIDs(), user: req.user, 'pathToAssets' : '/bower_components', message: req.flash('error') });
+    });
     
     app.get('/', function (req, res) {
         res.render('index', { user: req.user, tasks: JSON.stringify(appConfig.tasks), requestItems: JSON.stringify(appConfig.requestItems), 'pathToAssets' : '/bower_components', message: req.flash('error') });

@@ -22,7 +22,10 @@ include head.jade
                 button.btn.btn-success(type='submit') ورود 
                     span.glyphicon.glyphicon-log-in
           else
-            div(ng-init='currentUserFullName=\'#{user.name} #{user.family}\'; isOwner=#{user.isOwner}')
+            if (user.name)
+              div(ng-init='currentUserFullName=\'#{user.name} #{user.family}\'; isOwner=#{user.isOwner}')
+            else
+              div(ng-init='melicode=\'#{user.melicode}\'; currentUserFullName=\'#{user.melicode}\'; isOwner=#{user.isOwner}')           
             if (user.isItUser) 
               include topnav.jade
             include config.jade

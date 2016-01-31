@@ -1,4 +1,4 @@
-form.request.panel.panel-primary(ng-submit='insertbtnclick()', ng-hide='printpreview')
+form.request.panel.panel-primary(ng-submit='insertbtnclick()')
   .panel-heading
     h3.panel-title
       b فرم قراداد تدريس
@@ -12,9 +12,5 @@ form.request.panel.panel-primary(ng-submit='insertbtnclick()', ng-hide='printpre
   .panel-footer
     .btn.btn-default(name='buttoncancel', ng-click='backclick()') انصراف
       .span.glyphicon.glyphicon-remove
-    .btn.btn-info(name='buttonprint', ng-click='printbtnclick()') چاپ
-      .span.glyphicon.glyphicon-print
     button.btn.btn-success.pull-left(name='buttoninsert', type='submit') ثبت گردد
       .span.glyphicon.glyphicon-ok
-.embed-responsive.embed-responsive-16by9(ng-show='printpreview')
-  iframe.embed-responsive-item(ng-src='{{pdfcontent}}')

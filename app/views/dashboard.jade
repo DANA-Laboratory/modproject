@@ -9,4 +9,4 @@ if (user.isGuest || user.isTeacher || user.isKarshenas)
   .container-fluid(ng-controller='dashboardCont', ng-show='userselect==3')
     div(style='margin : 10px')
       div.col-md-12(ng-hide='hiderequest', style='margin: 10px')
-        include contract/panelPrimary.jade 
+        .ng-view

@@ -17,7 +17,7 @@ function charcodeat(s) {
 module.exports = function (app) {
     app.post('/contract/show', mypassport.ensureAuthenticated, function (req, res) {
         // TODO: shomare
-        var texcommand = '\\def\\shomare{ص پ 33-2/1}\n';
+        var texcommand = '\\def\\shomare{ص پ/2-33}\n';
         for (var itm in req.body) {
             texcommand = texcommand + '\\def\\' + itm + '{' + req.body[itm]  + '}\n';
         }
