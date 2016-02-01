@@ -164,17 +164,23 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     
     $scope.getmodat = function() {
         if ($scope.data) {
-            var d = $scope.data.startdate.split('/');
-            var id = jalaliToGregorian(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]), '/');
-            d = id.split('/'); 
-            var idd = new Date(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]), 0, 0, 0, 0);
-            
-            d = $scope.data.enddate.split('/');
-            var ed = jalaliToGregorian(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]), '/');
-            d = ed.split('/');
-            var edd = new Date(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]), 0, 0, 0, 0);
-            
-            return Math.ceil((edd.getTime()-idd.getTime())/3600/24/1000);
+            if (typeof $scope.data.startdate !== 'undefined' && typeof $scope.data.enddate !== 'undefined') {
+                var d = $scope.data.startdate.split('/');
+                var id = jalaliToGregorian(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]), '/');
+                d = id.split('/'); 
+                console.log(id);
+                var idd = new Date(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]));
+                
+                d = $scope.data.enddate.split('/');
+                var ed = jalaliToGregorian(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]), '/');
+                d = ed.split('/');
+                console.log(ed);
+                var edd = new Date(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]));
+                
+                var diff = edd.getTime() - idd.getTime();
+                console.log(diff);
+                return Math.ceil(diff/24/60/60/1000);
+            }
         }
         return '';
     }
