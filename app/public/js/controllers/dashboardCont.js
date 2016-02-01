@@ -33,10 +33,12 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     $scope.$on('opencontractclick', function (event, melicode) {
         itRequestService.selectusercontracts(melicode, function callback(data) {
             if(data.length > 0) {
-                console.log(data);
-                $scope.data = JSON.parse(data[0].requestitems).concat(JSON.parse(data[0].requesttasks));
+                $scope.data = {};
+                data[0].requestitems = JSON.parse(data[0].requestitems);
+                data[0].requesttasks = JSON.parse(data[0].requesttasks);
+                for(var key in data[0].requestitems) $scope.data[key]=data[0].requestitems[key];
+                for(var key in data[0].requesttasks) $scope.data[key]=data[0].requesttasks[key];
                 $scope.hidetableclick();
-                console.log($scope.data);
             } else {
                 $scope.newrequestclick(melicode);
             }
