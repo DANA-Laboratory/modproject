@@ -33,6 +33,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     $scope.$on('opencontractclick', function (event, melicode) {
         itRequestService.selectusercontracts(melicode, function callback(data) {
             if(data.length > 0) {
+                console.log(data);
                 $scope.data = JSON.parse(data[0].requestitems).concat(JSON.parse(data[0].requesttasks));
                 $scope.hidetableclick();
                 console.log($scope.data);
