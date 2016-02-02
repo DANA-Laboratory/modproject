@@ -22,7 +22,7 @@ module.exports = function (app) {
             texcommand = texcommand + '\\def\\' + itm + '{' + req.body[itm]  + '}\n';
         }
         var contractpath = path.join(__dirname, '..', '..', 'xelatex', 'contract');
-        var tempname = path.join(contractpath, req.body.melicode + '_' + charcodeat(req.body.initdate) + '.tex');
+        var tempname = path.join(contractpath, req.body.melicode + '.tex');
         console.log(tempname);
         xelatexapi.writecommandexectex(tempname, texcommand, contractpath, 'TeacherContract.tex', function (pathtopdf) {res.sendFile(pathtopdf); });
     });
