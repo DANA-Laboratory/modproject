@@ -6,32 +6,32 @@
     .col-md-2
       .form-group
         label(for='name')نام 
-        input.form-control(type='text', id='name', ng-model='data.name', ng-required='#{user.isGuest}')
+        input.form-control(type='text', id='name', ng-model='data.requesttasks.name', ng-required='#{user.isGuest}')
     .col-md-2
       .form-group
         label(for='family')نام خانوادگي 
-        input.form-control(type='text', id='family', ng-model='data.family', ng-required='#{user.isGuest}')
+        input.form-control(type='text', id='family', ng-model='data.requesttasks.family', ng-required='#{user.isGuest}')
     .col-md-2
       .form-group
         label(for='melicode')کد ملی 
-        input.form-control(type='text', id='melicode', ng-model='data.melicode', ng-disabled='true', required)
+        input.form-control(type='text', id='melicode', ng-model='data.requestitems.melicode', ng-disabled='true', required)
   .row
     .col-md-2
       .form-group
         label(for='startdate')&nbsp;تاریخ شروع قرارداد: 
-        input.form-control(type='text', id='startdate', pattern='(?:13|14)[0-9]{2}/(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01])', ng-model='data.startdate', ng-disabled='#{!user.isKarshenas}', placeholder='YYYY/MM/DD', required)
+        input.form-control(type='text', id='startdate', pattern='(?:13|14)[0-9]{2}/(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01])', ng-model='data.requestitems.startdate', ng-disabled='#{!user.isKarshenas}', placeholder='YYYY/MM/DD', required)
     .col-md-2
       .form-group
         label(for='enddate')&nbsp;تاریخ پایان قرارداد: 
-        input.form-control(type='text', id='enddate', pattern='(?:13|14)[0-9]{2}/(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01])', ng-model='data.enddate', ng-disabled='#{!user.isKarshenas}', placeholder='YYYY/MM/DD', required)
+        input.form-control(type='text', id='enddate', pattern='(?:13|14)[0-9]{2}/(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01])', ng-model='data.requestitems.enddate', ng-disabled='#{!user.isKarshenas}', placeholder='YYYY/MM/DD', required)
     .col-md-2
       .form-group
         label(for='mablagh')&nbsp;مبلغ قرارداد (ریال):
-        input.form-control(type='text', pattern='[0-9]+', id='mablagh', ng-model='data.mablagh', ng-disabled='#{!user.isKarshenas}', required, placeholder='تنها عدد قابل قبول است')
+        input.form-control(type='text', pattern='[0-9]+', id='mablagh', ng-model='data.requestitems.mablagh', ng-disabled='#{!user.isKarshenas}', required, placeholder='تنها عدد قابل قبول است')
     .col-md-2
       .form-group
         label(for='mablaghtype')&nbsp;به ازای هر:
-        select.form-control(id='mablaghtype', ng-model='data.mablaghtype', ng-disabled='#{!user.isKarshenas}', required)
+        select.form-control(id='mablaghtype', ng-model='data.requestitems.mablaghtype', ng-disabled='#{!user.isKarshenas}', required)
           option(value='روز آموزش') روز آموزش
           option(value='دوره آموزشی') دوره آموزشی
           option(value='ساعت آموزش') ساعت آموزش
@@ -44,8 +44,8 @@
     .col-md-8
       مبلغ قرارداد معادل&nbsp;
       strong
-          span(id='modat', ng-bind='getmablagh()')
+          span(id='mablaghword', ng-bind='getmablagh()')
       &nbsp;ریال به ازای هر
       strong
-          span(id='modat', ng-bind='data.mablaghtype')
+          span(id='mablaghtypeword', ng-bind='data.requestitems.mablaghtype')
       &nbsp;میباشد.
