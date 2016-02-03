@@ -33,12 +33,12 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     $scope.$on('opencontractclick', function (event, melicode) {
         itRequestService.selectusercontracts(melicode, function callback(data) {
             if(data.length > 0) {
+                var contracttoopen = data[data.length -1]; //last contract
                 $scope.data = {};
-                data[0].requestitems = JSON.parse(data[0].requestitems);
-                data[0].requesttasks = JSON.parse(data[0].requesttasks);
-                //for(var key in data[0].requestitems) $scope.data[key] = data[0].requestitems[key];
-                //for(var key in data[0].requesttasks) $scope.data[key] = data[0].requesttasks[key];
-                for(var key in data[0]) $scope.data[key] = data[0][key];
+                contracttoopen.requestitems = JSON.parse(contracttoopen.requestitems);
+                contracttoopen.requesttasks = JSON.parse(contracttoopen.requesttasks);
+                for(var key in contracttoopen) $scope.data[key] = contracttoopen[key];
+                $scope.requestLevel = 1 + requestStatus.indexOf(contracttoopen.status);
                 $scope.hidetableclick();
             } else {
                 $scope.newrequestclick(melicode);
@@ -62,11 +62,13 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             $scope.data.requestitems = [];
         }
         if ($scope.userselect==3) {
+            $scope.data.requestitems = {};
+            $scope.data.requesttasks = {};
             var sd = $scope.data.initdate.split('/');
-            $scope.data.enddate = parseInt(sd[0]) + 1 + '/' + sd[1] + '/' + sd[2];
-            $scope.data.mablaghtype = 'ساعت آموزش';
-            $scope.data.melicode = id;
-            $scope.data.startdate = $scope.data.initdate;
+            $scope.data.requestitems.enddate = parseInt(sd[0]) + 1 + '/' + sd[1] + '/' + sd[2];
+            $scope.data.requestitems.mablaghtype = 'ساعت آموزش';
+            $scope.data.requestitems.melicode = id;
+            $scope.data.requestitems.startdate = $scope.data.initdate;
         }        
 
         var minutes = date.getMinutes();
@@ -131,20 +133,25 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     };
     
     $scope.insertbtnclick = function () {
-        if ($scope.userselect==3) {
-            $scope.data.moddat = $scope.getmodat();
-            $scope.data.mablaghword = $scope.getmablagh();
-            $scope.data.requesttype = 'contract';
+        if ($scope.requestLevel!==0) {
+            $scope.updaterequest();
+            $scope.backclick();
         } else {
-            $scope.data.requesttype = 'itrequest';
+            if ($scope.userselect==3) {
+                $scope.data.requestitems.moddat = $scope.getmodat();
+                $scope.data.requestitems.mablaghword = $scope.getmablagh();
+                $scope.data.requesttype = 'contract';
+            } else {
+                $scope.data.requesttype = 'itrequest';
+            }
+            itRequestService.insertrequest($scope.backclick, $scope.data);
         }
-        itRequestService.insertrequest($scope.backclick, $scope.data);
     }
     
     $scope.printbtnclick = function () {
         if ($scope.userselect==3) {
-            $scope.data.moddat = $scope.getmodat();
-            $scope.data.mablaghword = $scope.getmablagh();
+            $scope.data.requestitems.moddat = $scope.getmodat();
+            $scope.data.requestitems.mablaghword = $scope.getmablagh();
             $scope.pdfcontent = itRequestService.openpdf($scope.data, function(pdfcontent) {$scope.pdfcontent = pdfcontent}, $scope.userselect);
         }
     }
@@ -164,14 +171,14 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     }
     
     $scope.getmodat = function() {
-        if ($scope.data) {
-            if (typeof $scope.data.startdate !== 'undefined' && typeof $scope.data.enddate !== 'undefined') {
-                var d = $scope.data.startdate.split('/');
+        if ($scope.userselect==3 && $scope.data) {
+            if (typeof $scope.data.requestitems.startdate !== 'undefined' && typeof $scope.data.requestitems.enddate !== 'undefined') {
+                var d = $scope.data.requestitems.startdate.split('/');
                 var id = jalaliToGregorian(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]), '/');
                 d = id.split('/'); 
                 var idd = new Date(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]));
                 
-                d = $scope.data.enddate.split('/');
+                d = $scope.data.requestitems.enddate.split('/');
                 var ed = jalaliToGregorian(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]), '/');
                 d = ed.split('/');
                 var edd = new Date(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]));
@@ -184,9 +191,9 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     }
     
     $scope.getmablagh = function() {
-        if ($scope.data) {
-            if ($scope.data.mablagh) {
-                return Adad($scope.data.mablagh);
+        if ($scope.userselect==3 && $scope.data) {
+            if ($scope.data.requestitems.mablagh) {
+                return Adad($scope.data.requestitems.mablagh);
             }
         }
     }

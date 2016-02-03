@@ -12,5 +12,5 @@ form.request.panel.panel-primary(ng-submit='insertbtnclick()')
   .panel-footer
     .btn.btn-default(name='buttoncancel', ng-click='backclick()') خروج
       .span.glyphicon.glyphicon-remove
-    button.btn.btn-success.pull-left(name='buttoninsert', type='submit') ثبت گردد
+    button.btn.pull-left(ng-class='requestLevel===0 ? "btn-success" : "btn-warning"' ,name='buttoninsert', type='submit') ثبت
       .span.glyphicon.glyphicon-ok
