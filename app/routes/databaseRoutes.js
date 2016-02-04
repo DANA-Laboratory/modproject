@@ -80,12 +80,12 @@ module.exports = function (app, io, appConfig, db) {
         db.all('SELECT * from requests where (user=? OR owner=?) AND status=? AND requesttype=?', [req.user.id, req.user.id, appConfig.status[req.params.status], req.params.type], callback);
     });
     
-    app.post('/data/updatetasks/:requestID', mypassport.ensureAuthenticated, function (req, res) {
+    app.post('/data/updateowneritems/:requestID', mypassport.ensureAuthenticated, function (req, res) {
         var callback = function (err) {
-            console.log('update tasks error=', err);
+            console.log('update updateowneritems error=', err);
             res.sendStatus(200);
         };
-        db.run('UPDATE requests SET owneritems=? WHERE (owner=? AND id=?)', [JSON.stringify(req.body.tasks), req.user.id, req.params.requestID], callback);
+        db.run('UPDATE requests SET owneritems=? WHERE (owner=? AND id=?)', [JSON.stringify(req.body.owneritems), req.user.id, req.params.requestID], callback);
     });
     
     app.post('/data/updatestatus/:requestID', mypassport.ensureAuthenticated, function (req, res) {
@@ -112,8 +112,6 @@ module.exports = function (app, io, appConfig, db) {
             res.sendStatus(200);
         };
         if (req.body.requesttype === 'contract') {
-            //var useritems = {melicode: req.body.melicode, startdate: req.body.startdate, enddate: req.body.enddate, mablagh: req.body.mablagh, mablaghtype: req.body.mablaghtype, modat: req.body.modat, mablaghword: req.body.mablaghword};
-            //var owneritems = {name: req.body.name, family: req.body.family, fname: req.body.fname, madrak: req.body.madrak, address: req.body.address, tel: req.body.tel, c1: req.body.c1, c2: req.body.c2, c3: req.body.c3, c4: req.body.c4, branch: req.body.branch, accountnumber: req.body.accountnumber};
             db.run('INSERT INTO requests (useritems,owneritems,owner,user,status,initdate,inittime,description,applicant,requesttype) VALUES (?,?,?,?,?,?,?,?,?,?)', [JSON.stringify(req.body.useritems), JSON.stringify(req.body.owneritems), mypassport.findIdByMeliCode(Number(req.body.useritems.melicode)), req.user.id, appConfig.status[0], req.body.initdate, req.body.inittime, req.body.description, req.body.useritems.melicode, req.body.requesttype], callback);
         } else {
             db.run('INSERT INTO requests (useritems,owner,user,status,initdate,inittime,description,applicant,requesttype) VALUES (?,?,?,?,?,?,?,?,?)', [JSON.stringify(req.body.useritems), mypassport.ownerRowID(), req.user.id, appConfig.status[0], req.body.initdate, req.body.inittime, req.body.description, req.body.applicant, req.body.requesttype], callback);
@@ -126,7 +124,6 @@ module.exports = function (app, io, appConfig, db) {
             res.sendStatus(200);
         };
         if (req.body.requesttype === 'contract') {
-            //var owneritems = {name: req.body.name, family: req.body.family, fname: req.body.fname, madrak: req.body.madrak, address: req.body.address, tel: req.body.tel, c1: req.body.c1, c2: req.body.c2, c3: req.body.c3, c4: req.body.c4, branch: req.body.branch, accountnumber: req.body.accountnumber};
             if (req.user.isKarshenas) {
                 db.run('UPDATE requests SET owneritems=?, useritems=? WHERE (id=? AND user=?)', [JSON.stringify(req.body.owneritems), JSON.stringify(req.body.useritems), req.body.id, req.user.id], callback);
             } else {

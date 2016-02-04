@@ -23,13 +23,13 @@ dashboardApp.service('itRequestService', function($http, $sce){
       }  
       $http({
           method: 'post',
-          url: '/data/updatetasks/' + selectedRequestId,
-          data: {tasks: selectedtasks}
+          url: '/data/updateowneritems/' + selectedRequestId,
+          data: {owneritems: selectedtasks}
       }).success(function(data, status, headers, config) {
-          console.log("tasks updated");
+          console.log("owneritems updated");
           callback();
       }).error(function(data, status, headers, config) {
-          console.log("error update tasks");
+          console.log("error update owneritems");
       });
     };
     
