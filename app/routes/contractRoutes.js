@@ -10,14 +10,14 @@ module.exports = function (app) {
     app.post('/contract/show', mypassport.ensureAuthenticated, function (req, res) {
         // TODO: shomare
         var texcommand = '\\def\\shomare{ص پ/2-33}\n';
-        for (var itm in req.body.requestitems) {
-            texcommand = texcommand + '\\def\\' + itm + '{' + req.body.requestitems[itm]  + '}\n';
+        for (var itm in req.body.useritems) {
+            texcommand = texcommand + '\\def\\' + itm + '{' + req.body.useritems[itm]  + '}\n';
         }
-        for (itm in req.body.requesttasks) {
-            texcommand = texcommand + '\\def\\' + itm + '{' + req.body.requesttasks[itm]  + '}\n';
+        for (itm in req.body.owneritems) {
+            texcommand = texcommand + '\\def\\' + itm + '{' + req.body.owneritems[itm]  + '}\n';
         }
         var contractpath = path.join(__dirname, '..', '..', 'xelatex', 'contract');
-        var tempname = path.join(contractpath, req.body.requestitems.melicode + '.tex');
+        var tempname = path.join(contractpath, req.body.useritems.melicode + '.tex');
         console.log(tempname);
         xelatexapi.writecommandexectex(tempname, texcommand, contractpath, 'TeacherContract.tex', function (pathtopdf) {res.sendFile(pathtopdf); });
     });

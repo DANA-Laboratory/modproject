@@ -54,7 +54,7 @@ var appConfig=
                 , {'name' : 'باتري مادربرد', 'id' : 47}
                 , {'name' : 'فلاپي درايو', 'id' : 48}
               ],
-              'requestItems': [
+              'useritems': [
                   'کابل کشي شبکه',
                   'کند بودن کامپيوتر',
                   'سيستم يونيت',
@@ -88,8 +88,8 @@ db.run('DELETE FROM config');
 for (var item in appConfig.tasks) {
     db.run('INSERT INTO config(itemName,itemType) VALUES(?,0)', appConfig.tasks[item].name);
 }
-for (var item in appConfig.requestItems) {
-    db.run('INSERT INTO config(itemName,itemType) VALUES(?,1)', appConfig.requestItems[item]);
+for (var item in appConfig.useritems) {
+    db.run('INSERT INTO config(itemName,itemType) VALUES(?,1)', appConfig.useritems[item]);
 }
 for (var item in appConfig.users) {
     db.run('INSERT INTO config(itemName,itemType) VALUES(?,2)', JSON.stringify(appConfig.users[item]));

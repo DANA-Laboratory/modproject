@@ -11,8 +11,8 @@ socket.on('message', console.log.bind(console));
 
 dashboardApp.service('itRequestService', function($http, $sce){
     
-    this.requestitems = {};
-    this.requesttasks = {};
+    this.useritems = {};
+    this.owneritems = {};
     
     this.updatetasks = function(callback, tasks) {
       var selectedtasks = [];
@@ -70,7 +70,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
                 method: 'GET',
                 url: '/data/' + selectedRequestId
             }).success(function(data, status, headers, config) {
-                data.requestitems = JSON.parse(data.requestitems);
+                data.useritems = JSON.parse(data.useritems);
                 callback(data);
             }).error(function(data, status, headers, config) {
                 console.log("error get");

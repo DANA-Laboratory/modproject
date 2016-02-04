@@ -23,13 +23,13 @@ if (!exists1) {
         appConfig.tasks = data;
     };
     
-    var setRequestItems = function (error, data) {
-        appConfig.requestItems = data;
+    var setuseritems = function (error, data) {
+        appConfig.useritems = data;
     };
     
     var readAppConfig = function () {
         dbre.all('SELECT itemName as name, id FROM config WHERE itemType=0', setTasks);
-        dbre.all('SELECT itemName as name, id FROM config WHERE itemType=1', setRequestItems);
+        dbre.all('SELECT itemName as name, id FROM config WHERE itemType=1', setuseritems);
     };
     
     readAppConfig();

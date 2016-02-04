@@ -20,26 +20,26 @@ dashboardApp.controller('itemCont', function ($scope, itRequestService) {
     
     $scope.toggleselection = function (indx) {
         selecteditemid = indx;
-        var item =  $scope.requestItems[selecteditemid].name;
+        var item =  $scope.useritems[selecteditemid].name;
         if ($scope.itemsclass(null)==='glyphicon-minus') {
-          itRequestService.doitem($scope.requestItems[selecteditemid], 'delete');
-          $scope.requestItems.splice(selecteditemid, 1);
+          itRequestService.doitem($scope.useritems[selecteditemid], 'delete');
+          $scope.useritems.splice(selecteditemid, 1);
           return;
         } else {
           if ($scope.itemsclass(null)==='glyphicon-pencil') {
-            $scope.selecteditem = $scope.requestItems[selecteditemid].name;
+            $scope.selecteditem = $scope.useritems[selecteditemid].name;
             $('#editRequestModal').modal('show');
             return;
           }
         };
-        var idx = $scope.data.requestitems.indexOf(item);
+        var idx = $scope.data.useritems.indexOf(item);
         // is currently selected
         if (idx > -1) {
-          $scope.data.requestitems.splice(idx, 1);
+          $scope.data.useritems.splice(idx, 1);
         }
         // is newly selected
         else {
-          $scope.data.requestitems.push(item);
+          $scope.data.useritems.push(item);
         }
         if ($scope.requestLevel>0) {
           $scope.updaterequest();
@@ -47,8 +47,8 @@ dashboardApp.controller('itemCont', function ($scope, itRequestService) {
     };
     
     $scope.updateselecteditem = function() {
-        $scope.requestItems[selecteditemid].name = $scope.selecteditem;
-        itRequestService.doitem($scope.requestItems[selecteditemid], 'update');
+        $scope.useritems[selecteditemid].name = $scope.selecteditem;
+        itRequestService.doitem($scope.useritems[selecteditemid], 'update');
         selecteditemid = -1;
         $('#editRequestModal').modal('hide');
     };
@@ -58,7 +58,7 @@ dashboardApp.controller('itemCont', function ($scope, itRequestService) {
         selecteditemid = -1;
         itRequestService.doitem(item, 'insert', function(data){
             item.id = data.lastID; 
-            $scope.requestItems.push(item);
+            $scope.useritems.push(item);
         });
         $('#addRequestModal').modal('hide');
     };

@@ -32,7 +32,7 @@ module.exports = function (app, passport, appConfig) {
     });
     
     app.get('/', function (req, res) {
-        res.render('index', { user: req.user, tasks: JSON.stringify(appConfig.tasks), requestItems: JSON.stringify(appConfig.requestItems), 'pathToAssets' : '/bower_components', message: req.flash('error') });
+        res.render('index', { user: req.user, tasks: JSON.stringify(appConfig.tasks), useritems: JSON.stringify(appConfig.useritems), 'pathToAssets' : '/bower_components', message: req.flash('error') });
     });
     
 };
