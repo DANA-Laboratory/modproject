@@ -66,6 +66,5 @@
   },
   "_source": "git://github.com/wenzhixin/bootstrap-table.git",
   "_target": "~1.7.0",
-  "_originalSource": "bootstrap-table",
-  "_direct": true
+  "_originalSource": "bootstrap-table"
 }

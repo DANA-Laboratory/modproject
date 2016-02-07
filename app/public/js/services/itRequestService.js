@@ -1,6 +1,6 @@
 'use strict';
 
-var dashboardApp = angular.module('dashboardApp', ['ngRoute', 'ngMask', 'ui.bootstrap', 'pdf']);
+var dashboardApp = angular.module('dashboardApp', ['ngRoute', 'ngMask', 'ui.bootstrap']);
 var socket = io();
  
 socket.on('update', function(data) {
