@@ -24,14 +24,14 @@ module.exports = function (app, io, appConfig, db) {
             }
         }
     };
-        
+
     var formatdata = function (row) {
         //replaceIDwithNameFamily
         replaceIDwithNameFamily(row);
         row.init = row.initdate !== null ? row.initdate + ' ' + row.inittime : '-';
         row.end = row.enddate !== null ? row.enddate + ' ' + row.endtime : '-';
         row.start = row.startdate !== null ? row.startdate + ' ' + row.starttime : '-';
-        
+
         //remove formats from string
         if (row.owneritems !== null) {
             row.owneritems = row.owneritems.replace(/[\"\[\]]/g, ' ');
@@ -43,8 +43,8 @@ module.exports = function (app, io, appConfig, db) {
 
     app.get('/data/nsidebar', mypassport.ensureAuthenticated, function (req, res) {
         var ret = [];
-        var callback = function (err, rows) {
-            ret.push(rows.count);
+        var callback = function (err, row) {
+            ret.push(row.count);
             if (ret.length === 2 * appConfig.status.length) {
                 res.json(ret);
             }
@@ -56,7 +56,7 @@ module.exports = function (app, io, appConfig, db) {
             }
         });
     });
-  
+
     app.get('/data/table/:type', mypassport.ensureAuthenticated, function (req, res) {
         var callback = function (err, rows) {
             for (var row in rows) {
@@ -66,7 +66,7 @@ module.exports = function (app, io, appConfig, db) {
         };
         db.all('SELECT * from requests where ((user=' + req.user.id  + ' OR owner=' + req.user.id + ') AND (status=? OR status=?) AND requesttype=?)', ['ثبت شده', 'در دست اقدام', req.params.type], callback);
     });
-  
+
     app.get('/data/table/:type/:status', mypassport.ensureAuthenticated, function (req, res) {
         var callback = function (err, rows) {
             for (var row in rows) {
@@ -79,7 +79,7 @@ module.exports = function (app, io, appConfig, db) {
         }
         db.all('SELECT * from requests where (user=? OR owner=?) AND status=? AND requesttype=?', [req.user.id, req.user.id, appConfig.status[req.params.status], req.params.type], callback);
     });
-    
+
     app.post('/data/updateowneritems/:requestID', mypassport.ensureAuthenticated, function (req, res) {
         var callback = function (err) {
             console.log('update updateowneritems error=', err);
@@ -87,7 +87,7 @@ module.exports = function (app, io, appConfig, db) {
         };
         db.run('UPDATE requests SET owneritems=? WHERE (owner=? AND id=?)', [JSON.stringify(req.body.owneritems), req.user.id, req.params.requestID], callback);
     });
-    
+
     app.post('/data/updatestatus/:requestID', mypassport.ensureAuthenticated, function (req, res) {
         var callback = function (err) {
             console.log('update status error=', err);
@@ -104,7 +104,7 @@ module.exports = function (app, io, appConfig, db) {
             db.run('UPDATE requests SET status=?, canceldate=?, canceltime=?, actiondescription=?, canceluser=? WHERE id=?', [req.body.status, req.body.actiondate, req.body.actiontime, req.body.cancelwhy, req.user.id, req.params.requestID], callback);
         }
     });
-    
+
     app.post('/data/insertrequest', mypassport.ensureAuthenticated, function (req, res) {
         var callback = function (err) {
             console.log('insert request error=', err);
@@ -112,12 +112,24 @@ module.exports = function (app, io, appConfig, db) {
             res.sendStatus(200);
         };
         if (req.body.requesttype === 'contract') {
-            db.run('INSERT INTO requests (useritems,owneritems,owner,user,status,initdate,inittime,description,applicant,requesttype) VALUES (?,?,?,?,?,?,?,?,?,?)', [JSON.stringify(req.body.useritems), JSON.stringify(req.body.owneritems), mypassport.findIdByMeliCode(Number(req.body.useritems.melicode)), req.user.id, appConfig.status[0], req.body.initdate, req.body.inittime, req.body.description, req.body.useritems.melicode, req.body.requesttype], callback);
+            db.get('SELECT MAX(description) as newshomare FROM requests WHERE requesttype == "contract"', function (err, row) {
+                if (err) {
+                    console.log('select max description err=', err);
+                    res.sendStatus(200);
+                } else {
+                    var newshomare = 1;
+                    if (typeof(row) !== 'undefined') {
+                        newshomare = row.newshomare + 1;
+                    }
+                    db.run('INSERT INTO requests (useritems,owneritems,owner,user,status,initdate,inittime,description,applicant,requesttype) VALUES (?,?,?,?,?,?,?,?,?,?)', [JSON.stringify(req.body.useritems), JSON.stringify(req.body.owneritems), mypassport.findIdByMeliCode(Number(req.body.useritems.melicode)), req.user.id, appConfig.status[0], req.body.initdate, req.body.inittime, newshomare, req.body.useritems.melicode, req.body.requesttype], callback);
+                }
+            });
         } else {
             db.run('INSERT INTO requests (useritems,owner,user,status,initdate,inittime,description,applicant,requesttype) VALUES (?,?,?,?,?,?,?,?,?)', [JSON.stringify(req.body.useritems), mypassport.ownerRowID(), req.user.id, appConfig.status[0], req.body.initdate, req.body.inittime, req.body.description, req.body.applicant, req.body.requesttype], callback);
         }
+
     });
-       
+
     app.post('/data/updaterequest', mypassport.ensureAuthenticated, function (req, res) {
         var callback = function (err) {
             console.log('update request error=', err);
@@ -133,7 +145,7 @@ module.exports = function (app, io, appConfig, db) {
             db.run('UPDATE requests SET useritems=?, description=? WHERE (id=? AND user=?)', [JSON.stringify(req.body.useritems), req.body.description, req.body.id, req.user.id], callback);
         }
     });
-    
+
     app.get('/data/:requestID', mypassport.ensureAuthenticated, function (req, res) {
         var callback = function (err, rows) {
             //console.log(rows.user,req.user.id);
