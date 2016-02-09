@@ -8,7 +8,7 @@
     ul.dropdown-menu.scrollable-menu
       each val in userNameIDs
         li
-          a(href='', ng-click='setUserIdName(#{val[0]}, "#{val[1]}")') #{val[1]}
+          a(href='', ng-click='data.applicant = "#{val[1]}"') #{val[1]}
   input.form-control(ng-if='!isOwner || requestLevel!==0', id='#{captions[0]}', ng-model='#{captions[0]}', type='text', placeholder=values[0], style='text-align : center', readonly)
 .col-sm-3
   label.col-sm-1.control-label(for='#{captions[1]}')=values[1]    

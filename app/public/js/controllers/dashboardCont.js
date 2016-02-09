@@ -113,7 +113,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
 
     $scope.deleterequest =function () {
         itRequestService.deleterequest($scope.backclick);
-    }
+    };
 
     $scope.$on('topnavClick', function(event){
         $scope.data = {};
@@ -160,10 +160,6 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         minutes = (minutes===0) ? ('00') : (minutes<10 ? ('0' + minutes) : minutes);
         $scope.data.actiontime = date.getHours() + ':' + minutes;
         itRequestService.updatestatus($scope.backclick, $scope.data);
-    }
-
-    $scope.setUserIdName = function(index, val) {
-        $scope.data.applicant = val;
     }
 
     var getdataCallback = function(data) {
