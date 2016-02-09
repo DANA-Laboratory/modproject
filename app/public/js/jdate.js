@@ -1,4 +1,17 @@
 'use strict';
+function datediff(startdate, enddate) {
+    var d = startdate.split('/');
+    var id = jalaliToGregorian(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]), '/');
+    d = id.split('/');
+    var idd = new Date(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]));
+    d = enddate.split('/');
+    var ed = jalaliToGregorian(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]), '/');
+    d = ed.split('/');
+    var edd = new Date(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]));
+    var diff = edd.getTime() - idd.getTime();
+    return Math.ceil(diff/24/60/60/1000)+1;
+}
+
 function gregorianToJalali(date, mod/*''*/) {
     var gY = date.getUTCFullYear();
     var gM = date.getUTCMonth() + 1;

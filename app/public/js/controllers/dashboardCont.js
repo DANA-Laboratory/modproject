@@ -138,8 +138,6 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             $scope.backclick();
         } else {
             if ($scope.userselect==3) {
-                $scope.data.useritems.moddat = $scope.getmodat();
-                $scope.data.useritems.mablaghword = $scope.getmablagh();
                 $scope.data.requesttype = 'contract';
             } else {
                 $scope.data.requesttype = 'itrequest';
@@ -150,8 +148,6 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
 
     $scope.printbtnclick = function () {
         if ($scope.userselect==3) {
-            $scope.data.useritems.moddat = $scope.getmodat();
-            $scope.data.useritems.mablaghword = $scope.getmablagh();
             $scope.pdfcontent = itRequestService.openpdf($scope.data, function(pdfcontent) {$scope.pdfcontent = pdfcontent}, $scope.userselect);
         }
     }
@@ -170,32 +166,20 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         $scope.data.applicant = val;
     }
 
-    $scope.getmodat = function() {
-        if ($scope.userselect==3 && $scope.data) {
-            if (typeof $scope.data.useritems.startdate !== 'undefined' && typeof $scope.data.useritems.enddate !== 'undefined') {
-                var d = $scope.data.useritems.startdate.split('/');
-                var id = jalaliToGregorian(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]), '/');
-                d = id.split('/');
-                var idd = new Date(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]));
-
-                d = $scope.data.useritems.enddate.split('/');
-                var ed = jalaliToGregorian(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]), '/');
-                d = ed.split('/');
-                var edd = new Date(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]));
-
-                var diff = edd.getTime() - idd.getTime();
-                return Math.ceil(diff/24/60/60/1000)+1;
-            }
+    $scope.setmodat = function() {
+        if (typeof $scope.data.useritems.startdate !== 'undefined' && typeof $scope.data.useritems.enddate !== 'undefined') {
+            $scope.data.useritems.moddat = datediff($scope.data.useritems.startdate, $scope.data.useritems.enddate);
+            return $scope.data.useritems.moddat;
         }
         return '';
     }
 
-    $scope.getmablagh = function() {
-        if ($scope.userselect==3 && $scope.data) {
-            if ($scope.data.useritems.mablagh) {
-                return Adad($scope.data.useritems.mablagh);
-            }
+    $scope.setmablagh = function() {
+        if ($scope.data.useritems.mablagh) {
+            $scope.data.useritems.mablaghword = adad($scope.data.useritems.mablagh);
+            return $scope.data.useritems.mablaghword;
         }
+        return '';
     }
 
     var getdataCallback = function(data) {
