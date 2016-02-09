@@ -166,22 +166,6 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         $scope.data.applicant = val;
     }
 
-    $scope.setmodat = function() {
-        if (typeof $scope.data.useritems.startdate !== 'undefined' && typeof $scope.data.useritems.enddate !== 'undefined') {
-            $scope.data.useritems.moddat = datediff($scope.data.useritems.startdate, $scope.data.useritems.enddate);
-            return $scope.data.useritems.moddat;
-        }
-        return '';
-    }
-
-    $scope.setmablagh = function() {
-        if ($scope.data.useritems.mablagh) {
-            $scope.data.useritems.mablaghword = adad($scope.data.useritems.mablagh);
-            return $scope.data.useritems.mablaghword;
-        }
-        return '';
-    }
-
     var getdataCallback = function(data) {
         $scope.requestLevel = 1 + requestStatus.indexOf(data.status);
         //data binding
