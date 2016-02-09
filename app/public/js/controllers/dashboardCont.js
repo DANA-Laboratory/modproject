@@ -44,12 +44,12 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
                 $scope.newrequestclick(melicode);
             }
         })
-    });    
+    });
 
     $scope.setpageid = function (pid) {
         $scope.pageid = pid;
     };
-    
+
     $scope.newrequestclick = function (id) {
         $scope.requestLevel = 0;
         $scope.isCreator = true;
@@ -69,7 +69,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             $scope.data.useritems.mablaghtype = 'ساعت آموزش';
             $scope.data.useritems.melicode = id;
             $scope.data.useritems.startdate = $scope.data.initdate;
-        }        
+        }
 
         var minutes = date.getMinutes();
         minutes = (minutes===0) ? ('00') : (minutes<10 ? ('0' + minutes) : minutes);
@@ -79,25 +79,25 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     };
 
     $scope.viewrequestclick = function (id) {
-        $scope.readonly = true; 
+        $scope.readonly = true;
         $scope.openrequestclick(id);
     };
-    
+
     $scope.openrequestclick = function (id) {
         $scope.hidetableclick();
         $scope.setpageid(1);
     };
-    
+
     $scope.toggleconfig = function () {
         $scope.showConfig = !$scope.showConfig;
     }
-    
+
     $scope.hidetableclick = function () {
         $scope.hidetable =  true;
         $scope.hiderequest = false;
         $scope.showConfig = false;
     };
-     
+
     $scope.backclick = function () {
         if ($scope.userselect == 1) {
             $scope.data = {};
@@ -110,11 +110,11 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             $scope.$parent.userselect = false;
         };
     };
-    
+
     $scope.deleterequest =function () {
         itRequestService.deleterequest($scope.backclick);
     }
-    
+
     $scope.$on('topnavClick', function(event){
         $scope.data = {};
         selectedRequestId = -1;
@@ -124,15 +124,15 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             $scope.hiderequest = true;
         }
     });
-    
+
     $scope.updaterequest = function() {
         if ($scope.requestLevel>0) {
             $scope.message = 'به روز رسانی....';
             itRequestService.updaterequest(function () {setTimeout(function(){$scope.message = ''; $scope.$apply();}, 300);}, $scope.data);
         }
     };
-    
-    $scope.insertbtnclick = function () {
+
+    $scope.submitbtnclick = function () {
         if ($scope.requestLevel!==0) {
             $scope.updaterequest();
             $scope.backclick();
@@ -147,7 +147,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             itRequestService.insertrequest($scope.backclick, $scope.data);
         }
     }
-    
+
     $scope.printbtnclick = function () {
         if ($scope.userselect==3) {
             $scope.data.useritems.moddat = $scope.getmodat();
@@ -155,7 +155,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             $scope.pdfcontent = itRequestService.openpdf($scope.data, function(pdfcontent) {$scope.pdfcontent = pdfcontent}, $scope.userselect);
         }
     }
-    
+
     $scope.updatestatus = function (id) {
         $scope.data.status = requestStatus[id];
         var date = new Date();
@@ -165,31 +165,31 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         $scope.data.actiontime = date.getHours() + ':' + minutes;
         itRequestService.updatestatus($scope.backclick, $scope.data);
     }
-    
+
     $scope.setUserIdName = function(index, val) {
         $scope.data.applicant = val;
     }
-    
+
     $scope.getmodat = function() {
         if ($scope.userselect==3 && $scope.data) {
             if (typeof $scope.data.useritems.startdate !== 'undefined' && typeof $scope.data.useritems.enddate !== 'undefined') {
                 var d = $scope.data.useritems.startdate.split('/');
                 var id = jalaliToGregorian(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]), '/');
-                d = id.split('/'); 
+                d = id.split('/');
                 var idd = new Date(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]));
-                
+
                 d = $scope.data.useritems.enddate.split('/');
                 var ed = jalaliToGregorian(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]), '/');
                 d = ed.split('/');
                 var edd = new Date(parseInt(d[0]), parseInt(d[1]), parseInt(d[2]));
-                
+
                 var diff = edd.getTime() - idd.getTime();
                 return Math.ceil(diff/24/60/60/1000)+1;
             }
         }
         return '';
     }
-    
+
     $scope.getmablagh = function() {
         if ($scope.userselect==3 && $scope.data) {
             if ($scope.data.useritems.mablagh) {
@@ -197,7 +197,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             }
         }
     }
-    
+
     var getdataCallback = function(data) {
         $scope.requestLevel = 1 + requestStatus.indexOf(data.status);
         //data binding
@@ -223,7 +223,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             $scope.data.cancelwhy  = $scope.data.actiondescription;
         }
     }
-    
+
     $(function () {
         $('#requestsTable').on('all.bs.table', function (e, name, args) {
             //console.log('Event:', name, ', data:', args);
