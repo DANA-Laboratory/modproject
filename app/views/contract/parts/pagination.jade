@@ -5,8 +5,11 @@ div.pull-right
   .row 
     a.btn.btn-primary.btn-circle(data-toggle='tooltip', title='درخواست', ng-click='setpageid(1)', href='#contractprimary', ng-class='pageid===1 ? "btn-toggle" : ""')
       span.glyphicon.glyphicon-pencil
-  .row(ng-show='requestLevel>=1')
-    a.btn.btn-success.btn-circle(data-toggle='tooltip', title='تصویر قرارداد', ng-click='printbtnclick(); setpageid(2)', href='#printpreview', ng-class='pageid===2 ? "btn-toggle" : ""')
+  .row(ng-show='requestLevel>1 || (requestLevel===1 && isCreator)')
+    a.btn.btn-success.btn-circle(data-toggle='tooltip', title='پیوست ها', ng-click='printbtnclick(); setpageid(2)', href='#attachments', ng-class='pageid===2 ? "btn-toggle" : ""')
+      span.glyphicon.glyphicon-paperclip
+  .row(ng-show='requestLevel>1 || (requestLevel===1 && isCreator)')
+    a.btn.btn-success.btn-circle(data-toggle='tooltip', title='تصویر قرارداد', ng-click='printbtnclick(); setpageid(3)', href='#printpreview', ng-class='pageid===3 ? "btn-toggle" : ""')
       span.glyphicon.glyphicon-print
 script.
     $(function () {

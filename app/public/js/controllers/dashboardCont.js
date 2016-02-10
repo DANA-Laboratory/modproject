@@ -20,6 +20,9 @@ dashboardApp.config(['$routeProvider', function($routeProvider) {
     .when('/printpreview', {
       templateUrl: 'contract/panelPrintPreview'
     })
+    .when('/attachments', {
+      templateUrl: 'contract/attachments'
+    })
   }]);
 
 dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
@@ -66,6 +69,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             $scope.data.owneritems = {};
             var sd = $scope.data.initdate.split('/');
             $scope.data.useritems.enddate = parseInt(sd[0]) + 1 + '/' + sd[1] + '/' + sd[2];
+            $scope.data.useritems.moddat = "365";
             $scope.data.useritems.mablaghtype = 'ساعت آموزش';
             $scope.data.useritems.melicode = id;
             $scope.data.useritems.startdate = $scope.data.initdate;
