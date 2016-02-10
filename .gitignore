@@ -79,3 +79,6 @@ nosetests.xml
 
 #temp statements
 /xelatex/
+
+# ctags #
+.tags
