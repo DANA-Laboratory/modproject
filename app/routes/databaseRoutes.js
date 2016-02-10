@@ -10,7 +10,7 @@ module.exports = function (app, io, appConfig, db) {
     var replaceIDwithNameFamily = function (row) {
         var userAccounts = mypassport.userAccounts();
         for (var user in userAccounts) {
-            if ([user].id === row.owner) {
+            if (userAccounts[user].id === row.owner) {
                 row.owner = userAccounts[user].name + ' ' + userAccounts[user].family;
             }
             if (userAccounts[user].id === row.user) {
@@ -47,6 +47,7 @@ module.exports = function (app, io, appConfig, db) {
             ret.push(row.count);
             if (ret.length === 2 * appConfig.status.length) {
                 res.json(ret);
+                console.log(ret);
             }
         };
         db.serialize(function () {
@@ -57,27 +58,23 @@ module.exports = function (app, io, appConfig, db) {
         });
     });
 
-    app.get('/data/table/:type', mypassport.ensureAuthenticated, function (req, res) {
-        var callback = function (err, rows) {
-            for (var row in rows) {
-                formatdata(rows[row]);
-            }
-            res.json(rows);
-        };
-        db.all('SELECT * from requests where ((user=' + req.user.id  + ' OR owner=' + req.user.id + ') AND (status=? OR status=?) AND requesttype=?)', ['ثبت شده', 'در دست اقدام', req.params.type], callback);
-    });
-
     app.get('/data/table/:type/:status', mypassport.ensureAuthenticated, function (req, res) {
         var callback = function (err, rows) {
-            for (var row in rows) {
-                formatdata(rows[row]);
+            if(err) {
+                console.log("get table data fails: ", err);
+            } else {
+                for (var row in rows) {
+                    formatdata(rows[row]);
+                }
+                console.log(rows);
+                res.json(rows);
             }
-            res.json(rows);
         };
         if (req.params.status > 3) {
             req.params.status -= 4;
         }
-        db.all('SELECT * from requests where (user=? OR owner=?) AND status=? AND requesttype=?', [req.user.id, req.user.id, appConfig.status[req.params.status], req.params.type], callback);
+//        db.all('SELECT * from requests where ((user=' + req.user.id  + ' OR owner=' + req.user.id + ') AND (((status=\'' + appConfig.status[0] +'\' OR status=\'' + appConfig.status[1] + '\') AND ?<0) OR status=?) AND (requesttype=? OR ?=\'ALL\'))', [req.params.status, appConfig.status[req.params.status], req.params.type, req.params.type], callback);
+        db.all('SELECT * from requests where ((user=' + req.user.id  + ' OR owner=' + req.user.id + ') AND (?<0) AND (requesttype=? OR ?=\'ALL\'))', [req.params.status, req.params.type, req.params.type], callback);
     });
 
     app.post('/data/updateowneritems/:requestID', mypassport.ensureAuthenticated, function (req, res) {

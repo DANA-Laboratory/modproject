@@ -2,7 +2,7 @@
 
 var dashboardApp = angular.module('dashboardApp', ['ngRoute', 'ngMask', 'ui.bootstrap']);
 var socket = io();
- 
+
 socket.on('update', function(data) {
     console.log("need referesh...");
 });
@@ -10,17 +10,17 @@ socket.on('error', console.error.bind(console));
 socket.on('message', console.log.bind(console));
 
 dashboardApp.service('itRequestService', function($http, $sce){
-    
+
     this.useritems = {};
     this.owneritems = {};
-    
+
     this.updatetasks = function(callback, tasks) {
       var selectedtasks = [];
       for (var task in tasks) {
         if (tasks[task].selected) {
             selectedtasks.push(tasks[task].name);
         }
-      }  
+      }
       $http({
           method: 'post',
           url: '/data/updateowneritems/' + selectedRequestId,
@@ -32,7 +32,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
           console.log("error update owneritems");
       });
     };
-    
+
     this.getcities = function(callback) {
       $http({
           method: 'GET',
@@ -43,7 +43,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
           console.log("error get side bar data");
       });
     };
-    
+
     this.refereshnavbar = function(callback) {
       $http({
           method: 'GET',
@@ -55,15 +55,15 @@ dashboardApp.service('itRequestService', function($http, $sce){
           console.log("error get side bar data");
       });
     };
-    
+
     this.refreshTable = function (status) {
-        if (null==status) {
-            $('#requestsTable').bootstrapTable('refresh', {url: '/data/table/itrequest'});
+        if (isNaN(status)) {
+            $('#requestsTable').bootstrapTable('refresh', {url: '/data/table/itrequest/-1'});
         } else {
             $('#requestsTable').bootstrapTable('refresh', {url: '/data/table/itrequest/' + status});
         }
     }
-    
+
     this.getdata = function (callback) {
         if (selectedRequestId!==-1) {
             $http({
@@ -77,7 +77,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
             });
         }
     };
-  
+
     this.updatestatus = function (callback, data) {
         $http({
             method: 'post',
@@ -90,7 +90,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
             console.log("error update status");
         });
     };
-    
+
     this.selectusercontracts = function (melicode, callback) {
         $http({
             method: 'GET',
@@ -102,7 +102,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
             console.log("error get user requests");
         });
     };
-    
+
     this.insertrequest = function (callback, data) {
         $http({
             method: 'post',
@@ -115,7 +115,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
             console.log("error insert request");
         });
     };
-       
+
     this.updaterequest = function (callback, data) {
         $http({
             method: 'post',
@@ -128,7 +128,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
             console.log("error update request items");
         });
     };
-    
+
     this.deleterequest = function (callback) {
         $http({
             method: 'post',
@@ -141,7 +141,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
             console.log("delete request error");
         });
     };
-    
+
     this.getusers = function (callback) {
         $http({
             method: 'get',
@@ -152,7 +152,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
             console.log("error get users list");
         });
     };
-    
+
     this.douser = function (data, callback, whattodo) {
         $http({
             method: 'post',
@@ -165,7 +165,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
             console.log('error ' + whattodo + ' user account');
         });
     };
-    
+
     this.doitem = function (data, whattodo, callback) {
         $http({
             method: 'post',
@@ -178,8 +178,8 @@ dashboardApp.service('itRequestService', function($http, $sce){
         }).error(function(data, status, headers, config) {
             console.log('error ' + whattodo + ' item');
         });
-    };    
-    
+    };
+
     //open contract && statement
     this.openpdf = function (data, callback, userselect) {
         var addr = 'mali';
@@ -199,7 +199,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
             console.log('error Open state');
         });
     };
-    
+
     this.getuserstatedates = function (callback) {
         $http({
             method: 'get',
@@ -210,5 +210,5 @@ dashboardApp.service('itRequestService', function($http, $sce){
             console.log("error get user state dates");
         });
     };
-    
+
 });

@@ -1,39 +1,45 @@
 'use strict';
 
 dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
-    
+
     $scope.requestStatus = requestStatus;
     var activeid = null;
-    
+    $scope.isreceive = 1;
+
     var active= function (id) {
         var ac = ['btn-default','btn-default','btn-default','btn-default','btn-default','btn-default','btn-default','btn-default','btn-default','btn-default'];
-        activeid = null;
-        if (id != null) {
+        if (!isNaN(id)) {
             ac[id] = 'btn-info';
-            activeid = id;
         }
         return ac
     }
-    
+
     $scope.liclick = function (id) {
-        $scope.active = active(id);
-        itRequestService.refreshTable(id);
+        if (id === "receive") {
+            $scope.isreceive = 1;
+        }
+        if (id === "send") {
+            $scope.isreceive = 0;
+        }
+        activeid = id;
+        $scope.active = active(activeid);
+        itRequestService.refreshTable(activeid);
         $scope.$broadcast('topnavClick');
         $scope.userselect = 1;
     };
-    
-    $scope.active = active(null);
+
+    $scope.active = active("receive");
     itRequestService.refereshnavbar(function(data) {$scope.ndata = data;});
-    
+
     $scope.$on('refereshnavbar', function(event){
         itRequestService.refreshTable(activeid);
         itRequestService.refereshnavbar(function(data) {$scope.ndata = data;});
     });
-    
+
     $scope.accountsclick = function() {
         $('#accountsManegement').modal('show');
-    }; 
-    
+    };
+
     //get list of dates of current user statements
     $scope.malilogin = function() {
         itRequestService.getuserstatedates(function(data) {
@@ -43,12 +49,12 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
                 $scope.pid = $scope.pids[0];
                 $scope.statedate = $scope.dates[$scope.dates.length-1];
                 // default selection is newest
-                $scope.selectedstatedate =  $scope.statedate;  
-                $scope.selectedpid =  $scope.pid;  
+                $scope.selectedstatedate =  $scope.statedate;
+                $scope.selectedpid =  $scope.pid;
             }
         });
     };
-    
+
     $scope.contractuserlogin = function() {
         itRequestService.getusers(function(data) {
             $scope.users = [];
@@ -58,31 +64,31 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
                 }
             }
             $scope.selectedmelicode = $scope.melicode;
-        }); 
+        });
     };
-    
+
     //show state click
     $scope.openstate = function() {
         if($scope.selectedstatedate && ($scope.selectedstatedate === $scope.statedate))
             $scope.pdfcontent = itRequestService.openpdf({date : $scope.selectedstatedate, pid : $scope.selectedpid}, function(pdfcontent) {$scope.pdfcontent = pdfcontent; $scope.userselect = 2;}, $scope.userselect);
         else
             alert('فیش حقوقی در تاریخ ' + $scope.statedate + ' وجود ندارد.');
-    };      
-    
+    };
+
     //typeaheads-on-select
     $scope.setdate = function(item) {
         $scope.selectedstatedate = item;
     }
-    
+
     $scope.setpid = function(item) {
         $scope.selectedpid = item;
     }
-    
+
     $scope.setmelicode = function(item) {
         $scope.selectedmelicode = $scope.melicode;
         /*TODO somthing with selected teacher*/
     }
-    
+
     $scope.addguestuser = function() {
         if ($scope.melicode) {
             if($scope.selectedmelicode !== $scope.melicode)
@@ -98,14 +104,14 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
                 }
                 else
                     alert('کد ملی باید یک عدد 10 رقمی باشد');
-            } 
+            }
             else
                 alert('کاربر مورد نظر وجود دارد!');
         }
         else
             alert('ورود کد ملی الزامی است');
     }
-    
+
     var teacherexists = function() {
         if ($scope.melicode) {
             if (String($scope.melicode).length===10 && !isNaN($scope.melicode)) {
@@ -123,7 +129,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
         }
         return -1;
     }
-    
+
     $scope.removeguestuser = function() {
         var te = teacherexists();
         if (te === 1) {
