@@ -5,13 +5,13 @@ var requestStatus = ['ثبت شده','در دست اقدام','خاتمه ياف
 
 dashboardApp.config(['$routeProvider', function($routeProvider) {
   $routeProvider
-    .when('/primary', {
+    .when('/itprimary', {
       templateUrl: 'itRequest/panelPrimary'
     })
-    .when('/success', {
+    .when('/itsuccess', {
       templateUrl: 'itRequest/panelSuccess'
     })
-    .when('/action', {
+    .when('/itaction', {
       templateUrl: 'itRequest/panelAction'
     })
     .when('/contractprimary', {
@@ -28,7 +28,7 @@ dashboardApp.config(['$routeProvider', function($routeProvider) {
 dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     $scope.pageid = 1;
     $scope.isCreator = null;
-    // defult views per userselect
+    // defult views per requesttype
     $scope.hidetable =  false;
     $scope.hiderequest = true;
     $scope.showConfig = false;
@@ -60,11 +60,11 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         $scope.data = {};
         $scope.data.initdate = gregorianToJalali(date, '/');
 
-        if ($scope.userselect==1) {
+        if ($scope.requesttype === 'itrequest') {
             $scope.data.description = '';
             $scope.data.useritems = [];
         }
-        if ($scope.userselect==3) {
+        if ($scope.requesttype === 'contract') {
             $scope.data.useritems = {};
             $scope.data.owneritems = {};
             var sd = $scope.data.initdate.split('/');
@@ -103,16 +103,12 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     };
 
     $scope.backclick = function () {
-        if ($scope.userselect == 1) {
-            $scope.data = {};
-            selectedRequestId = -1;
-            $scope.isCreator = null;
-            $scope.$emit('refereshnavbar');
-            $scope.hidetable =  false;
-            $scope.hiderequest = true;
-        } else {
-            $scope.$parent.userselect = false;
-        };
+        $scope.data = {};
+        selectedRequestId = -1;
+        $scope.isCreator = null;
+        $scope.$emit('refereshnavbar');
+        $scope.hidetable =  false;
+        $scope.hiderequest = true;
     };
 
     $scope.deleterequest =function () {
@@ -141,18 +137,14 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             $scope.updaterequest();
             $scope.backclick();
         } else {
-            if ($scope.userselect==3) {
-                $scope.data.requesttype = 'contract';
-            } else {
-                $scope.data.requesttype = 'itrequest';
-            }
+            $scope.data.requesttype = $scope.requesttype;
             itRequestService.insertrequest($scope.backclick, $scope.data);
         }
     }
 
     $scope.printbtnclick = function () {
-        if ($scope.userselect==3) {
-            $scope.pdfcontent = itRequestService.openpdf($scope.data, function(pdfcontent) {$scope.pdfcontent = pdfcontent}, $scope.userselect);
+        if ($scope.requesttype === 'contract') {
+            $scope.pdfcontent = itRequestService.openpdf($scope.data, function(pdfcontent) {$scope.pdfcontent = pdfcontent}, $scope.requesttype);
         }
     }
 
@@ -169,26 +161,34 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     var getdataCallback = function(data) {
         $scope.requestLevel = 1 + requestStatus.indexOf(data.status);
         //data binding
+        data.useritems = JSON.parse(data.useritems);
         $scope.data = data;
         $scope.isCreator = data.isCreator;
-        for (var task in $scope.tasks) {
-            if (null!=$scope.data.owneritems && $scope.data.owneritems.indexOf($scope.tasks[task].name) > -1) {
-                $scope.tasks[task].selected = true;
-            } else {
-                $scope.tasks[task].selected = false;
+        $scope.requesttype = data.requesttype;
+        if($scope.requesttype === 'itrequest') {
+            $scope.primary = '#itprimary';
+            for (var task in $scope.tasks) {
+                if (null!=$scope.data.owneritems && $scope.data.owneritems.indexOf($scope.tasks[task].name) > -1) {
+                    $scope.tasks[task].selected = true;
+                } else {
+                    $scope.tasks[task].selected = false;
+                }
             }
-        }
-        $scope.data.actionuser = $scope.currentUserFullName;
-        if ($scope.requestLevel === 3) {
-            $scope.data.actiondate = $scope.data.enddate;
-            $scope.data.actiontime = $scope.data.endtime;
-            $scope.data.actionuser = $scope.data.enduser;
-        }
-        if ($scope.requestLevel === 4) {
-            $scope.data.actiondate = $scope.data.canceldate;
-            $scope.data.actiontime = $scope.data.canceltime;
-            $scope.data.actionuser = $scope.data.canceluser;
-            $scope.data.cancelwhy  = $scope.data.actiondescription;
+            $scope.data.actionuser = $scope.currentUserFullName;
+            if ($scope.requestLevel === 3) {
+                $scope.data.actiondate = $scope.data.enddate;
+                $scope.data.actiontime = $scope.data.endtime;
+                $scope.data.actionuser = $scope.data.enduser;
+            }
+            if ($scope.requestLevel === 4) {
+                $scope.data.actiondate = $scope.data.canceldate;
+                $scope.data.actiontime = $scope.data.canceltime;
+                $scope.data.actionuser = $scope.data.canceluser;
+                $scope.data.cancelwhy  = $scope.data.actiondescription;
+            }
+        } else if($scope.requesttype ===  'contract') {
+            $scope.primary = '#contractprimary';
+            $scope.data.owneritems = JSON.parse(data.owneritems);
         }
     }
 

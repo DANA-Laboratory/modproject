@@ -9,7 +9,7 @@ include head.jade
             .span.icon-bar
             .span.icon-bar
             .span.icon-bar
-          a.navbar-brand.hidden-sm.hidden-xs(ng-click='userselect=false', href='/')
+          a.navbar-brand.hidden-sm.hidden-xs(ng-click='requesttype=false', href='/')
             span.glyphicon.glyphicon-home
             |  سامانه خدمات مکانیزه
         .navbar-collapse.collapse.text-center(id="myNavbar")
@@ -33,7 +33,7 @@ include head.jade
     if (user)
       include dashboard.jade
       if (user.isMaliUser)
-        .embed-responsive.embed-responsive-16by9(ng-show='userselect==2')
+        .embed-responsive.embed-responsive-16by9(ng-show='requesttype==="statement"')
           iframe.embed-responsive-item(ng-src='{{pdfcontent}}')
       if (user.isOwner)
         include modals/uploadDataBase.jade

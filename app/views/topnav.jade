@@ -9,5 +9,8 @@
     span.badge(style='margin-right: 1px')  {{ndata[0] + ndata[2]}}
 span(style='margin: 2px')
 .btn-group
-  .btn.btn-sm.navbar-btn(href='#', ng-repeat='i in [0,1,2,3]', ng-click='liclick(4*isreceive+i)', ng-class='active[4*isreceive+i]') {{requestStatus[i]}}
+  .btn.btn-sm.navbar-btn(href='#', ng-repeat='i in [0,1,2]', ng-click='liclick(4*isreceive+i)', ng-class='active[4*isreceive+i]') {{requestStatus[i]}}
     span.badge(style='margin-right: 1px')  {{ndata[isreceive+2*i]}}
+  .btn.btn-sm.navbar-btn(href='#', ng-click='liclick(4*isreceive+3)', ng-class='active[4*isreceive+3]')
+    span.glyphicon.glyphicon-trash(style='margin-left: 2px')
+    span.badge(style='margin-right: 1px')  {{ndata[isreceive+2*3]}}

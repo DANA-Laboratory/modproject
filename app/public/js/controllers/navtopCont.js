@@ -2,11 +2,13 @@
 
 dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
 
-    $scope.requestStatus = requestStatus;
-    var activeid = null;
+    $scope.requestStatus = ['ثبت شده','در دست اقدام','خاتمه يافته','متوقف شده'];
     $scope.isreceive = 1;
+    $scope.requesttype = false;
 
-    var active= function (id) {
+    var activeid = null;
+
+    var active = function (id) {
         var ac = ['btn-default','btn-default','btn-default','btn-default','btn-default','btn-default','btn-default','btn-default','btn-default','btn-default'];
         if (!isNaN(id)) {
             ac[id] = 'btn-info';
@@ -23,16 +25,16 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
         }
         activeid = id;
         $scope.active = active(activeid);
-        itRequestService.refreshTable(activeid);
+        itRequestService.refreshTable(activeid, 'ALL', $scope.isreceive);
         $scope.$broadcast('topnavClick');
-        $scope.userselect = 1;
+        $scope.requesttype= true;
     };
 
     $scope.active = active("receive");
     itRequestService.refereshnavbar(function(data) {$scope.ndata = data;});
 
     $scope.$on('refereshnavbar', function(event){
-        itRequestService.refreshTable(activeid);
+        itRequestService.refreshTable(activeid, 'ALL', $scope.isreceive);
         itRequestService.refereshnavbar(function(data) {$scope.ndata = data;});
     });
 
@@ -70,7 +72,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
     //show state click
     $scope.openstate = function() {
         if($scope.selectedstatedate && ($scope.selectedstatedate === $scope.statedate))
-            $scope.pdfcontent = itRequestService.openpdf({date : $scope.selectedstatedate, pid : $scope.selectedpid}, function(pdfcontent) {$scope.pdfcontent = pdfcontent; $scope.userselect = 2;}, $scope.userselect);
+            $scope.pdfcontent = itRequestService.openpdf({date : $scope.selectedstatedate, pid : $scope.selectedpid}, function(pdfcontent) {$scope.pdfcontent = pdfcontent; $scope.requesttype = 'statement';}, 'statement');
         else
             alert('فیش حقوقی در تاریخ ' + $scope.statedate + ' وجود ندارد.');
     };

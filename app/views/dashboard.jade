@@ -1,12 +1,7 @@
-if (user.isItUser)
-  .container-fluid(ng-controller='dashboardCont',ng-show='userselect==1', ng-init='tasks=#{tasks}; useritems=#{useritems}')
+if (user.isItUser || user.isGuest || user.isTeacher || user.isKarshenas)
+  .container-fluid(ng-controller='dashboardCont', ng-hide='requesttype===false', ng-init='tasks=#{tasks}; useritems=#{useritems}')
     div(ng-hide='hidetable', style='margin : 10px')
       include tableplusnav.jade
     div(style='margin : 10px')
       div.col-md-12(ng-hide='hiderequest', ng-if='requestLevel<5', style='margin: 10px')
-        .ng-view
-if (user.isGuest || user.isTeacher || user.isKarshenas)
-  .container-fluid(ng-controller='dashboardCont', ng-show='userselect==3')
-    div(style='margin : 10px')
-      div.col-md-12(ng-controller='contractCont', ng-hide='hiderequest', style='margin: 10px')
         .ng-view

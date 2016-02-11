@@ -56,11 +56,11 @@ dashboardApp.service('itRequestService', function($http, $sce){
       });
     };
 
-    this.refreshTable = function (status) {
+    this.refreshTable = function (status, requesttype, isreceive) {
         if (isNaN(status)) {
-            $('#requestsTable').bootstrapTable('refresh', {url: '/data/table/itrequest/-1'});
+            $('#requestsTable').bootstrapTable('refresh', {url: '/data/table/' + requesttype + '/-1/' + isreceive});
         } else {
-            $('#requestsTable').bootstrapTable('refresh', {url: '/data/table/itrequest/' + status});
+            $('#requestsTable').bootstrapTable('refresh', {url: '/data/table/' + requesttype + '/' + status + '/' + isreceive});
         }
     }
 
@@ -70,7 +70,6 @@ dashboardApp.service('itRequestService', function($http, $sce){
                 method: 'GET',
                 url: '/data/' + selectedRequestId
             }).success(function(data, status, headers, config) {
-                data.useritems = JSON.parse(data.useritems);
                 callback(data);
             }).error(function(data, status, headers, config) {
                 console.log("error get");
@@ -181,14 +180,10 @@ dashboardApp.service('itRequestService', function($http, $sce){
     };
 
     //open contract && statement
-    this.openpdf = function (data, callback, userselect) {
-        var addr = 'mali';
-        if (userselect === 3) {
-            addr = 'contract';
-        }
+    this.openpdf = function (data, callback, requesttype) {
         $http({
             method: 'post',
-            url: '/' + addr + '/show/',
+            url: '/' + requesttype + '/show/',
             responseType: 'arraybuffer',
             data: data
         }).success(function(data, status, headers, config) {

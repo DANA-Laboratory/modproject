@@ -33,11 +33,30 @@ module.exports = function (app, io, appConfig, db) {
         row.start = row.startdate !== null ? row.startdate + ' ' + row.starttime : '-';
 
         //remove formats from string
-        if (row.owneritems !== null) {
-            row.owneritems = row.owneritems.replace(/[\"\[\]]/g, ' ');
-        }
-        if (row.useritems !== null) {
-            row.useritems = row.useritems.replace(/[\"\[\]]/g, ' ');
+        if (row.requesttype === 'contract') {
+            var useritems = JSON.parse(row.useritems);
+            row.useritems = 'تکمیل قرارداد به مبلغ ' + useritems.mablagh + ' ریال ' + ' به ازای هر ' + useritems.mablaghtype + ' به مدت ' + useritems.moddat + ' روز' + ' از تاریخ ' + useritems.startdate;
+            switch (row.status) {
+            case appConfig.status[0]:
+                row.owneritems = 'انتظار تکمیل';
+                break;
+            case appConfig.status[1]:
+                row.owneritems = 'تکمیل گردید، انتظار چاپ';
+                break;
+            case appConfig.status[2]:
+                row.owneritems = 'چاپ شده';
+                break;
+            case appConfig.status[3]:
+                row.owneritems = 'رد شده';
+                break;
+            }
+        } else {
+            if (row.owneritems !== null) {
+                row.owneritems = row.owneritems.replace(/[\"\[\]]/g, ' ');
+            }
+            if (row.useritems !== null) {
+                row.useritems = row.useritems.replace(/[\"\[\]]/g, ' ');
+            }
         }
     };
 
@@ -47,7 +66,6 @@ module.exports = function (app, io, appConfig, db) {
             ret.push(row.count);
             if (ret.length === 2 * appConfig.status.length) {
                 res.json(ret);
-                console.log(ret);
             }
         };
         db.serialize(function () {
@@ -58,23 +76,22 @@ module.exports = function (app, io, appConfig, db) {
         });
     });
 
-    app.get('/data/table/:type/:status', mypassport.ensureAuthenticated, function (req, res) {
+    app.get('/data/table/:type/:status/:isreceive', mypassport.ensureAuthenticated, function (req, res) {
         var callback = function (err, rows) {
-            if(err) {
-                console.log("get table data fails: ", err);
+            if (err) {
+                console.log('get table data fails: ', err);
             } else {
                 for (var row in rows) {
                     formatdata(rows[row]);
                 }
-                console.log(rows);
                 res.json(rows);
             }
         };
-        if (req.params.status > 3) {
-            req.params.status -= 4;
+        var status = parseInt(req.params.status, 10);
+        if (status > 3) {
+            status -= 4;
         }
-//        db.all('SELECT * from requests where ((user=' + req.user.id  + ' OR owner=' + req.user.id + ') AND (((status=\'' + appConfig.status[0] +'\' OR status=\'' + appConfig.status[1] + '\') AND ?<0) OR status=?) AND (requesttype=? OR ?=\'ALL\'))', [req.params.status, appConfig.status[req.params.status], req.params.type, req.params.type], callback);
-        db.all('SELECT * from requests where ((user=' + req.user.id  + ' OR owner=' + req.user.id + ') AND (?<0) AND (requesttype=? OR ?=\'ALL\'))', [req.params.status, req.params.type, req.params.type], callback);
+        db.all('SELECT * from requests where ((((?) AND (user=' + req.user.id  + ')) OR ((?) AND (owner=' + req.user.id + '))) AND (((status=\'' + appConfig.status[0] + '\' OR status=\'' + appConfig.status[1] + '\') AND ?<0) OR status=?) AND (requesttype=? OR ?=\'ALL\'))', [req.params.isreceive, !req.params.isreceive, status, appConfig.status[status], req.params.type, req.params.type], callback);
     });
 
     app.post('/data/updateowneritems/:requestID', mypassport.ensureAuthenticated, function (req, res) {

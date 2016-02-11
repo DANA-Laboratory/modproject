@@ -36,7 +36,7 @@ module.exports = function (app, dbma) {
             console.log(req.connection.remoteAddress);
         }
     });
-    app.post('/mali/show', function (req, res) {
+    app.post('/statement/show', function (req, res) {
         var pid = '';
         if (req.user.isMaliAdmin) {
             pid = req.body.pid;
@@ -63,7 +63,7 @@ module.exports = function (app, dbma) {
         };
         dbma.get('SELECT data FROM statements WHERE pid=? AND date=?', [pid, req.body.date], callback);
     });
-    
+
     app.get('/mali/list', function (req, res) {
         var data = {};
         var callbackpid = function (err, rows) {
@@ -106,7 +106,7 @@ module.exports = function (app, dbma) {
             dbma.all('SELECT date FROM statements WHERE pid=?', [req.user.pid], callbackdate);
         }
     });
-    
+
     function charcodeat(s) {
         var ret = 0;
         for (var i = 1; i < s.length; i++) {
