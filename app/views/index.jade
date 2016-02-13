@@ -23,9 +23,9 @@ include head.jade
                     span.glyphicon.glyphicon-log-in
           else
             if (user.name)
-              div(ng-init='melicode=\'#{user.melicode}\'; currentUserFullName=\'#{user.name} #{user.family}\'; isOwner=#{user.isOwner}')
+              div(ng-init='currentUserFullName=\'#{user.name} #{user.family}\'; isOwner=#{user.isOwner}')
             else
-              div(ng-init='melicode=\'#{user.melicode}\'; currentUserFullName=\'#{user.melicode}\'; isOwner=#{user.isOwner}')           
+              div(ng-init='currentUserFullName=\'#{user.melicode}\'; isOwner=#{user.isOwner}')           
             if (user.isItUser) 
               include topnav.jade
             include config.jade

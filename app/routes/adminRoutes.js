@@ -3,7 +3,7 @@
  */
 //user types, in users table:
 //isSysAdmin, isItAdmin, isMaliAdmin, isItUser, isMaliUser, isKarshenas, isGuest, isTeacher
- 
+
 'use strict';
 var mypassport = require('../passport/mypassport');
 var multer = require('multer');
@@ -27,7 +27,7 @@ module.exports = function (app, db, readAppConfig) {
         }
         res.redirect('/');
     });
-    
+
     app.get('/admin/backup', mypassport.ensureAuthenticated, function (req, res) {
         if (req.user.isOwner) {
             res.download(dbpath + '.sqlite');
@@ -35,7 +35,7 @@ module.exports = function (app, db, readAppConfig) {
             res.redirect('/');
         }
     });
-    
+
     app.get('/admin/select/users', mypassport.ensureAuthenticated, function (req, res) {
         if (req.user.isSysAdmin) {
             res.json(mypassport.userAccounts());
@@ -57,15 +57,14 @@ module.exports = function (app, db, readAppConfig) {
             }
         }
     });
-    
+
     app.post('/admin/user/:whattodo', mypassport.ensureAuthenticated, function (req, res) {
         var callback = function (err) {
             if (err) {
                 console.log(req.params.whattodo + ' user error=', err);
                 res.sendStatus(403);
             } else {
-                mypassport.readAccounts();
-                res.sendStatus(200);
+                mypassport.readAccounts(function(){res.sendStatus(200);});
             }
         };
         //Check if user want do somthing with his account
@@ -158,7 +157,7 @@ module.exports = function (app, db, readAppConfig) {
             }
         }
     });
-    
+
     app.post('/admin/item/:whattodo', mypassport.ensureAuthenticated, function (req, res) {
         if (req.user.isOwner && req.body.itemType !== 2)  {
             var callback = function (err) {
@@ -190,7 +189,7 @@ module.exports = function (app, db, readAppConfig) {
             res.redirect('/');
         }
     });
-    
+
     app.post('/admin/deleterequest', mypassport.ensureAuthenticated, function (req, res) {
         if (req.user.isOwner) {
             var callback = function (err) {

@@ -48,16 +48,3 @@
             input.form-control(type='text', ng-init='malilogin()', ng-model='statedate', typeahead-on-select='setdate($item)', typeahead='date for date in dates | filter:$viewValue | limitTo:5', placeholder='ماه و سال ...')
           .col-md-2
             button.btn.btn-info(type='button', ng-click='openstate($statedate, $pid)') نمایش فیش حقوقی
-      if (user.isKarshenas)
-        .row
-          b تعریف کاربری اساتید:
-        .col-md-12.well
-          .col-md-2
-            input.form-control(type='text', ng-init='contractuserlogin()', ng-model='melicode', typeahead-on-select='setmelicode($item)', typeahead='user.melicode for user in users | filter:$viewValue | limitTo:5', placeholder='کد ملی جستجو ...')
-          button.btn.btn-success.col-md-2(type='button', ng-click='addguestuser()', ng-hide='selectedmelicode===melicode') کاربر جدید
-          a.btn.btn-info.col-md-2(type='button', href='#contractprimary', ng-click='requesttype="contract"; $broadcast("opencontractclick", melicode);', ng-show='melicode && selectedmelicode===melicode') قرارداد جدید
-          button.btn.btn-danger.col-md-2(type='button', ng-click='removeguestuser()', ng-show='melicode && selectedmelicode===melicode') حذف
-      if (user.isGuest)
-        .row
-          b تهیه قراداد تدریس: 
-          a.btn.btn-info(type='button', ng-init='contractuserlogin()', href='#contractprimary', ng-click='requesttype="contract"; $broadcast("opencontractclick", melicode);') تکمیل قرارداد

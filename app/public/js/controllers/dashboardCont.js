@@ -44,7 +44,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
                 $scope.requestLevel = 1 + requestStatus.indexOf(contracttoopen.status);
                 $scope.hidetableclick();
             } else {
-                $scope.newrequestclick(melicode);
+                $scope.newrequestclick('contract', melicode);
             }
         })
     });
@@ -53,7 +53,8 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         $scope.pageid = pid;
     };
 
-    $scope.newrequestclick = function (id) {
+    $scope.newrequestclick = function (requesttype, id) {
+        $scope.requesttype = requesttype;
         $scope.requestLevel = 0;
         $scope.isCreator = true;
         var date = new Date();

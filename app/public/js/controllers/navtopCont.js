@@ -57,18 +57,6 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
         });
     };
 
-    $scope.contractuserlogin = function() {
-        itRequestService.getusers(function(data) {
-            $scope.users = [];
-            for (var itm in data) {
-                if (data[itm].isGuest || data[itm].isTeacher) {
-                    $scope.users.push(data[itm]);
-                }
-            }
-            $scope.selectedmelicode = $scope.melicode;
-        });
-    };
-
     //show state click
     $scope.openstate = function() {
         if($scope.selectedstatedate && ($scope.selectedstatedate === $scope.statedate))
@@ -84,67 +72,5 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
 
     $scope.setpid = function(item) {
         $scope.selectedpid = item;
-    }
-
-    $scope.setmelicode = function(item) {
-        $scope.selectedmelicode = $scope.melicode;
-        /*TODO somthing with selected teacher*/
-    }
-
-    $scope.addguestuser = function() {
-        if ($scope.melicode) {
-            if($scope.selectedmelicode !== $scope.melicode)
-            {
-                if (String($scope.melicode).length===10 && !isNaN($scope.melicode)) {
-                    var data = {};
-                    data.username=$scope.melicode;
-                    data.password=$scope.melicode;
-                    data.defaultpass=$scope.melicode;
-                    data.melicode=$scope.melicode;
-                    data.isGuest=1;
-                    itRequestService.douser(data, $scope.contractuserlogin, 'insert');
-                }
-                else
-                    alert('کد ملی باید یک عدد 10 رقمی باشد');
-            }
-            else
-                alert('کاربر مورد نظر وجود دارد!');
-        }
-        else
-            alert('ورود کد ملی الزامی است');
-    }
-
-    var teacherexists = function() {
-        if ($scope.melicode) {
-            if (String($scope.melicode).length===10 && !isNaN($scope.melicode)) {
-                var itm=0;
-                console.log($scope.users[0]);
-                while (itm < $scope.users.length && String($scope.users[itm].melicode) !== String($scope.melicode)) {
-                    itm+=1;
-                }
-                if (itm < $scope.users.length) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            }
-        }
-        return -1;
-    }
-
-    $scope.removeguestuser = function() {
-        var te = teacherexists();
-        if (te === 1) {
-            var data = {};
-            data.username=$scope.melicode;
-            $scope.melicode="";
-            itRequestService.douser(data, $scope.contractuserlogin, 'delete');
-        } else {
-            if (te === 0) {
-                alert('کاربر مورد نظر وجود ندارد!');
-            } else {
-                alert('ورود کد ملی بصورت یک عدد 10 رقمی الزامی است');
-            }
-        }
     }
  });

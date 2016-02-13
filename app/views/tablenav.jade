@@ -1,10 +1,17 @@
-.btn-group.btn-group-justified(role='group')
-  .btn-group(role='group')
-    a.btn.btn-primary(ng-href='{{primary}}', ng-click='newrequestclick()')درخواست جدید 
+.col-md-12
+  .col-md-2.btn-group(role='group')
+    button.btn.btn-primary.dropdown-toggle.col-md-12(type='button', data-toggle='dropdown') فرم جدید 
       span.glyphicon.glyphicon-plus-sign
-  .btn-group(role='group', ng-if='isOwner')
-    a.btn.btn-success(ng-href='{{primary}}', ng-click='openrequestclick()', ng-disabled='isCreator===null') بررسی 
+      | 
+      span.caret
+    ul.dropdown-menu
+      li
+        a(href='#contractprimary', ng-click='newrequestclick("contract")') قرارداد مدرسین
+      li
+        a(href='#itprimary', ng-click='newrequestclick("itrequest")') درخواست خدمت واحد خدمات کامپیوتری 
+  .col-md-2
+    a.btn.btn-success.col-md-12(ng-href='{{primary}}', ng-click='openrequestclick()', ng-disabled='isCreator===null') بررسی 
       span.glyphicon.glyphicon-zoom-in
-  .btn-group(role='group', ng-if='!isOwner')
-    a.btn.btn-info(ng-href='{{primary}}', ng-click='viewrequestclick()', ng-disabled='!isCreator') نمایش 
+  .col-md-2
+    a.btn.btn-info.col-md-12(ng-href='{{primary}}', ng-click='viewrequestclick()', ng-disabled='!isCreator') نمایش 
       span.glyphicon.glyphicon-play-circle

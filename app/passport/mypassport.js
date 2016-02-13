@@ -1,5 +1,6 @@
 'use strict';
 
+var userPasswords = [];
 var userAccounts = [];
 var LocalStrategy = require('passport-local').Strategy;
 var passport = require('passport');
@@ -11,25 +12,25 @@ var db = null;
 var ownerRowID = -1;
 
 function findById(id, fn) {
-  var idx = 0;
-  while (idx<userAccounts.length && userAccounts[idx].id!==id) {
-    idx++;
-  }
-  if (userAccounts[idx]) {
-    fn(null, userAccounts[idx]);
-  } else {
-    fn(new Error('User ' + id + ' does not exist'));
-  }
+    var idx = 0;
+    while (idx<userAccounts.length && userAccounts[idx].id!==id) {
+        idx++;
+    }
+    if (userAccounts[idx]) {
+        fn(null, userAccounts[idx]);
+    } else {
+        fn(new Error('User ' + id + ' does not exist'));
+    }
 }
 
 function findByUsername(username, fn) {
-  for (var i = 0, len = userAccounts.length; i < len; i++) {
-    var user = userAccounts[i];
-    if (user.username == username) {
-      return fn(null, user);
+    for (var i = 0, len = userAccounts.length; i < len; i++) {
+        var user = userAccounts[i];
+        if (user.username == username) {
+            return fn(null, user, userPasswords[i]);
+        }
     }
-  }
-  return fn(null, null);
+    return fn(null, null);
 }
 
 // Passport session setup.
@@ -39,13 +40,13 @@ function findByUsername(username, fn) {
 //    the user by ID when deserializing.
 //
 passport.serializeUser(function (user, done) {
-  done(null, user.id);
+    done(null, user.id);
 });
 
 passport.deserializeUser(function (id, done) {
-  findById(id, function (err, user) {
-    done(err, user);
-  });
+    findById(id, function (err, user) {
+        done(err, user);
+    });
 });
 
 // Use the LocalStrategy within Passport.
@@ -54,22 +55,22 @@ passport.deserializeUser(function (id, done) {
 //    with a user object.  In the real world, this would query a database;
 //    however, in this example we are using a baked-in set of users.
 passport.use(new LocalStrategy(
-      function (username, password, done) {
+    function (username, password, done) {
         // asynchronous verification, for effect...
         process.nextTick(function () {
-          // Find the user by username.  If there is no user with the given
-          // username, or the password is not correct, set the user to `false` to
-          // indicate failure and set a flash message.  Otherwise, return the
-          // authenticated `user`.
-            findByUsername(username, function (err, user) {
-              if (err) { return done(err); }
-              if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
-              if (user.password != password) { return done(null, false, { message: 'Invalid password' }); }
-              return done(null, user);
+            // Find the user by username.  If there is no user with the given
+            // username, or the password is not correct, set the user to `false` to
+            // indicate failure and set a flash message.  Otherwise, return the
+            // authenticated `user`.
+                findByUsername(username, function (err, user, pass) {
+                    if (err) { return done(err); }
+                    if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
+                    if (pass != password) { return done(null, false, { message: 'Invalid password' }); }
+                    return done(null, user);
+                });
             });
-          });
-        }
-        ));
+      }
+      ));
 
 // Simple route middleware to ensure user is authenticated.
 // Use this route middleware on any resource that needs to be protected.  If
@@ -78,60 +79,60 @@ passport.use(new LocalStrategy(
 // login page.
 
 exports.ensureAuthenticated =  function (req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-  req.flash('error', 'Login first');
-  res.redirect('/');
+    if (req.isAuthenticated()) { return next(); }
+    req.flash('error', 'Login first');
+    res.redirect('/');
 };
 
 exports.itUserNameIDs =  function () {
-  var itUserNameIDs = [];
-  for (var user in userAccounts) {
-      if (userAccounts[user].isItUser) {
-          itUserNameIDs.push([userAccounts[user].id, userAccounts[user].name + ' ' + userAccounts[user].family]);
-      }    
-  }
-  return itUserNameIDs;
+    var itUserNameIDs = [];
+    for (var user in userAccounts) {
+        if (userAccounts[user].isItUser) {
+            itUserNameIDs.push([userAccounts[user].id, userAccounts[user].name + ' ' + userAccounts[user].family]);
+        }
+    }
+    return itUserNameIDs;
 };
 
-exports.userAccounts = function () { 
-  return userAccounts;
+exports.userAccounts = function () {
+    return userAccounts;
 };
 
 exports.maliAccounts = function () {
-    var maliAccounts = [];
+    var selectedAccounts = [];
     for (var user in userAccounts) {
         if (userAccounts[user].isMaliUser) {
-            maliAccounts.push(userAccounts[user]);
+            selectedAccounts.push(userAccounts[user]);
         }
     }
-    return maliAccounts;
+    return selectedAccounts;
 };
 
 exports.itAccounts = function () {
-    var itAccounts = [];
+    var selectedAccounts = [];
     for (var user in userAccounts) {
         if (userAccounts[user].isItUser) {
-            itAccounts.push(userAccounts[user]);
+            selectedAccounts.push(userAccounts[user]);
         }
     }
-    return itAccounts;
+    return selectedAccounts;
 };
 
 exports.teachAccounts = function () {
-  var teachAccounts = [];
+  var selectedAccounts = [];
   for (var user in userAccounts) {
       if (userAccounts[user].isGuest || userAccounts[user].isTeacher) {
-          teachAccounts.push(userAccounts[user]);
+          selectedAccounts.push(userAccounts[user]);
       }
   }
-  return teachAccounts;
+  return selectedAccounts;
 };
 
 exports.ownerRowID = function () {
   return ownerRowID;
 }
 
-exports.readAccounts = function () {
+exports.readAccounts = function (callback) {
   if (!exists) {
       console.log('database not exists!');
   } else {
@@ -147,24 +148,28 @@ exports.readAccounts = function () {
               }
               else
                   tmpAccount.isOwner = false
+              userPasswords.push(tmpAccount.password);
+              tmpAccount.password = '***';
               userAccounts.push(tmpAccount);
-              //db.run('INSERT INTO users(id,username,password,name,family,melicode,pcode,isSysAdmin,isItAdmin,isMaliAdmin,isItUser,isMaliUser,isKarshenas,isGuest,isTeacher,defaultpass,email) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)' ,[tmpAccount.id,tmpAccount.username,tmpAccount.password,tmpAccount.name,tmpAccount.family,'',tmpAccount.pid,tmpAccount.isOwner,false,false,tmpAccount.isItUser,tmpAccount.isMaliUser,false,false,false,tmpAccount.defaultpass,tmpAccount.email],callback);             
+              //db.run('INSERT INTO users(id,username,password,name,family,melicode,pcode,isSysAdmin,isItAdmin,isMaliAdmin,isItUser,isMaliUser,isKarshenas,isGuest,isTeacher,defaultpass,email) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)' ,[tmpAccount.id,tmpAccount.username,tmpAccount.password,tmpAccount.name,tmpAccount.family,'',tmpAccount.pid,tmpAccount.isOwner,false,false,tmpAccount.isItUser,tmpAccount.isMaliUser,false,false,false,tmpAccount.defaultpass,tmpAccount.email],callback);
           }
+          if(typeof(callback) === 'function')
+            callback();
       };
       db.all('SELECT * FROM users', setUsers);
   }
 };
 
 exports.findIdByMeliCode = function(melicode) {
-  var idx = 0;
-  while (idx<userAccounts.length && userAccounts[idx].melicode!==melicode) {
-    idx++;
-  }
-  if (userAccounts[idx]) {
-    return userAccounts[idx].id;
-  } else {
-    return null;
-  }
+    var idx = 0;
+    while (idx<userAccounts.length && userAccounts[idx].melicode!==melicode) {
+        idx++;
+    }
+    if (userAccounts[idx]) {
+        return userAccounts[idx].id;
+    } else {
+        return null;
+    }
 }
 
 this.readAccounts();

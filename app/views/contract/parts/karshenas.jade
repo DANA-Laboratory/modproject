@@ -3,6 +3,32 @@
     label.control-label &nbsp;این قسمت توسط کارشناس شرکت ره آوران تکمیل گردد:
 .col-md-12.well(ng-controller='contractCont')
   .row
+    if (user.isKarshenas)
+      div(ng-if='requestLevel===0')
+        .col-md-2
+          .form-group
+            label(for='melicode')کد ملی 
+            .input-group
+              input.form-control(autocomplete='off', type='text', id='melicode', ng-init='contractuserlogin()', ng-model='data.useritems.melicode', typeahead-on-select='setmelicode($item)', typeahead='user.melicode for user in users | filter:$viewValue | limitTo:5', placeholder='کد ملی جستجو ...')
+              span.input-group-btn
+                button.btn.btn-default.dropdown-toggle(type='button', data-toggle='dropdown') عملیات 
+                  span.caret
+                ul.dropdown-menu
+                  li
+                    a(href='', ng-click='addguestuser()', ng-if='selectedmelicode!==data.useritems.melicode') تعریف کاربر مدرس جدید
+                      span.glyphicon.glyphicon-user
+                  li
+                    a(href='#contractprimary', ng-click='requesttype="contract"; $broadcast("opencontractclick", data.useritems.melicode);', ng-if='selectedmelicode===data.useritems.melicode') آخرین قرارداد 
+                      span.glyphicon.glyphicon-list-alt
+                  li
+                    a(href='', ng-click='removeguestuser()', ng-if='selectedmelicode===data.useritems.melicode') حذف کاربر
+                      span.glyphicon.glyphicon-remove  
+    if (user.isGuest)
+      a.btn.btn-info(type='button', ng-init='contractuserlogin()', href='#contractprimary', ng-click='requesttype="contract"; $broadcast("opencontractclick", data.useritems.melicode);') تکمیل قرارداد
+    .col-md-2(ng-if='requestLevel!==0')
+      .form-group
+        label(for='melicode')کد ملی 
+        input.form-control(type='text', id='melicode', ng-model='data.useritems.melicode', ng-disabled='true', required)
     .col-md-2
       .form-group
         label(for='name')نام 
@@ -11,10 +37,6 @@
       .form-group
         label(for='family')نام خانوادگي 
         input.form-control(type='text', id='family', ng-model='data.owneritems.family', ng-required='#{user.isGuest}')
-    .col-md-2
-      .form-group
-        label(for='melicode')کد ملی 
-        input.form-control(type='text', id='melicode', ng-model='data.useritems.melicode', ng-disabled='true', required)
   .row
     .col-md-2
       .form-group
