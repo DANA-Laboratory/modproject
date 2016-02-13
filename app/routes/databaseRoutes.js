@@ -70,8 +70,8 @@ module.exports = function (app, io, appConfig, db) {
         };
         db.serialize(function () {
             for (var status in appConfig.status) {
+                db.get('SELECT count(id) as count from requests where status=\'' + appConfig.status[status]  + '\'AND owner<>' + req.user.id + ' AND user=' + req.user.id, callback);
                 db.get('SELECT count(id) as count from requests where status=\'' + appConfig.status[status]  + '\' AND owner=' + req.user.id, callback);
-                db.get('SELECT count(id) as count from requests where status=\'' + appConfig.status[status]  + '\' AND user=' + req.user.id, callback);
             }
         });
     });
@@ -91,7 +91,7 @@ module.exports = function (app, io, appConfig, db) {
         if (status > 3) {
             status -= 4;
         }
-        db.all('SELECT * from requests where ((((?) AND (user=' + req.user.id  + ')) OR ((?) AND (owner=' + req.user.id + '))) AND (((status=\'' + appConfig.status[0] + '\' OR status=\'' + appConfig.status[1] + '\') AND ?<0) OR status=?) AND (requesttype=? OR ?=\'ALL\'))', [req.params.isreceive, !req.params.isreceive, status, appConfig.status[status], req.params.type, req.params.type], callback);
+        db.all('SELECT * from requests where ((((not ?) AND (owner<>' + req.user.id + ' AND user=' + req.user.id  + ')) OR ((?) AND (owner=' + req.user.id + '))) AND (((status=\'' + appConfig.status[0] + '\' OR status=\'' + appConfig.status[1] + '\') AND ?<0) OR status=?) AND (requesttype=? OR ?=\'ALL\'))', [req.params.isreceive, req.params.isreceive, status, appConfig.status[status], req.params.type, req.params.type], callback);
     });
 
     app.post('/data/updateowneritems/:requestID', mypassport.ensureAuthenticated, function (req, res) {

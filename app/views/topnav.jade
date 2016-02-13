@@ -1,11 +1,11 @@
 .btn-group
   .btn.navbar-btn.btn-sm(href='#', ng-click='liclick("receive")', ng-class='isreceive===1 ? "btn-success" : "btn-default"')  
-    span.glyphicon.glyphicon-send(style='margin-left: 2px')
-    | ارسالی
-    span.badge(style='margin-right: 1px')  {{ndata[1] + ndata[3]}}
-  .btn.navbar-btn.btn-sm(href='#', ng-click='liclick("send")', ng-class='isreceive===0 ? "btn-success" : "btn-default"')   
     span.glyphicon.glyphicon-envelope(style='margin-left: 2px')
     | دریافتی
+    span.badge(style='margin-right: 1px')  {{ndata[1] + ndata[3]}}
+  .btn.navbar-btn.btn-sm(href='#', ng-click='liclick("send")', ng-class='isreceive===0 ? "btn-success" : "btn-default"')   
+    span.glyphicon.glyphicon-send(style='margin-left: 2px')
+    | ارسالی
     span.badge(style='margin-right: 1px')  {{ndata[0] + ndata[2]}}
 span(style='margin: 2px')
 .btn-group
