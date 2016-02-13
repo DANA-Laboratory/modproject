@@ -5,10 +5,12 @@
       | 
       span.caret
     ul.dropdown-menu
-      li
-        a(href='#contractprimary', ng-click='newrequestclick("contract")') قرارداد مدرسین
-      li
-        a(href='#itprimary', ng-click='newrequestclick("itrequest")') درخواست خدمت واحد خدمات کامپیوتری 
+      if (user.isKarshenas)
+        li
+          a(href='#contractprimary', ng-click='newrequestclick("contract")') قرارداد مدرسین
+      if (user.isItUser)
+        li
+          a(href='#itprimary', ng-click='newrequestclick("itrequest")') درخواست خدمت واحد خدمات کامپیوتری 
   .col-md-2
     a.btn.btn-success.col-md-12(ng-href='{{primary}}', ng-click='openrequestclick()', ng-disabled='isCreator===null') بررسی 
       span.glyphicon.glyphicon-zoom-in

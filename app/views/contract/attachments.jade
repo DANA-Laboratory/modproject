@@ -6,6 +6,13 @@ form.request.panel.panel-info()
     .row
       include parts/pagination.jade
       .col-md-12
+        .col-sm-6.col-md-4
+          .thumbnail
+            img(src='...', alt='...')
+            .caption
+              h3 صفحه اول شناسنامه
+                a.btn.btn-primary(href='#', role='button') ارسال
+                  span.glyphicon.glyphicon-upload
   .panel-footer
     .btn.btn-default(name='buttoncancel', ng-click='backclick()') خروج
       .span.glyphicon.glyphicon-remove

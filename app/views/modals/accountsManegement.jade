@@ -6,7 +6,7 @@
           span ×
         h4.modal-title مدیریت کاربران
       .modal-body
-        if (user.isOwner)
+        if (user.isSysAdmin || user.isItAdmin || user.isMaliAdmin || user.isKarshenas)
           .row
             .form-group
               a.btn.col-md-1(type='button', ng-click='gotouser((selectedUserIndex>0) ? (selectedUserIndex-1) : (users.length-1))')
@@ -47,7 +47,7 @@
             label.control-label(for='in7') آدرس الکترونیک
             input.form-control(name='textinput', type='text', id='in7', style='text-align: left', ng-model='selectedUser.email', ng-change='updateclass = "";')
       .modal-footer
-        if (user.isOwner)
+        if (user.isSysAdmin || user.isItAdmin || user.isMaliAdmin || user.isKarshenas)
           button.btn.btn-sm.btn-danger.pull-right(type='button', ng-click='deleteuser()') حذف کاربر 
             span.glyphicon.glyphicon-remove
           button.btn.btn-sm.btn-primary.pull-right(type='button', ng-click='insertuser()') تعریف کاربر جدید 
