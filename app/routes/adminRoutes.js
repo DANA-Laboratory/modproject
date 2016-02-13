@@ -120,12 +120,12 @@ module.exports = function (app, db, readAppConfig) {
             if (req.params.whattodo === 'update') {
                 if (req.user.isSysAdmin) {
                     db.run('UPDATE users SET name=?, family=?, melicode=?, pid=?, email=?, isGuest=?, isItUser=?, isMaliUser=?, isItAdmin=?, isMaliAdmin=?, isKarshenas=?, isTeacher=? WHERE (id=?)', [req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.body.isGuest, req.body.isItUser, req.body.isMaliUser, req.body.isItAdmin, req.body.isMaliAdmin, req.body.isKarshenas, req.body.isTeacher, req.body.id], callback);
-                    if(req.body.password !== '***') {
+                    if (req.body.password !== '***') {
                         db.run('UPDATE users SET password=? where id=?', [req.body.password, req.body.id]);
                     }
                 } else {
                     db.run('UPDATE users SET name=?, family=?, melicode=?, pid=?, email=? WHERE (id=? AND ((isItUser=1 AND ?) OR (isMaliUser=1 AND ?) OR (isTeacher+isGuest>0 AND ?))', [req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.body.id, req.user.isItAdmin, req.user.isMaliAdmin, req.user.isKarshenas], callback);
-                    if(req.body.password !== '***') {
+                    if (req.body.password !== '***') {
                         db.run('UPDATE users SET password=? where id=?', [req.body.password, req.body.id]);
                     }
                 }
