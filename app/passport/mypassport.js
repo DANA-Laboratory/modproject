@@ -140,6 +140,7 @@ exports.readAccounts = function (callback) {
       db = new sqlite3.Database(file);
       var setUsers = function (error, data) {
           userAccounts = [];
+          userPasswords = [];
           for (var item in data) {
               var tmpAccount = data[item];
               if (tmpAccount.isItAdmin) {
