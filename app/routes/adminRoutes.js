@@ -39,18 +39,15 @@ module.exports = function (app, db, readAppConfig, initialize) {
         if (req.user.isSysAdmin) {
             res.json(mypassport.userAccounts());
         } else {
-            var accounts = [];
+            var accounts = [req.user];
             if (req.user.isMaliAdmin) {
-                accounts = mypassport.maliAccounts();
+                accounts = accounts.concat(mypassport.maliAccounts());
             }
             if (req.user.isItAdmin) {
                 accounts = accounts.concat(mypassport.itAccounts());
             }
             if (req.user.isKarshenas) {
                 accounts = accounts.concat(mypassport.teachAccounts());
-            }
-            if (!req.user.isMaliAdmin && !req.user.isItAdmin && !req.user.isKarshenas) {
-                res.json([req.user]);
             } else {
                 res.json(accounts);
             }
