@@ -45,7 +45,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
     //get list of dates of current user statements
     $scope.malilogin = function() {
         itRequestService.getuserstatedates(function(data) {
-            if (data.pids.length>0) {
+            if (data.dates.length>0) {
                 $scope.dates = data.dates;
                 $scope.pids = data.pids;
                 $scope.pid = $scope.pids[0];

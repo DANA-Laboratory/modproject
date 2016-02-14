@@ -36,7 +36,7 @@
         .row
           b ثبت درخواست خدمت از واحد خدمات IT: 
           button.btn.btn-info(type='button', ng-click='liclick(0)') نمایش کارتابل
-      if (user.isMaliUser)
+      if (user.isMaliUser || user.isMaliAdmin)
         .row.top-buffer
           b دریافت فیش حقوقی:
           | (برای مشاهده فهرست فیش های موجود در سال 1394، کافی است در مستطیل مورد نظر عبارت 94 را وارد فرمایید.)
