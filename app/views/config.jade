@@ -5,7 +5,7 @@ form.navbar-form.navbar-left
       |  تنظيمات 
       span.caret
     ul.dropdown-menu.pull-right
-      if (user.isOwner)
+      if (user.isItAdmin || user.isSysAdmin)
         li
           a(href='/admin/backup')
             span.glyphicon.glyphicon-import

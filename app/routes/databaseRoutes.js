@@ -68,10 +68,10 @@ module.exports = function (app, io, appConfig, db) {
                 res.json(ret);
             }
         };
-        db.serialize(function () {
+        db().serialize(function () {
             for (var status in appConfig.status) {
-                db.get('SELECT count(id) as count from requests where status=\'' + appConfig.status[status]  + '\'AND owner<>' + req.user.id + ' AND user=' + req.user.id, callback);
-                db.get('SELECT count(id) as count from requests where status=\'' + appConfig.status[status]  + '\' AND owner=' + req.user.id, callback);
+                db().get('SELECT count(id) as count from requests where status=\'' + appConfig.status[status]  + '\'AND owner<>' + req.user.id + ' AND user=' + req.user.id, callback);
+                db().get('SELECT count(id) as count from requests where status=\'' + appConfig.status[status]  + '\' AND owner=' + req.user.id, callback);
             }
         });
     });
@@ -91,7 +91,7 @@ module.exports = function (app, io, appConfig, db) {
         if (status > 3) {
             status -= 4;
         }
-        db.all('SELECT * from requests where ((((not ?) AND (owner<>' + req.user.id + ' AND user=' + req.user.id  + ')) OR ((?) AND (owner=' + req.user.id + '))) AND (((status=\'' + appConfig.status[0] + '\' OR status=\'' + appConfig.status[1] + '\') AND ?<0) OR status=?) AND (requesttype=? OR ?=\'ALL\'))', [req.params.isreceive, req.params.isreceive, status, appConfig.status[status], req.params.type, req.params.type], callback);
+        db().all('SELECT * from requests where ((((not ?) AND (owner<>' + req.user.id + ' AND user=' + req.user.id  + ')) OR ((?) AND (owner=' + req.user.id + '))) AND (((status=\'' + appConfig.status[0] + '\' OR status=\'' + appConfig.status[1] + '\') AND ?<0) OR status=?) AND (requesttype=? OR ?=\'ALL\'))', [req.params.isreceive, req.params.isreceive, status, appConfig.status[status], req.params.type, req.params.type], callback);
     });
 
     app.post('/data/updateowneritems/:requestID', mypassport.ensureAuthenticated, function (req, res) {
@@ -99,7 +99,7 @@ module.exports = function (app, io, appConfig, db) {
             console.log('update updateowneritems error=', err);
             res.sendStatus(200);
         };
-        db.run('UPDATE requests SET owneritems=? WHERE (owner=? AND id=?)', [JSON.stringify(req.body.owneritems), req.user.id, req.params.requestID], callback);
+        db().run('UPDATE requests SET owneritems=? WHERE (owner=? AND id=?)', [JSON.stringify(req.body.owneritems), req.user.id, req.params.requestID], callback);
     });
 
     app.post('/data/updatestatus/:requestID', mypassport.ensureAuthenticated, function (req, res) {
@@ -109,13 +109,13 @@ module.exports = function (app, io, appConfig, db) {
             res.sendStatus(200);
         };
         if (req.body.status === appConfig.status[1]) {
-            db.run('UPDATE requests SET status=?, startdate=?, starttime=?, startuser=? WHERE id=?', [req.body.status, req.body.actiondate, req.body.actiontime, req.user.id, req.params.requestID], callback);
+            db().run('UPDATE requests SET status=?, startdate=?, starttime=?, startuser=? WHERE id=?', [req.body.status, req.body.actiondate, req.body.actiontime, req.user.id, req.params.requestID], callback);
         }
         if (req.body.status === appConfig.status[2]) {
-            db.run('UPDATE requests SET status=?, enddate=?, endtime=?, enduser=?, actiondescription=? WHERE id=?', [req.body.status, req.body.actiondate, req.body.actiontime, req.user.id, req.body.actiondescription, req.params.requestID], callback);
+            db().run('UPDATE requests SET status=?, enddate=?, endtime=?, enduser=?, actiondescription=? WHERE id=?', [req.body.status, req.body.actiondate, req.body.actiontime, req.user.id, req.body.actiondescription, req.params.requestID], callback);
         }
         if (req.body.status === appConfig.status[3]) {
-            db.run('UPDATE requests SET status=?, canceldate=?, canceltime=?, actiondescription=?, canceluser=? WHERE id=?', [req.body.status, req.body.actiondate, req.body.actiontime, req.body.cancelwhy, req.user.id, req.params.requestID], callback);
+            db().run('UPDATE requests SET status=?, canceldate=?, canceltime=?, actiondescription=?, canceluser=? WHERE id=?', [req.body.status, req.body.actiondate, req.body.actiontime, req.body.cancelwhy, req.user.id, req.params.requestID], callback);
         }
     });
 
@@ -126,7 +126,7 @@ module.exports = function (app, io, appConfig, db) {
             res.sendStatus(200);
         };
         if (req.body.requesttype === 'contract') {
-            db.get('SELECT MAX(description) as newshomare FROM requests WHERE requesttype == "contract"', function (err, row) {
+            db().get('SELECT MAX(description) as newshomare FROM requests WHERE requesttype == "contract"', function (err, row) {
                 if (err) {
                     console.log('select max description err=', err);
                     res.sendStatus(200);
@@ -135,11 +135,11 @@ module.exports = function (app, io, appConfig, db) {
                     if (typeof(row) !== 'undefined') {
                         newshomare = row.newshomare + 1;
                     }
-                    db.run('INSERT INTO requests (useritems,owneritems,owner,user,status,initdate,inittime,description,applicant,requesttype) VALUES (?,?,?,?,?,?,?,?,?,?)', [JSON.stringify(req.body.useritems), JSON.stringify(req.body.owneritems), mypassport.findIdByMeliCode(Number(req.body.useritems.melicode)), req.user.id, appConfig.status[0], req.body.initdate, req.body.inittime, newshomare, req.body.useritems.melicode, req.body.requesttype], callback);
+                    db().run('INSERT INTO requests (useritems,owneritems,owner,user,status,initdate,inittime,description,applicant,requesttype) VALUES (?,?,?,?,?,?,?,?,?,?)', [JSON.stringify(req.body.useritems), JSON.stringify(req.body.owneritems), mypassport.findIdByMeliCode(Number(req.body.useritems.melicode)), req.user.id, appConfig.status[0], req.body.initdate, req.body.inittime, newshomare, req.body.useritems.melicode, req.body.requesttype], callback);
                 }
             });
         } else {
-            db.run('INSERT INTO requests (useritems,owner,user,status,initdate,inittime,description,applicant,requesttype) VALUES (?,?,?,?,?,?,?,?,?)', [JSON.stringify(req.body.useritems), mypassport.ownerRowID(), req.user.id, appConfig.status[0], req.body.initdate, req.body.inittime, req.body.description, req.body.applicant, req.body.requesttype], callback);
+            db().run('INSERT INTO requests (useritems,owner,user,status,initdate,inittime,description,applicant,requesttype) VALUES (?,?,?,?,?,?,?,?,?)', [JSON.stringify(req.body.useritems), mypassport.ownerRowID(), req.user.id, appConfig.status[0], req.body.initdate, req.body.inittime, req.body.description, req.body.applicant, req.body.requesttype], callback);
         }
 
     });
@@ -151,12 +151,12 @@ module.exports = function (app, io, appConfig, db) {
         };
         if (req.body.requesttype === 'contract') {
             if (req.user.isKarshenas) {
-                db.run('UPDATE requests SET owneritems=?, useritems=? WHERE (id=? AND user=?)', [JSON.stringify(req.body.owneritems), JSON.stringify(req.body.useritems), req.body.id, req.user.id], callback);
+                db().run('UPDATE requests SET owneritems=?, useritems=? WHERE (id=? AND user=?)', [JSON.stringify(req.body.owneritems), JSON.stringify(req.body.useritems), req.body.id, req.user.id], callback);
             } else {
-                db.run('UPDATE requests SET owneritems=? WHERE (id=? AND owner=?)', [JSON.stringify(req.body.owneritems), req.body.id, req.user.id], callback);
+                db().run('UPDATE requests SET owneritems=? WHERE (id=? AND owner=?)', [JSON.stringify(req.body.owneritems), req.body.id, req.user.id], callback);
             }
         } else {
-            db.run('UPDATE requests SET useritems=?, description=? WHERE (id=? AND user=?)', [JSON.stringify(req.body.useritems), req.body.description, req.body.id, req.user.id], callback);
+            db().run('UPDATE requests SET useritems=?, description=? WHERE (id=? AND user=?)', [JSON.stringify(req.body.useritems), req.body.description, req.body.id, req.user.id], callback);
         }
     });
 
@@ -175,7 +175,7 @@ module.exports = function (app, io, appConfig, db) {
                 res.sendStatus(404);
             }
         };
-        db.get('SELECT * from requests where id=' + req.params.requestID + '  AND (user=' + req.user.id  + ' OR owner=' + req.user.id + ')', callback);
+        db().get('SELECT * from requests where id=' + req.params.requestID + '  AND (user=' + req.user.id  + ' OR owner=' + req.user.id + ')', callback);
     });
 
     app.get('/data/findcontract/:melicode', mypassport.ensureAuthenticated, function (req, res) {
@@ -187,6 +187,6 @@ module.exports = function (app, io, appConfig, db) {
                 res.json(rows);
             }
         };
-        db.all('SELECT * from requests where ((' + req.user.isKarshenas  + ' OR owner=' + req.user.id + ') AND applicant=? AND requesttype="contract") ORDER BY id ASC', req.params.melicode, callback);
+        db().all('SELECT * from requests where ((' + req.user.isKarshenas  + ' OR owner=' + req.user.id + ') AND applicant=? AND requesttype="contract") ORDER BY id ASC', req.params.melicode, callback);
     });
 };

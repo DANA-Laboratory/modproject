@@ -21,13 +21,13 @@ module.exports = function (app, dbma) {
                     console.log('delete statements error=', err);
                 }
             };
-            dbma.serialize(function () {
+            dbma().serialize(function () {
                 for (var id in req.body.datas) {
                     var d = req.body.datas[id];
                     if (req.body.overwrite === 'True') {
-                        dbma.run('DELETE FROM statements WHERE (pid=? AND date=?)', [d[0], req.body.date], callbackdelete);
+                        dbma().run('DELETE FROM statements WHERE (pid=? AND date=?)', [d[0], req.body.date], callbackdelete);
                     }
-                    dbma.run('INSERT INTO statements (pid,date,data) VALUES (?,?,?)', [d[0], req.body.date, JSON.stringify(d)], callback);
+                    dbma().run('INSERT INTO statements (pid,date,data) VALUES (?,?,?)', [d[0], req.body.date, JSON.stringify(d)], callback);
                 }
             });
             res.sendStatus(200);
@@ -61,7 +61,7 @@ module.exports = function (app, dbma) {
             console.log(tempname);
             xelatexapi.writecommandexectex(tempname, texcommand, statementpath, 'statement.tex', function (pathtopdf) {res.sendFile(pathtopdf); });
         };
-        dbma.get('SELECT data FROM statements WHERE pid=? AND date=?', [pid, req.body.date], callback);
+        dbma().get('SELECT data FROM statements WHERE pid=? AND date=?', [pid, req.body.date], callback);
     });
 
     app.get('/mali/list', function (req, res) {
@@ -100,10 +100,10 @@ module.exports = function (app, dbma) {
             }
         };
         if (req.user.isMaliAdmin) {
-            dbma.all('SELECT DISTINCT pid FROM statements', callbackpid);
-            dbma.all('SELECT DISTINCT date FROM statements', callbackdate);
+            dbma().all('SELECT DISTINCT pid FROM statements', callbackpid);
+            dbma().all('SELECT DISTINCT date FROM statements', callbackdate);
         } else {
-            dbma.all('SELECT date FROM statements WHERE pid=?', [req.user.pid], callbackdate);
+            dbma().all('SELECT date FROM statements WHERE pid=?', [req.user.pid], callbackdate);
         }
     });
 

@@ -11,28 +11,39 @@ var exists1 = fs.existsSync(requestdb);
 var exists2 = fs.existsSync(malidb);
 var sqlite3 = require('sqlite3').verbose();
 var dbre = null;
+function dbref() {
+    return dbre;
+}
 var dbma = null;
+function dbmaf() {
+    return dbma;
+}
 var appConfig = require('../config/appConfig.json');
+var readAppConfig = null;
 
-if (!exists1) {
-    console.log('request database not exists index.js!');
-} else {
-    dbre = new sqlite3.Database(requestdb);
-    
-    var setTasks = function (error, data) {
-        appConfig.tasks = data;
-    };
-    
-    var setuseritems = function (error, data) {
-        appConfig.useritems = data;
-    };
-    
-    var readAppConfig = function () {
-        dbre.all('SELECT itemName as name, id FROM config WHERE itemType=0', setTasks);
-        dbre.all('SELECT itemName as name, id FROM config WHERE itemType=1', setuseritems);
-    };
-    
-    readAppConfig();
+function initializerequests() {
+    if (!exists1) {
+        console.log('request database not exists index.js!');
+    } else {
+        dbre = new sqlite3.Database(requestdb);
+
+        var setTasks = function (error, data) {
+            appConfig.tasks = data;
+        };
+
+        var setuseritems = function (error, data) {
+            appConfig.useritems = data;
+        };
+
+        readAppConfig = function () {
+            dbre.all('SELECT itemName as name, id FROM config WHERE itemType=0', setTasks);
+            dbre.all('SELECT itemName as name, id FROM config WHERE itemType=1', setuseritems);
+        };
+
+        readAppConfig();
+    }
+
+    console.log('initializing requestdb.......');
 }
 
 if (!exists2) {
@@ -41,11 +52,13 @@ if (!exists2) {
     dbma = new sqlite3.Database(malidb);
 }
 
+initializerequests();
+
 module.exports = function (app, passport, io) {
     require('./passportRoutes')(app, passport, appConfig);
-    require('./databaseRoutes')(app, io, appConfig, dbre);
-    require('./mapRoutes')(app, dbre);
-    require('./adminRoutes')(app, dbre, readAppConfig);
-    require('./maliRoutes')(app, dbma);
+    require('./databaseRoutes')(app, io, appConfig, dbref);
+    require('./mapRoutes')(app, dbref);
+    require('./adminRoutes')(app, dbref, readAppConfig, initializerequests);
+    require('./maliRoutes')(app, dbmaf);
     require('./contractRoutes')(app);
 };

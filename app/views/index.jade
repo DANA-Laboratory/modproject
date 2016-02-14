@@ -26,7 +26,7 @@ include head.jade
               div(ng-init='currentUserFullName=\'#{user.name} #{user.family}\'; isOwner=#{user.isOwner}')
             else
               div(ng-init='currentUserFullName=\'#{user.melicode}\'; isOwner=#{user.isOwner}')           
-            if (user.isItUser) 
+            if (user.isItUser || user.isKarshenas || user.isGuest || user.isTeacher) 
               include topnav.jade
             include config.jade
     include jumbotron.jade
@@ -35,7 +35,7 @@ include head.jade
       if (user.isMaliUser)
         .embed-responsive.embed-responsive-16by9(ng-show='requesttype==="statement"')
           iframe.embed-responsive-item(ng-src='{{pdfcontent}}')
-      if (user.isOwner)
+      if (user.isItAdmin || user.isSysAdmin)
         include modals/uploadDataBase.jade
       include modals/accountsManegement.jade
     else

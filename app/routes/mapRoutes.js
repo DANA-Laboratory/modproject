@@ -9,6 +9,6 @@ module.exports = function (app, db) {
         var callback = function (err, rows) {
             res.json(rows);
         };
-        db.all('SELECT * from mapdetails where type=1', callback);
+        db().all('SELECT * from mapdetails where type=1', callback);
     });
 };

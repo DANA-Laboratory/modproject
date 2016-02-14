@@ -17,10 +17,10 @@ dashboardApp.directive('myOnKeyDownCall', function (itRequestService) {
                     }
                 }
                 if (event.keyCode === 27 || event.keyCode === 13) {
-                    
+
                     if (event.keyCode === 13) {
                         $scope.message = 'به روز رسانی....';
-                        itRequestService.updatetasks(function () {setTimeout(function(){$scope.message = ''; $scope.$apply();}, 300);}, $scope.tasks);                    
+                        itRequestService.updatetasks(function () {setTimeout(function(){$scope.message = ''; $scope.$apply();}, 300);}, $scope.tasks);
                     } else {
                         $scope.filtertext = '';
                     }
@@ -30,3 +30,20 @@ dashboardApp.directive('myOnKeyDownCall', function (itRequestService) {
         });
     };
 });
+
+dashboardApp.directive("fileread", [function () {
+    return {
+        scope: {
+            fileread: "="
+        },
+        link: function ($scope, element, attributes) {
+            element.bind("change", function (changeEvent) {
+                $scope.$apply(function () {
+                    $scope.fileread = changeEvent.target.files[0];
+                    // or all selected files:
+                    // scope.fileread = changeEvent.target.files;
+                });
+            });
+        }
+    }
+}]);
