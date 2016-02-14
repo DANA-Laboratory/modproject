@@ -47,4 +47,12 @@
           .col-md-2
             input.form-control(type='text', ng-init='malilogin()', ng-model='statedate', typeahead-on-select='setdate($item)', typeahead='date for date in dates | filter:$viewValue | limitTo:5', placeholder='ماه و سال ...')
           .col-md-2
-            button.btn.btn-info(type='button', ng-click='openstate($statedate, $pid)') نمایش فیش حقوقی
+            .dropdown
+              button#dropdownMenu1.btn.btn-default.dropdown-toggle(type='button', data-toggle='dropdown', ng-init='malilogin()')
+                | {{selectedstatedate}}
+                span.caret
+              ul.dropdown-menu(aria-labelledby='dropdownMenu1')
+                li(ng-repeat='m in dates', ng-click='setdate(m)')
+                  a.btn(href) {{m}}
+          .col-md-2
+            button.btn.btn-info(type='button', ng-click='openstate($selectedstatedate, $selectedpid)') نمایش فیش حقوقی

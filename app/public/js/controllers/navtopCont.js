@@ -47,9 +47,8 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
         itRequestService.getuserstatedates(function(data) {
             if (data.dates.length>0) {
                 $scope.dates = data.dates;
-                $scope.statedate = $scope.dates[$scope.dates.length-1];
+                $scope.selectedstatedate = $scope.dates[$scope.dates.length-1];
                 // default selection is newest
-                $scope.selectedstatedate =  $scope.statedate;
             }
             if (data.dates.length>0) {
                 $scope.pids = data.pids;
@@ -61,7 +60,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
 
     //show state click
     $scope.openstate = function() {
-        if($scope.selectedstatedate && ($scope.selectedstatedate === $scope.statedate))
+        if($scope.selectedstatedate && $scope.selectedpid)
             $scope.pdfcontent = itRequestService.openpdf({date : $scope.selectedstatedate, pid : $scope.selectedpid}, function(pdfcontent) {$scope.pdfcontent = pdfcontent; $scope.requesttype = 'statement';}, 'statement');
         else
             alert('فیش حقوقی در تاریخ ' + $scope.statedate + ' وجود ندارد.');
