@@ -45,6 +45,7 @@ dashboardApp.controller('usermanCont', function ($scope, itRequestService) {
           itRequestService.douser(data, $scope.onLoad, 'insert');
         }
         $scope.updateclass = 'disabled';
+        $scope.selected = '';
     }
 
     $scope.resetuser = function() {
@@ -59,7 +60,7 @@ dashboardApp.controller('usermanCont', function ($scope, itRequestService) {
 
     $scope.updateclass = 'disabled';
     $scope.selectedUser = {};
-    $scope.selected = undefined;
+    $scope.selected = '';
     $scope.users = [];
     $scope.selectedUserIndex = 0;
  });
