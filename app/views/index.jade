@@ -32,7 +32,7 @@ include head.jade
     include jumbotron.jade
     if (user)
       include dashboard.jade
-      if (user.isMaliUser)
+      if (user.isMaliUser || user.isMaliAdmin)
         .embed-responsive.embed-responsive-16by9(ng-show='requesttype==="statement"')
           iframe.embed-responsive-item(ng-src='{{pdfcontent}}')
       if (user.isItAdmin || user.isSysAdmin)

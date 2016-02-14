@@ -47,11 +47,13 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
         itRequestService.getuserstatedates(function(data) {
             if (data.dates.length>0) {
                 $scope.dates = data.dates;
-                $scope.pids = data.pids;
-                $scope.pid = $scope.pids[0];
                 $scope.statedate = $scope.dates[$scope.dates.length-1];
                 // default selection is newest
                 $scope.selectedstatedate =  $scope.statedate;
+            }
+            if (data.dates.length>0) {
+                $scope.pids = data.pids;
+                $scope.pid = $scope.pids[0];
                 $scope.selectedpid =  $scope.pid;
             }
         });

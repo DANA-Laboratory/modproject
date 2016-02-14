@@ -1,5 +1,5 @@
 if (user.isItUser || user.isGuest || user.isTeacher || user.isKarshenas)
-  .container-fluid(ng-controller='dashboardCont', ng-hide='requesttype===false', ng-init='tasks=#{tasks}; useritems=#{useritems}')
+  .container-fluid(ng-controller='dashboardCont', ng-hide='requesttype===false || requesttype==="statement"', ng-init='tasks=#{tasks}; useritems=#{useritems}')
     div(ng-hide='hidetable', style='margin : 10px')
       include tableplusnav.jade
     div(style='margin : 10px')
