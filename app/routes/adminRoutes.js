@@ -16,7 +16,6 @@ module.exports = function (app, db, readAppConfig, initialize) {
             var fs = require('fs');
             var file = dbpath + '.sqlite';
             req.logout();
-            var sqlite3 = require('sqlite3').verbose();
             db().close(function () {
                 fs.rename(file, dbpath + Date.now() + '.sqlite', function () {
                     fs.rename(req.file.path, dbpath + '.sqlite', function () {
@@ -71,7 +70,11 @@ module.exports = function (app, db, readAppConfig, initialize) {
         if (req.user.id === req.body.id) {
             //Each user could 1-update his account informations or 2-reset his password
             if (req.params.whattodo === 'update') {
-                db().run('UPDATE users SET password=?, name=?, family=?, melicode=?, pid=?, email=? WHERE id=?', [req.body.password, req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.user.id], callback);
+                console.log(req.body);
+                db().run('UPDATE users SET name=?, family=?, melicode=?, pid=?, email=?, isGuest=?, isItUser=?, isMaliUser=?, isItAdmin=?, isMaliAdmin=?, isKarshenas=?, isTeacher=? WHERE (id=?)', [req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.body.isGuest, req.body.isItUser, req.body.isMaliUser, req.body.isItAdmin, req.body.isMaliAdmin, req.body.isKarshenas, req.body.isTeacher, req.body.id], callback);
+                if (req.body.password !== '***') {
+                    db().run('UPDATE users SET password=? where id=?', [req.body.password, req.body.id]);
+                }
             } else {
                 if (req.params.whattodo === 'reset') {
                     req.user.password = req.user.defaultpass;
