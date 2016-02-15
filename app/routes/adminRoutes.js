@@ -112,6 +112,7 @@ module.exports = function (app, db, readAppConfig, initialize) {
             }
             if (req.params.whattodo === 'delete') {
                 if (req.user.isSysAdmin) {
+                    console.log(req.body.id);
                     db().run('DELETE FROM users WHERE(id=?)', [req.body.id], callback);
                 } else {
                     db().run('DELETE FROM users WHERE(id=? AND ((isGuest+isTeacher+isMaliUser+isItAdmin+isMaliAdmin+isKarshenas=0 AND ?) OR (isGuest+isTeacher+isItUser+isItAdmin+isMaliAdmin+isKarshenas=0 AND ?) OR (isItUser+isMaliUser+isItAdmin+isMaliAdmin+isKarshenas=0 AND ?)))', [req.body.id, req.user.isItAdmin, req.user.isMaliAdmin, req.user.isKarshenas], callback);

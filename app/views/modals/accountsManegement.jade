@@ -50,24 +50,24 @@
           .row
             .col-md-12
               label.col-md-3.checkbox-inline
-                input(type='checkbox', ng-model='selectedUser.isMaliAdmin', ng-checked='selectedUser.isMaliAdmin==true', ng-click='updateclass = "";')
+                input(type='checkbox', ng-model='selectedUser.isMaliAdmin', ng-click='updateclass = "";')
                 | مدیر مالی 
               label.col-md-3.checkbox-inline
-                input(type='checkbox', ng-model='selectedUser.isKarshenas', ng-checked='selectedUser.isKarshenas==true', ng-click='updateclass = "";')
+                input(type='checkbox', ng-model='selectedUser.isKarshenas', ng-click='updateclass = "";')
                 | کارشناس آموزش
               label.col-md-3.checkbox-inline
-                input(type='checkbox', ng-model='selectedUser.isItAdmin', ng-checked='selectedUser.isItAdmin==true', ng-click='updateclass = "";')
+                input(type='checkbox', ng-model='selectedUser.isItAdmin', ng-click='updateclass = "";')
                 | مدیر خدمات کامپیوتر   
           .row
             .col-md-12
               label.col-md-3.checkbox-inline
-                input(type='checkbox', ng-model='selectedUser.isMaliUser', ng-checked='selectedUser.isMaliUser==true', ng-click='updateclass = "";')
+                input(type='checkbox', ng-model='selectedUser.isMaliUser', ng-click='updateclass = "";')
                 | کاربر مالی 
               label.col-md-3.checkbox-inline
-                input(type='checkbox', ng-model='selectedUser.isGuest', ng-checked='selectedUser.isGuest==true', ng-click='updateclass = "";')
+                input(type='checkbox', ng-model='selectedUser.isGuest', ng-click='updateclass = "";')
                 | مدرس مهمان
               label.col-md-3.checkbox-inline
-                input(type='checkbox', ng-model='selectedUser.isItUser', ng-checked='selectedUser.isItUser==true', ng-click='updateclass = "";')
+                input(type='checkbox', ng-model='selectedUser.isItUser', ng-click='updateclass = "";')
                 | کاربر خدمات کامپیوتر 
       .modal-footer
         if (user.isSysAdmin || user.isItAdmin || user.isMaliAdmin || user.isKarshenas)

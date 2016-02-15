@@ -16,8 +16,15 @@ dashboardApp.controller('usermanCont', function ($scope, itRequestService) {
     $scope.gotouser = function(index) {
         $scope.selectedUserIndex = index;
         //copy object
-        $scope.selectedUser = JSON.parse(JSON.stringify($scope.users[index]));
+        $scope.selectedUser = $scope.users[index];
         $scope.updateclass = 'disabled';
+        $scope.selectedUser.isMaliAdmin = ($scope.selectedUser.isMaliAdmin == true);
+        $scope.selectedUser.isMaliUser = ($scope.selectedUser.isMaliUser == true);
+        $scope.selectedUser.isItAdmin = ($scope.selectedUser.isItAdmin == true);
+        $scope.selectedUser.isKarshenas = ($scope.selectedUser.isKarshenas == true);
+        $scope.selectedUser.isGuest = ($scope.selectedUser.isGuest == true);
+        $scope.selectedUser.isTeacher = ($scope.selectedUser.isTeacher == true);
+        $scope.selectedUser.isItUser = ($scope.selectedUser.isItUser == true);
     }
 
     $scope.insertuser = function() {

@@ -1,7 +1,8 @@
-form.request.panel.panel-primary(ng-submit='submitbtnclick()')
+form.request.panel.panel-primary(ng-controller='contractCont', ng-submit='submitbtnclick()')
   .panel-heading
     h3.panel-title
       b فرم قراداد تدريس
+      span.label.label-info.pull-left {{message}}
   .request.panel-body
     .row
       include parts/pagination.jade

@@ -1,11 +1,11 @@
 .row
   .col-md-3
     label.control-label &nbsp;این قسمت توسط کارشناس شرکت ره آوران تکمیل گردد:
-.col-md-12.well(ng-controller='contractCont')
+.col-md-12.well
   .row
     if (user.isKarshenas)
       div(ng-if='requestLevel===0')
-        .col-md-2
+        .col-md-3
           .form-group
             label(for='melicode')کد ملی 
             .input-group
@@ -18,18 +18,17 @@
                     a(href='', ng-click='addguestuser()', ng-if='selectedmelicode!==data.useritems.melicode') تعریف کاربر مدرس جدید
                       span.glyphicon.glyphicon-user
                   li
-                    a(href='#contractprimary', ng-click='requesttype="contract"; $broadcast("opencontractclick", data.useritems.melicode);', ng-if='selectedmelicode===data.useritems.melicode') آخرین قرارداد 
+                    a(href='#contractprimary', ng-click='opencontractclick(data.useritems.melicode);', ng-if='selectedmelicode===data.useritems.melicode') آخرین قرارداد 
                       span.glyphicon.glyphicon-list-alt
                   li
                     a(href='', ng-click='removeguestuser()', ng-if='selectedmelicode===data.useritems.melicode') حذف کاربر
                       span.glyphicon.glyphicon-remove  
-    if (user.isGuest)
-      a.btn.btn-info(type='button', ng-init='contractuserlogin()', href='#contractprimary', ng-click='requesttype="contract"; $broadcast("opencontractclick", data.useritems.melicode);') تکمیل قرارداد
-    .col-md-2(ng-if='requestLevel!==0')
+        .col-md-1
+    .col-md-2(ng-if = 'requestLevel!==0')
       .form-group
         label(for='melicode')کد ملی 
         input.form-control(type='text', id='melicode', ng-model='data.useritems.melicode', ng-disabled='true', required)
-    .col-md-2
+    .col-md-2(ng-class='requestLevel!==0 ? "col-md-offset-2" : "col-md-offset-0"')
       .form-group
         label(for='name')نام 
         input.form-control(type='text', id='name', ng-model='data.owneritems.name', ng-required='#{user.isGuest}')

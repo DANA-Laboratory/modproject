@@ -36,6 +36,8 @@
         .row
           b ثبت درخواست خدمت از واحد خدمات IT: 
           button.btn.btn-info(type='button', ng-click='liclick(0)') نمایش کارتابل
+      if (user.isGuest)
+        a.btn.btn-info تکمیل قرارداد
       if (user.isMaliUser || user.isMaliAdmin)
         .row.top-buffer
           b دریافت فیش حقوقی:

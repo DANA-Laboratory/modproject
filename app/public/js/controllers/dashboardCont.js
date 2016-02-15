@@ -33,21 +33,19 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     $scope.hiderequest = true;
     $scope.showConfig = false;
 
-    $scope.$on('opencontractclick', function (event, melicode) {
+    $scope.opencontractclick = function (melicode) {
         itRequestService.selectusercontracts(melicode, function callback(data) {
             if(data.length > 0) {
-                var contracttoopen = data[data.length -1]; //last contract
-                $scope.data = {};
-                contracttoopen.useritems = JSON.parse(contracttoopen.useritems);
-                contracttoopen.owneritems = JSON.parse(contracttoopen.owneritems);
-                for(var key in contracttoopen) $scope.data[key] = contracttoopen[key];
-                $scope.requestLevel = 1 + requestStatus.indexOf(contracttoopen.status);
+                $scope.data = data[data.length -1]; //last contract
+                $scope.data.useritems = JSON.parse($scope.data.useritems);
+                $scope.data.owneritems = JSON.parse($scope.data.owneritems);
+                $scope.requestLevel = 1 + requestStatus.indexOf($scope.data.status);
                 $scope.hidetableclick();
             } else {
                 $scope.newrequestclick('contract', melicode);
             }
         })
-    });
+    };
 
     $scope.setpageid = function (pid) {
         $scope.pageid = pid;
