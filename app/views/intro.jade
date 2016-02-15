@@ -1,4 +1,4 @@
-svg(id='iranmap', width='750', height='670', ng-controller='mapCont', ng-show='requesttype===false')
+svg(id='iranmap', width='750', height='670', ng-controller='mapCont', ng-show='pageroute==="intro"')
   | sorry your browser can't display svg graphics
   foreignObject(id='labels', x=0, y=0, width=750, height=670, ng-hide='hidelabels')
     .label.label-primary(ng-repeat='c in cities', ng-style='{position: "fixed", left: c.x, top: c.y-30}') {{c.name}}

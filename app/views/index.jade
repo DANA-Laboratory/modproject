@@ -9,7 +9,7 @@ include head.jade
             .span.icon-bar
             .span.icon-bar
             .span.icon-bar
-          a.navbar-brand.hidden-sm.hidden-xs(ng-click='requesttype=false', href='/')
+          a.navbar-brand.hidden-sm.hidden-xs(ng-click='pageroute="welcome"', href='/')
             span.glyphicon.glyphicon-home
             |  سامانه خدمات مکانیزه
         .navbar-collapse.collapse.text-center(id="myNavbar")
@@ -22,18 +22,20 @@ include head.jade
                 button.btn.btn-success(type='submit') ورود 
                     span.glyphicon.glyphicon-log-in
           else
+            div(ng-init='isOwner=#{user.isOwner}; pageroute="welcome"')           
             if (user.name)
-              div(ng-init='currentUserFullName=\'#{user.name} #{user.family}\'; isOwner=#{user.isOwner}')
+              div(ng-init='currentUserFullName=\'#{user.name} #{user.family}\'')
             else
-              div(ng-init='currentUserFullName=\'#{user.melicode}\'; isOwner=#{user.isOwner}')           
-            if (user.isItUser || user.isKarshenas || user.isGuest || user.isTeacher) 
+              div(ng-init='currentUserFullName=\'#{user.melicode}\'')           
+            if (user.isItUser || user.isKarshenas || user.isGuest || user.isTeacher || user.isItAdmin) 
               include topnav.jade
             include config.jade
-    include jumbotron.jade
+    div(ng-if='pageroute==="intro" || pageroute==="welcome"')
+      include jumbotron.jade
     if (user)
       include dashboard.jade
       if (user.isMaliUser || user.isMaliAdmin)
-        .embed-responsive.embed-responsive-16by9(ng-show='requesttype==="statement"')
+        .embed-responsive.embed-responsive-16by9(ng-show='pageroute==="statement"')
           iframe.embed-responsive-item(ng-src='{{pdfcontent}}')
       if (user.isItAdmin || user.isSysAdmin)
         include modals/uploadDataBase.jade

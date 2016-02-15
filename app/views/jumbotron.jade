@@ -1,4 +1,4 @@
-.jumbotron(ng-show='requesttype===false')
+.jumbotron
   .container
     if !(user)
       h2 خوش آمدید!
@@ -28,33 +28,34 @@
             strong کارشناسان آموزش 
             | - از بهمن ماه 1394 میتوانند با تعریف اطلاعات کاربری اساتید در این سامانه، انعقاد قرارداد و تکمیل مدارک مربوطه را بصورت الکترونیک پیگیری نمایند. 
     else
-      h3 
-        | کاربر محترم 
-        u {{currentUserFullName}} 
-        | لطفا گزینه مورد نظر خود را انتخاب فرمایید:
-      if (user.isItUser)
-        .row
-          b ثبت درخواست خدمت از واحد خدمات IT: 
-          button.btn.btn-info(type='button', ng-click='liclick(0)') نمایش کارتابل
-      if (user.isGuest)
-        a.btn.btn-info تکمیل قرارداد
-      if (user.isMaliUser || user.isMaliAdmin)
-        .row.top-buffer
-          b دریافت فیش حقوقی:
-          | (برای مشاهده فهرست فیش های موجود در سال 1394، کافی است در مستطیل مورد نظر عبارت 94 را وارد فرمایید.)
-        .col-md-12.well
-          if (user.isMaliAdmin)
+      div(ng-show='pageroute==="welcome"')
+        h3 
+          | کاربر محترم 
+          u {{currentUserFullName}} 
+          | لطفا گزینه مورد نظر خود را انتخاب فرمایید:
+        if (user.isItUser)
+          .row
+            b ثبت درخواست خدمت از واحد خدمات IT: 
+            button.btn.btn-info(type='button', ng-click='liclick(0)') نمایش کارتابل
+        if (user.isGuest)
+          a.btn.btn-info تکمیل قرارداد
+        if (user.isMaliUser || user.isMaliAdmin)
+          .row.top-buffer
+            b دریافت فیش حقوقی:
+            | (برای مشاهده فهرست فیش های موجود در سال 1394، کافی است در مستطیل مورد نظر عبارت 94 را وارد فرمایید.)
+          .col-md-12.well
+            if (user.isMaliAdmin)
+              .col-md-2
+                input.form-control(type='text', ng-model='pid', typeahead-on-select='setpid($item)', typeahead='pid for pid in pids | filter:$viewValue | limitTo:5', placeholder='کد پرسنلی ...')                        
             .col-md-2
-              input.form-control(type='text', ng-model='pid', typeahead-on-select='setpid($item)', typeahead='pid for pid in pids | filter:$viewValue | limitTo:5', placeholder='کد پرسنلی ...')                        
-          .col-md-2
-            input.form-control(type='text', ng-init='malilogin()', ng-model='statedate', typeahead-on-select='setdate($item)', typeahead='date for date in dates | filter:$viewValue | limitTo:5', placeholder='ماه و سال ...')
-          .col-md-2
-            .dropdown
-              button#dropdownMenu1.btn.btn-default.dropdown-toggle(type='button', data-toggle='dropdown', ng-init='malilogin()')
-                | {{selectedstatedate}}
-                span.caret
-              ul.dropdown-menu(aria-labelledby='dropdownMenu1')
-                li(ng-repeat='m in dates', ng-click='setdate(m)')
-                  a.btn(href) {{m}}
-          .col-md-2
-            button.btn.btn-info(type='button', ng-click='openstate($selectedstatedate, $selectedpid)') نمایش فیش حقوقی
+              input.form-control(type='text', ng-init='malilogin()', ng-model='statedate', typeahead-on-select='setdate($item)', typeahead='date for date in dates | filter:$viewValue | limitTo:5', placeholder='ماه و سال ...')
+            .col-md-2
+              .dropdown
+                button#dropdownMenu1.btn.btn-default.dropdown-toggle(type='button', data-toggle='dropdown', ng-init='malilogin()')
+                  | {{selectedstatedate}}
+                  span.caret
+                ul.dropdown-menu(aria-labelledby='dropdownMenu1')
+                  li(ng-repeat='m in dates', ng-click='setdate(m)')
+                    a.btn(href) {{m}}
+            .col-md-2
+              button.btn.btn-info(type='button', ng-click='openstate($selectedstatedate, $selectedpid)') نمایش فیش حقوقی

@@ -28,7 +28,6 @@ dashboardApp.config(['$routeProvider', function($routeProvider) {
 dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     $scope.pageid = 1;
     $scope.isCreator = null;
-    // defult views per requesttype
     $scope.hidetable =  false;
     $scope.hiderequest = true;
     $scope.showConfig = false;
@@ -52,18 +51,18 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     };
 
     $scope.newrequestclick = function (requesttype, id) {
-        $scope.requesttype = requesttype;
+        $scope.data.requesttype = requesttype;
         $scope.requestLevel = 0;
         $scope.isCreator = true;
         var date = new Date();
         $scope.data = {};
         $scope.data.initdate = gregorianToJalali(date, '/');
 
-        if ($scope.requesttype === 'itrequest') {
+        if (requesttype === 'itrequest') {
             $scope.data.description = '';
             $scope.data.useritems = [];
         }
-        if ($scope.requesttype === 'contract') {
+        if (requesttype === 'contract') {
             $scope.data.useritems = {};
             $scope.data.owneritems = {};
             var sd = $scope.data.initdate.split('/');
@@ -136,14 +135,13 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
             $scope.updaterequest();
             $scope.backclick();
         } else {
-            $scope.data.requesttype = $scope.requesttype;
             itRequestService.insertrequest($scope.backclick, $scope.data);
         }
     }
 
     $scope.printbtnclick = function () {
-        if ($scope.requesttype === 'contract') {
-            $scope.pdfcontent = itRequestService.openpdf($scope.data, function(pdfcontent) {$scope.pdfcontent = pdfcontent}, $scope.requesttype);
+        if ($scope.data.requesttype === 'contract') {
+            $scope.pdfcontent = itRequestService.openpdf($scope.data, function(pdfcontent) {$scope.pdfcontent = pdfcontent}, $scope.data.requesttype);
         }
     }
 
@@ -163,8 +161,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         data.useritems = JSON.parse(data.useritems);
         $scope.data = data;
         $scope.isCreator = data.isCreator;
-        $scope.requesttype = data.requesttype;
-        if($scope.requesttype === 'itrequest') {
+        if($scope.data.requesttype === 'itrequest') {
             $scope.primary = '#itprimary';
             for (var task in $scope.tasks) {
                 if (null!=$scope.data.owneritems && $scope.data.owneritems.indexOf($scope.tasks[task].name) > -1) {
@@ -185,7 +182,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
                 $scope.data.actionuser = $scope.data.canceluser;
                 $scope.data.cancelwhy  = $scope.data.actiondescription;
             }
-        } else if($scope.requesttype ===  'contract') {
+        } else if($scope.data.requesttype ===  'contract') {
             $scope.primary = '#contractprimary';
             $scope.data.owneritems = JSON.parse(data.owneritems);
         }

@@ -89,8 +89,8 @@ module.exports = function (app, dbma) {
                 }
                 data.dates = dates;
                 if (!req.user.isMaliAdmin) {
+                    data.pids = [req.user.pid];
                     res.json(data);
-                    console.log(data);
                 } else {
                     if (data.pids) {
                         res.json(data);

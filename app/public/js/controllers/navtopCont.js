@@ -4,7 +4,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
 
     $scope.requestStatus = ['ثبت شده','در دست اقدام','خاتمه يافته','متوقف شده'];
     $scope.isreceive = 1;
-    $scope.requesttype = false;
+    $scope.pageroute = "intro";
 
     var activeid = null;
 
@@ -27,7 +27,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
         $scope.active = active(activeid);
         itRequestService.refreshTable(activeid, 'ALL', $scope.isreceive);
         $scope.$broadcast('topnavClick');
-        $scope.requesttype= true;
+        $scope.pageroute = "dashboard";
     };
 
     $scope.active = active("receive");
@@ -50,7 +50,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
                 $scope.selectedstatedate = $scope.dates[$scope.dates.length-1];
                 // default selection is newest
             }
-            if (data.dates.length>0) {
+            if (data.pids.length>0) {
                 $scope.pids = data.pids;
                 $scope.pid = $scope.pids[0];
                 $scope.selectedpid =  $scope.pid;
@@ -61,7 +61,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
     //show state click
     $scope.openstate = function() {
         if($scope.selectedstatedate && $scope.selectedpid)
-            $scope.pdfcontent = itRequestService.openpdf({date : $scope.selectedstatedate, pid : $scope.selectedpid}, function(pdfcontent) {$scope.pdfcontent = pdfcontent; $scope.requesttype = 'statement';}, 'statement');
+            $scope.pdfcontent = itRequestService.openpdf({date : $scope.selectedstatedate, pid : $scope.selectedpid}, function(pdfcontent) {$scope.pdfcontent = pdfcontent; $scope.pageroute = 'statement';}, 'statement');
         else
             alert('فیش حقوقی در تاریخ ' + $scope.statedate + ' وجود ندارد.');
     };

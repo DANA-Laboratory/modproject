@@ -126,7 +126,7 @@ module.exports = function (app, io, appConfig, db) {
             res.sendStatus(200);
         };
         if (req.body.requesttype === 'contract') {
-            db().get('SELECT MAX(description) as newshomare FROM requests WHERE requesttype == "contract"', function (err, row) {
+            db().get('SELECT MAX(description) as newshomare FROM requests WHERE (requesttype="contract")', function (err, row) {
                 if (err) {
                     console.log('select max description err=', err);
                     res.sendStatus(200);
