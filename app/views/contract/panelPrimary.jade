@@ -2,7 +2,11 @@ form.request.panel.panel-primary(ng-controller='contractCont', ng-submit='submit
   .panel-heading
     h3.panel-title
       b فرم قراداد تدريس
-      span.label.label-info.pull-left {{message}}
+      span.label.label-warning{{message}}
+      span.label.label-info.pull-left 
+        | شماره: {{data.description}}
+      span.label.label-info.pull-left 
+        | تاریخ: {{data.initdate}}
   .request.panel-body
     .row
       include parts/pagination.jade
@@ -13,5 +17,5 @@ form.request.panel.panel-primary(ng-controller='contractCont', ng-submit='submit
   .panel-footer
     .btn.btn-default(name='buttoncancel', ng-click='backclick()') خروج
       .span.glyphicon.glyphicon-remove
-    button.btn.pull-left(ng-class='requestLevel===0 ? "btn-success" : "btn-warning"' ,name='buttoninsert', type='submit') ثبت
+    button.btn.pull-left(ng-class='requestLevel===0 ? "btn-success" : "btn-warning"' ,name='buttonsubmit', type='submit') ثبت
       .span.glyphicon.glyphicon-ok

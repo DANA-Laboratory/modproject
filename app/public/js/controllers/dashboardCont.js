@@ -51,11 +51,11 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     };
 
     $scope.newrequestclick = function (requesttype, id) {
-        $scope.data.requesttype = requesttype;
         $scope.requestLevel = 0;
         $scope.isCreator = true;
-        var date = new Date();
         $scope.data = {};
+        $scope.data.requesttype = requesttype;
+        var date = new Date();
         $scope.data.initdate = gregorianToJalali(date, '/');
 
         if (requesttype === 'itrequest') {

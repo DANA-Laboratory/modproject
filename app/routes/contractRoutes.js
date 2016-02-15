@@ -9,7 +9,8 @@ var mypassport = require('../passport/mypassport');
 module.exports = function (app) {
     app.post('/contract/show', mypassport.ensureAuthenticated, function (req, res) {
         // TODO: shomare
-        var texcommand = '\\def\\shomare{/33-2 ص پ' + req.body.description + '}\n';
+        var texcommand = '\\def\\shomare{33-2/' + req.body.description + ' ص پ}\n';
+        texcommand = texcommand + '\\def\\initdate{' + req.body.initdate + '}\n';
         for (var itm in req.body.useritems) {
             texcommand = texcommand + '\\def\\' + itm + '{' + req.body.useritems[itm]  + '}\n';
         }
