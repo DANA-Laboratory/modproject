@@ -57,10 +57,11 @@ module.exports = function (app, dbma) {
                     achar = 'z';
                 }
             }
-            var statementpath = stmdata.length===47 ? path.join(__dirname, '..', '..', 'xelatex', 'statement') : path.join(__dirname, '..', '..', 'xelatex', 'statement4');
+            var statementpath = path.join(__dirname, '..', '..', 'xelatex', 'statement');
+            var statementtemplate = stmdata.length === 47 ? 'statement.tex' : 'statement4.tex';
             var tempname = path.join(statementpath, pid + '_' + charcodeat(req.body.date) + '.tex');
             console.log(tempname);
-            xelatexapi.writecommandexectex(tempname, texcommand, statementpath, 'statement.tex', function (pathtopdf) {res.sendFile(pathtopdf); });
+            xelatexapi.writecommandexectex(tempname, texcommand, statementpath, statementtemplate, function (pathtopdf) {res.sendFile(pathtopdf); });
         };
         dbma().get('SELECT data FROM statements WHERE pid=? AND date=?', [pid, req.body.date], callback);
     });

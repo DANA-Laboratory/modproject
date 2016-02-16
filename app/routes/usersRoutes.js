@@ -18,11 +18,17 @@ module.exports = function (app, db, readAppConfig, initialize) {
             req.logout();
             db().close(function () {
                 fs.rename(file, dbpath + Date.now() + '.sqlite', function (err) {
-                    if (err) console.log(err);
-                    if (!err) fs.rename(req.file.path, dbpath + '.sqlite', function (err) {
-                        if (err) console.log(err);
-                        if (!err) initialize();
-                    });
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        fs.rename(req.file.path, dbpath + '.sqlite', function (err) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                initialize();
+                            }
+                        });
+                    }
                 });
             });
         }
@@ -37,9 +43,13 @@ module.exports = function (app, db, readAppConfig, initialize) {
         } else {
             dpath = req.file.destination + 'users/' + req.user.id;
         }
-        if (!fs.existsSync(dpath)) fs.mkdirSync(dpath);
+        if (!fs.existsSync(dpath)) {
+            fs.mkdirSync(dpath);
+        }
         fs.rename(req.file.path, dpath + '/' + req.body.filename, function (err) {
-            if (err) console.log(err);
+            if (err) {
+                console.log(err);
+            }
             res.redirect('/');
         });
     });
