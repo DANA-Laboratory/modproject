@@ -48,6 +48,7 @@ module.exports = function (app, dbma) {
             var texcommand = '\\def\\ya{' + req.body.date  + '}\n';
             var j = 98;
             var achar = 'y';
+            console.log(stmdata.length);
             for (var i in stmdata) {
                 texcommand = texcommand + '\\def\\' + achar + String.fromCharCode(j) + '{' + stmdata[i]  + '}\n';
                 j += 1;
@@ -56,7 +57,7 @@ module.exports = function (app, dbma) {
                     achar = 'z';
                 }
             }
-            var statementpath = path.join(__dirname, '..', '..', 'xelatex', 'statement');
+            var statementpath = stmdata.length===47 ? path.join(__dirname, '..', '..', 'xelatex', 'statement') : path.join(__dirname, '..', '..', 'xelatex', 'statement4');
             var tempname = path.join(statementpath, pid + '_' + charcodeat(req.body.date) + '.tex');
             console.log(tempname);
             xelatexapi.writecommandexectex(tempname, texcommand, statementpath, 'statement.tex', function (pathtopdf) {res.sendFile(pathtopdf); });
