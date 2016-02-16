@@ -38,7 +38,7 @@ include head.jade
         .embed-responsive.embed-responsive-16by9(ng-show='pageroute==="statement"')
           iframe.embed-responsive-item(ng-src='{{pdfcontent}}')
       if (user.isItAdmin || user.isSysAdmin)
-        include modals/uploadDataBase.jade
+        include modals/uploadFile.jade
       include modals/accountsManegement.jade
     else
       include intro.jade

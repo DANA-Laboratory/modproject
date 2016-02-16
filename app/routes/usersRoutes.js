@@ -9,17 +9,19 @@ var mypassport = require('../passport/mypassport');
 var multer = require('multer');
 var upload = multer({ dest : 'uploads/' });
 var dbpath = __dirname + '/../database/Requests';
+var fs = require('fs');
 module.exports = function (app, db, readAppConfig, initialize) {
-    app.post('/admin/import', mypassport.ensureAuthenticated, upload.single('Requests.sqlite'), function (req, res) {
+    app.post('/admin/import', mypassport.ensureAuthenticated, upload.single('attachment'), function (req, res) {
         if (req.user.isItAdmin || req.user.isSysAdmin) {
             console.log('file uploaded', req.file);
-            var fs = require('fs');
             var file = dbpath + '.sqlite';
             req.logout();
             db().close(function () {
-                fs.rename(file, dbpath + Date.now() + '.sqlite', function () {
-                    fs.rename(req.file.path, dbpath + '.sqlite', function () {
-                        initialize();
+                fs.rename(file, dbpath + Date.now() + '.sqlite', function (err) {
+                    if (err) console.log(err);
+                    if (!err) fs.rename(req.file.path, dbpath + '.sqlite', function (err) {
+                        if (err) console.log(err);
+                        if (!err) initialize();
                     });
                 });
             });
@@ -27,8 +29,23 @@ module.exports = function (app, db, readAppConfig, initialize) {
         res.redirect('/');
     });
 
+    app.post('/users/upload', mypassport.ensureAuthenticated, upload.single('attachment'), function (req, res) {
+        console.log(req.file);
+        var dpath = '';
+        if (typeof(req.body.requestid) !== 'undefined' &&  req.body.requestid >= 0) {
+            dpath = req.file.destination + 'requests/' + req.body.requestid;
+        } else {
+            dpath = req.file.destination + 'users/' + req.user.id;
+        }
+        if (!fs.existsSync(dpath)) fs.mkdirSync(dpath);
+        fs.rename(req.file.path, dpath + '/' + req.body.filename, function (err) {
+            if (err) console.log(err);
+            res.redirect('/');
+        });
+    });
+
     app.get('/admin/backup', mypassport.ensureAuthenticated, function (req, res) {
-        if (req.user.isOwner) {
+        if (req.user.isSysAdmin || req.use.isItAdmin) {
             res.download(dbpath + '.sqlite');
         } else {
             res.redirect('/');

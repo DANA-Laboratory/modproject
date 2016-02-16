@@ -11,13 +11,17 @@ form.navbar-form.navbar-left
             span.glyphicon.glyphicon-import
             |  دريافت بانک پشتيبان  
         li
-          a(href='#', data-toggle='modal', data-target='#uploadDataBase')
+          a(href, data-toggle='modal', data-target='#uploadFile', ng-click='installDataBase=true; vm.uploadme=""')
             span.glyphicon.glyphicon-export
             |  نصب بانک پشتيبان     
       li
-        a(href='#', ng-click='accountsclick()')
+        a(href, ng-click='accountsclick()')
           span.glyphicon.glyphicon-cog
           |  تنظیمات کاربری
+      li
+        a(href, data-toggle='modal', data-target='#uploadFile', ng-click='installDataBase=false; vm.uploadme=""')
+          span.glyphicon.glyphicon-cog
+          | ارسال فایل 
   a.btn.btn-warning(href='/logout', data-toggle='tooltip', data-placement='bottom', title='خروج') 
     | #{user.username} 
     span.glyphicon.glyphicon-log-out

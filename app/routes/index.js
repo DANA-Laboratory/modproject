@@ -58,7 +58,7 @@ module.exports = function (app, passport, io) {
     require('./passportRoutes')(app, passport, appConfig);
     require('./databaseRoutes')(app, io, appConfig, dbref);
     require('./mapRoutes')(app, dbref);
-    require('./adminRoutes')(app, dbref, readAppConfig, initializerequests);
+    require('./usersRoutes')(app, dbref, readAppConfig, initializerequests);
     require('./maliRoutes')(app, dbmaf);
     require('./contractRoutes')(app);
 };

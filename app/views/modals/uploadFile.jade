@@ -1,0 +1,21 @@
+#uploadFile.modal.fade(tabindex='-1')
+  .modal-dialog.modal-sm
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal')
+          span ×
+        h4.modal-title(ng-if='installDataBase') نصب بانک پشتیبان
+        h4.modal-title(ng-if='!installDataBase') ارسال فایل 
+      .modal-body
+        form#uploadForm(enctype='multipart/form-data', action='{{installDataBase ? "/admin/import" : "/users/upload"}}', method='post')
+          .form-group(ng-if='!installDataBase')
+            label(for='filename') عنوان فایل
+            input.form-control(id='filename', name='filename', type='text', required)
+          .form-group
+            span.btn.btn-default.btn-file
+              | انتخاب فایل
+              input.form-control(type='file', name='attachment', fileread='vm.uploadme', required)
+            input.btn.btn-primary.pull-left(type='submit', value='ارسال', name='submit')
+          .form-group
+            span.label.label-default.col-md-12
+              | نام={{vm.uploadme.name}}   حجم={{vm.uploadme.size}}
