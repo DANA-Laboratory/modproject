@@ -154,8 +154,9 @@ module.exports = function (app, io, appConfig, db) {
                 db().run('UPDATE requests SET owneritems=?, useritems=? WHERE (id=? AND user=?)', [JSON.stringify(req.body.owneritems), JSON.stringify(req.body.useritems), req.body.id, req.user.id], callback);
             } else {
                 console.log(req.body);
-                if (req.body.status === appConfig.status[0])
+                if (req.body.status === appConfig.status[0]) {
                     req.body.status = appConfig.status[1];
+                }
                 db().run('UPDATE requests SET owneritems=?, status=? WHERE (id=? AND owner=?)', [JSON.stringify(req.body.owneritems), req.body.status, req.body.id, req.user.id], callback);
             }
         } else {
@@ -171,6 +172,11 @@ module.exports = function (app, io, appConfig, db) {
                     rows.isCreator = true;
                 } else {
                     rows.isCreator = false;
+                }
+                if (rows.owner === req.user.id) {
+                    rows.isOwner = true;
+                } else {
+                    rows.isOwner = false;
                 }
                 replaceIDwithNameFamily(rows);
                 res.json(rows);

@@ -145,10 +145,7 @@ exports.readAccounts = function (callback) {
               var tmpAccount = data[item];
               if (tmpAccount.isItAdmin) {
                   ownerRowID=tmpAccount.id;
-                  tmpAccount.isOwner = true;
               }
-              else
-                  tmpAccount.isOwner = false
               userPasswords.push(tmpAccount.password);
               tmpAccount.password = '***';
               userAccounts.push(tmpAccount);

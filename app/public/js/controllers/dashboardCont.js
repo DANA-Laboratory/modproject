@@ -80,11 +80,6 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         $scope.hidetableclick();
     };
 
-    $scope.viewrequestclick = function (id) {
-        $scope.readonly = true;
-        $scope.openrequestclick(id);
-    };
-
     $scope.openrequestclick = function (id) {
         $scope.hidetableclick();
         $scope.setpageid(1);
@@ -161,6 +156,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         data.useritems = JSON.parse(data.useritems);
         $scope.data = data;
         $scope.isCreator = data.isCreator;
+        $scope.isOwner = data.isOwner;
         if($scope.data.requesttype === 'itrequest') {
             $scope.primary = '#itprimary';
             for (var task in $scope.tasks) {
