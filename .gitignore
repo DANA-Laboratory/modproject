@@ -1,5 +1,6 @@
 ###Uploads###
-/uploads/
+/uploads/requests
+/uploads/users
 
 ###SQLite###
 *.sqlite
