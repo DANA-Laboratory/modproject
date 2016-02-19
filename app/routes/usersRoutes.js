@@ -35,23 +35,40 @@ module.exports = function (app, db, readAppConfig, initialize) {
         res.redirect('/');
     });
 
-    app.post('/users/upload', mypassport.ensureAuthenticated, upload.single('attachment'), function (req, res) {
-        console.log(req.file);
-        var dpath = '';
-        if (typeof(req.body.requestid) !== 'undefined' &&  req.body.requestid >= 0) {
-            dpath = req.file.destination + 'requests/' + req.body.requestid;
-        } else {
-            dpath = req.file.destination + 'users/' + req.user.id;
-        }
-        if (!fs.existsSync(dpath)) {
-            fs.mkdirSync(dpath);
-        }
-        fs.rename(req.file.path, dpath + '/' + req.body.filename, function (err) {
-            if (err) {
-                console.log(err);
+    app.post('/users/:whattodo', mypassport.ensureAuthenticated, upload.single('attachment'), function (req, res) {
+        if (req.params.whattodo === 'upload') {
+            console.log(req.file);
+            var dpath = req.file.destination + 'users/' + req.user.id;
+            if (!fs.existsSync(dpath)) {
+                fs.mkdirSync(dpath);
             }
-            res.redirect('/');
-        });
+            fs.rename(req.file.path, dpath + '/' + req.body.filename, function (err) {
+                if (err) {
+                    console.log(err);
+                }
+                res.redirect('/');
+            });
+        } else if (req.params.whattodo === 'remove') {
+
+        } else if (req.params.whattodo === 'removeall') {
+
+        } else if (req.params.whattodo === 'attachto') {
+            if (typeof(req.body.requestid) !== 'undefined' &&  req.body.requestid >= 0 && req.body.filename !== 'undefined') {
+                dpath = req.file.destination + 'requests/' + req.body.requestid;
+            } else {
+                console.log('attachto error');
+                res.sendStatus(403);
+            }
+        }
+    });
+
+    app.get('/users/dir', mypassport.ensureAuthenticated, function (req, res) {
+        var path = 'uploads/users/' + req.user.id;
+        if (fs.existsSync(path)) {
+            res.json(fs.readdirSync(path));
+        } else {
+            res.json({});
+        }
     });
 
     app.get('/admin/backup', mypassport.ensureAuthenticated, function (req, res) {
