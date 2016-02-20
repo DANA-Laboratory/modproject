@@ -7,10 +7,10 @@
         h4.modal-title(ng-if='installDataBase') نصب بانک پشتیبان
         h4.modal-title(ng-if='!installDataBase') ارسال فایل 
       .modal-body
-        form#uploadForm(enctype='multipart/form-data', action='{{installDataBase ? "/admin/import" : "/users/upload"}}', method='post')
+        form#uploadForm(ng-submit='managefiles()')
           .form-group(ng-if='!installDataBase')
             label(for='filename') عنوان فایل
-            input.form-control(id='filename', name='filename', type='text', required)
+            input.form-control(id='filename', ng-model='filename', type='text', required)
           .form-group
             span.btn.btn-default.btn-file
               | انتخاب فایل

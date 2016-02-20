@@ -10,8 +10,9 @@ var multer = require('multer');
 var upload = multer({ dest : 'uploads/' });
 var dbpath = __dirname + '/../database/Requests';
 var fs = require('fs');
+
 module.exports = function (app, db, readAppConfig, initialize) {
-    app.post('/admin/import', mypassport.ensureAuthenticated, upload.single('attachment'), function (req, res) {
+    app.post('/admin/import', mypassport.ensureAuthenticated, upload.single('file'), function (req, res) {
         if (req.user.isItAdmin || req.user.isSysAdmin) {
             console.log('file uploaded', req.file);
             var file = dbpath + '.sqlite';
@@ -36,6 +37,7 @@ module.exports = function (app, db, readAppConfig, initialize) {
     });
 
     app.post('/users/:whattodo', mypassport.ensureAuthenticated, upload.single('attachment'), function (req, res) {
+        var src = '';
         if (req.params.whattodo === 'upload') {
             console.log(req.file);
             var dpath = req.file.destination + 'users/' + req.user.id;
@@ -45,27 +47,55 @@ module.exports = function (app, db, readAppConfig, initialize) {
             fs.rename(req.file.path, dpath + '/' + req.body.filename, function (err) {
                 if (err) {
                     console.log(err);
+                    res.sendStatus(403);
+                } else {
+                    res.json(fs.readdirSync(dpath));
                 }
-                res.redirect('/');
             });
         } else if (req.params.whattodo === 'remove') {
-
+            src = 'uploads/users/' + req.user.id;
+            if (typeof(req.body.requestid !== 'undefined')) {
+                src = 'uploads/requests/' + req.body.requestid;
+            }
+            fs.unlinkSync(src + '/' + req.body.filename);
+            res.json(fs.readdirSync(src));
         } else if (req.params.whattodo === 'removeall') {
-
+            src = 'uploads/users/' + req.user.id;
+            if (typeof(req.body.requestid !== 'undefined')) {
+                src = 'uploads/requests/' + req.body.requestid;
+            }
+            fs.rmdirSync(src);
+            res.sendStatus(200);
         } else if (req.params.whattodo === 'attachto') {
             if (typeof(req.body.requestid) !== 'undefined' &&  req.body.requestid >= 0 && req.body.filename !== 'undefined') {
-                dpath = req.file.destination + 'requests/' + req.body.requestid;
+                var dst = 'uploads/requests/' + req.body.requestid + '/';
+                if (req.params.whattodo === 'attachto') {
+                    src = 'uploads/users/' + req.user.id + '/' + req.body.filename;
+                    if (!fs.existsSync(dst + req.body.filename) && fs.existsSync(src)) {
+                        if (!fs.existsSync(dst)) {
+                            fs.mkdirSync(dst);
+                        }
+                        fs.createReadStream(src).pipe(fs.createWriteStream(dst + req.body.filename));
+                        res.json(fs.readdirSync(dst));
+                    } else {
+                        console.log('source not exists or dist allready exists');
+                        res.sendStatus(403);
+                    }
+                }
             } else {
-                console.log('attachto error');
+                console.log(req.params.whattodo + ' error');
                 res.sendStatus(403);
             }
         }
     });
 
-    app.get('/users/dir', mypassport.ensureAuthenticated, function (req, res) {
-        var path = 'uploads/users/' + req.user.id;
-        if (fs.existsSync(path)) {
-            res.json(fs.readdirSync(path));
+    app.post('/users/dir', mypassport.ensureAuthenticated, function (req, res) {
+        var src = 'uploads/users/' + req.user.id;
+        if (typeof(req.body.requestid !== 'undefined')) {
+            src = 'uploads/requests/' + req.body.requestid;
+        }
+        if (fs.existsSync(src)) {
+            res.json(fs.readdirSync(src));
         } else {
             res.json({});
         }

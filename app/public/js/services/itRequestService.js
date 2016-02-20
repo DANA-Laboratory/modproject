@@ -206,4 +206,17 @@ dashboardApp.service('itRequestService', function($http, $sce){
         });
     };
 
+    this.managefiles = function (to, data, callback) {
+        $http.post(to, data, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        })
+        .success(function(data, status, headers, config){
+            console.log('Install DataBase Done');
+            callback();
+        })
+        .error(function(data, status, headers, config){
+            console.log('Error');
+        });
+    };
 });

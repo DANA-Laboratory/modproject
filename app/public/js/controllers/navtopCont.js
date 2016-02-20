@@ -74,4 +74,22 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
     $scope.setpid = function(item) {
         $scope.selectedpid = item;
     }
+
+    $scope.managefiles = function() {
+        var callback = function(dir) {
+            if($scope.installDataBase) {
+                window.location.href = '/';
+            } else {
+                console.log(dir);
+            }
+        }
+        var fd = new FormData();
+        fd.append('file', $scope.vm.uploadme);
+        var whattodo = '';
+        if($scope.installDataBase){
+            itRequestService.managefiles('admin/import', fd, callback);
+        } else {
+            itRequestService.managefiles('users/' + whattodo, fd, callback);
+        }
+    }
  });

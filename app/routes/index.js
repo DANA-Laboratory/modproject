@@ -2,7 +2,6 @@
  * Created by Reza Afzalan.
  */
 'use strict';
-
 var fs = require('fs');
 //console.log('__dirname=', __dirname);
 var requestdb = __dirname + '/../database/Requests.sqlite';
