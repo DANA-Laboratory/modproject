@@ -5,9 +5,12 @@
         button.close(type='button', data-dismiss='modal')
           span ×
         h4.modal-title(ng-if='installDataBase') نصب بانک پشتیبان
-        h4.modal-title(ng-if='!installDataBase') ارسال فایل 
+        h4.modal-title(ng-if='!installDataBase') مدیرت فضای کاربری 
       .modal-body
         form#uploadForm(ng-submit='managefiles()')
+          .form-group
+            label(for='dir') فهرست فایلهای موجود در فضای کاربری
+            .well.col-md-12(id='dir', style='height:100px;overflow:auto')
           .form-group(ng-if='!installDataBase')
             label(for='filename') عنوان فایل
             input.form-control(id='filename', ng-model='filename', type='text', required)
@@ -16,6 +19,6 @@
               | انتخاب فایل
               input.form-control(type='file', name='attachment', fileread='vm.uploadme', required)
             input.btn.btn-primary.pull-left(type='submit', value='ارسال', name='submit')
-          .form-group
-            span.label.label-default.col-md-12
-              | نام={{vm.uploadme.name}}   حجم={{vm.uploadme.size}}
+            .row.col-md-12
+              span.label.label-default
+                | نام={{vm.uploadme.name}}   حجم={{vm.uploadme.size}}

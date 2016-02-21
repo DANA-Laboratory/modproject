@@ -36,7 +36,7 @@ module.exports = function (app, db, readAppConfig, initialize) {
         res.redirect('/');
     });
 
-    app.post('/users/:whattodo', mypassport.ensureAuthenticated, upload.single('attachment'), function (req, res) {
+    app.post('/users/:whattodo', mypassport.ensureAuthenticated, upload.single('file'), function (req, res) {
         var src = '';
         if (req.params.whattodo === 'upload') {
             console.log(req.file);

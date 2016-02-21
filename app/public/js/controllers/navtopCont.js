@@ -85,8 +85,9 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
         }
         var fd = new FormData();
         fd.append('file', $scope.vm.uploadme);
-        var whattodo = '';
-        if($scope.installDataBase){
+        fd.append('filename', $scope.filename);
+        var whattodo = 'upload';
+        if($scope.installDataBase) {
             itRequestService.managefiles('admin/import', fd, callback);
         } else {
             itRequestService.managefiles('users/' + whattodo, fd, callback);
