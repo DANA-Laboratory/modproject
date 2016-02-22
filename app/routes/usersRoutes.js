@@ -38,6 +38,13 @@ module.exports = function (app, db, readAppConfig, initialize) {
 
     app.post('/users/:whattodo', mypassport.ensureAuthenticated, upload.single('file'), function (req, res) {
         var src = '';
+        var callback = function (path) {
+            if (fs.existsSync(path)) {
+                res.json(fs.readdirSync(path));
+            } else {
+                res.json({});
+            }
+        };
         if (req.params.whattodo === 'upload') {
             console.log(req.file);
             var dpath = req.file.destination + 'users/' + req.user.id;
@@ -49,19 +56,19 @@ module.exports = function (app, db, readAppConfig, initialize) {
                     console.log(err);
                     res.sendStatus(403);
                 } else {
-                    res.json(fs.readdirSync(dpath));
+                    callback(dpath);
                 }
             });
         } else if (req.params.whattodo === 'remove') {
             src = 'uploads/users/' + req.user.id;
-            if (typeof(req.body.requestid !== 'undefined')) {
+            if (typeof(req.body.requestid) !== 'undefined') {
                 src = 'uploads/requests/' + req.body.requestid;
             }
             fs.unlinkSync(src + '/' + req.body.filename);
-            res.json(fs.readdirSync(src));
+            callback(src);
         } else if (req.params.whattodo === 'removeall') {
             src = 'uploads/users/' + req.user.id;
-            if (typeof(req.body.requestid !== 'undefined')) {
+            if (typeof(req.body.requestid) !== 'undefined') {
                 src = 'uploads/requests/' + req.body.requestid;
             }
             fs.rmdirSync(src);
@@ -76,7 +83,7 @@ module.exports = function (app, db, readAppConfig, initialize) {
                             fs.mkdirSync(dst);
                         }
                         fs.createReadStream(src).pipe(fs.createWriteStream(dst + req.body.filename));
-                        res.json(fs.readdirSync(dst));
+                        callback(dst);
                     } else {
                         console.log('source not exists or dist allready exists');
                         res.sendStatus(403);
@@ -86,18 +93,12 @@ module.exports = function (app, db, readAppConfig, initialize) {
                 console.log(req.params.whattodo + ' error');
                 res.sendStatus(403);
             }
-        }
-    });
-
-    app.post('/users/dir', mypassport.ensureAuthenticated, function (req, res) {
-        var src = 'uploads/users/' + req.user.id;
-        if (typeof(req.body.requestid !== 'undefined')) {
-            src = 'uploads/requests/' + req.body.requestid;
-        }
-        if (fs.existsSync(src)) {
-            res.json(fs.readdirSync(src));
-        } else {
-            res.json({});
+        } else if (req.params.whattodo === 'dir') {
+            src = 'uploads/users/' + req.user.id;
+            if (typeof(req.body.requestid) !== 'undefined') {
+                src = 'uploads/requests/' + req.body.requestid;
+            }
+            callback(src);
         }
     });
 

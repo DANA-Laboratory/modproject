@@ -75,17 +75,21 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
         $scope.selectedpid = item;
     }
 
+    $scope.dir = function() {
+        itRequestService.managefiles('users/dir', {}, function(dir) { $scope.dir = dir; });
+    }
+
     $scope.managefiles = function() {
         var callback = function(dir) {
             if($scope.installDataBase) {
                 window.location.href = '/';
             } else {
-                console.log(dir);
+                $scope.dir = dir;
             }
         }
         var fd = new FormData();
-        fd.append('file', $scope.vm.uploadme);
-        fd.append('filename', $scope.filename);
+        fd.append('file', $scope.uploadme);
+        fd.append('filename', $('#filename').val());
         var whattodo = 'upload';
         if($scope.installDataBase) {
             itRequestService.managefiles('admin/import', fd, callback);
@@ -93,4 +97,10 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
             itRequestService.managefiles('users/' + whattodo, fd, callback);
         }
     }
+
+    $scope.uploadme = {name:''};
+
+    $scope.$watch('uploadme.name', function(){
+        $('#filename').val($scope.uploadme.name);
+    });
  });

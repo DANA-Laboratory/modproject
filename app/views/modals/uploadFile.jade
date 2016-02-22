@@ -8,17 +8,29 @@
         h4.modal-title(ng-if='!installDataBase') مدیرت فضای کاربری 
       .modal-body
         form#uploadForm(ng-submit='managefiles()')
-          .form-group
-            label(for='dir') فهرست فایلهای موجود در فضای کاربری
-            .well.col-md-12(id='dir', style='height:100px;overflow:auto')
           .form-group(ng-if='!installDataBase')
-            label(for='filename') عنوان فایل
-            input.form-control(id='filename', ng-model='filename', type='text', required)
+            label(for='dir') فهرست فایلهای موجود در فضای کاربری
+            .well.col-md-12(id='dir', style='overflow:auto; padding:5px', ng-init='dir()')
+              label.btn-xs.btn-info.well-item(ng-repeat='fi in dir', ng-int='selected=false', ng-click='selected=!selected') {{fi}}
+                span.glyphicon.glyphicon-check(ng-show='selected')
+                span.glyphicon.glyphicon-unchecked(ng-show='!selected')
+              .col-md-12.btn-group
+                  button.btn.btn-danger.col-md-4 حذف
+                      span.glyphicon.glyphicon-remove
+                  button.btn.btn-default.col-md-4 دریافت
+                      span.glyphicon.glyphicon-download
+                  button.btn.btn-warning.col-md-4 پیوست
+                      span.glyphicon.glyphicon-paperclip
           .form-group
-            span.btn.btn-default.btn-file
-              | انتخاب فایل
-              input.form-control(type='file', name='attachment', fileread='vm.uploadme', required)
-            input.btn.btn-primary.pull-left(type='submit', value='ارسال', name='submit')
-            .row.col-md-12
-              span.label.label-default
-                | نام={{vm.uploadme.name}}   حجم={{vm.uploadme.size}}
+              label ارسال فایل 
+              .well
+                  .form-group(ng-if='!installDataBase')
+                    label(for='filename') عنوان فایل
+                    input.form-control(id='filename', type='text', ng-value='uploadme.name', required) 
+                  .form-group
+                    span.btn.btn-default.btn-file
+                      | انتخاب فایل
+                      input.form-control(type='file', name='attachment', fileread='uploadme', required)
+                    input.btn.btn-primary.pull-left(type='submit', value='ارسال', name='submit')
+                    span.label.label-default
+                      | حجم : {{uploadme.size}}  نام : {{uploadme.name}}

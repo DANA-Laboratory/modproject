@@ -212,8 +212,8 @@ dashboardApp.service('itRequestService', function($http, $sce){
             headers: {'Content-Type': undefined}
         })
         .success(function(data, status, headers, config){
-            console.log('Install DataBase Done');
-            callback();
+            console.log('manage files ' + to + ' done.');
+            callback(data);
         })
         .error(function(data, status, headers, config){
             console.log('Error');
