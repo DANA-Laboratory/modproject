@@ -76,10 +76,9 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
     }
 
     $scope.dir = function() {
-        itRequestService.managefiles('users/dir', {}, function(dir) { $scope.dir = dir; });
     }
 
-    $scope.managefiles = function() {
+    $scope.managefiles = function(whattodo) {
         var callback = function(dir) {
             if($scope.installDataBase) {
                 window.location.href = '/';
@@ -87,14 +86,35 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
                 $scope.dir = dir;
             }
         }
-        var fd = new FormData();
-        fd.append('file', $scope.uploadme);
-        fd.append('filename', $('#filename').val());
-        var whattodo = 'upload';
-        if($scope.installDataBase) {
-            itRequestService.managefiles('admin/import', fd, callback);
-        } else {
-            itRequestService.managefiles('users/' + whattodo, fd, callback);
+        if (whattodo === 'upload') {
+            var fd = new FormData();
+            fd.append('file', $scope.uploadme);
+            fd.append('filename', $('#filename').val());
+            if($scope.installDataBase) {
+                itRequestService.managefiles('admin/import', fd, callback);
+            } else {
+                itRequestService.managefiles('users/' + whattodo, fd, callback);
+            }
+        } else if (whattodo === 'dir') {
+            $scope.selected = {};
+            itRequestService.managefiles('users/dir', {}, function(dir) {
+                $scope.dir = dir;
+                for (var fi in dir) {
+                    $scope.selected[dir[fi]] = false;
+                }
+            });
+        } else if (whattodo === 'download') {
+
+        } else if (whattodo === 'remove') {
+            var filename = [];
+            for (var fi in $scope.selected) {
+                if ($scope.selected[fi]) {
+                    filename.push(fi)
+                }
+            }
+            itRequestService.managefiles('users/' + whattodo, filename, callback);
+        } else if (whattodo === 'attach') {
+
         }
     }
 

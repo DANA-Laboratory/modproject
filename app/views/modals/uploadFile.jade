@@ -7,19 +7,19 @@
         h4.modal-title(ng-if='installDataBase') نصب بانک پشتیبان
         h4.modal-title(ng-if='!installDataBase') مدیرت فضای کاربری 
       .modal-body
-        form#uploadForm(ng-submit='managefiles()')
+        form#uploadForm(ng-submit='managefiles("upload")')
           .form-group(ng-if='!installDataBase')
             label(for='dir') مدیریت فایلهای موجود در فضای کاربری
-            .well.col-md-12(id='dir', style='height:200px; overflow:auto;', ng-init='dir()')
-              label.btn-xs.btn-info.well-item(ng-repeat='fi in dir', ng-int='selected=false', ng-click='selected=!selected') {{fi}}
-                span.glyphicon.glyphicon-check(ng-show='selected')
-                span.glyphicon.glyphicon-unchecked(ng-show='!selected')
+            .well.col-md-12(id='dir', style='height:200px; overflow:auto;', ng-init='managefiles("dir");')
+              label.btn-xs.btn-info.well-item(ng-repeat='fi in dir', ng-click='selected[fi]=!selected[fi]') {{fi}}
+                span.glyphicon.glyphicon-check(ng-show='selected[fi]')
+                span.glyphicon.glyphicon-unchecked(ng-show='!selected[fi]')
             .col-md-12.btn-group
-              button.btn.btn-danger.col-md-4 حذف
+              button.btn.btn-danger.col-md-4(ng-click='managefiles("remove")') حذف
                 span.glyphicon.glyphicon-remove
-              button.btn.btn-default.col-md-4 دریافت
+              button.btn.btn-default.col-md-4(ng-click='managefiles("download")') دریافت
                 span.glyphicon.glyphicon-download
-              button.btn.btn-warning.col-md-4 پیوست
+              button.btn.btn-warning.col-md-4(ng-click='managefiles("attach")') پیوست
                 span.glyphicon.glyphicon-paperclip
           .form-group
               label(style='margin-top:20px') ارسال فایل 

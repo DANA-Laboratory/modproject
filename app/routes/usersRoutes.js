@@ -66,7 +66,9 @@ module.exports = function (app, db, readAppConfig, initialize) {
             if (typeof(req.body.requestid) !== 'undefined') {
                 src = 'uploads/requests/' + req.body.requestid;
             }
-            fs.unlinkSync(src + '/' + req.body.filename);
+            for (var fi in req.body.filename) {
+                fs.unlinkSync(src + '/' + req.body.filename[fi]);
+            }
             callback(src);
         } else if (req.params.whattodo === 'removeall') {
             src = 'uploads/users/' + req.user.id;
