@@ -1,5 +1,5 @@
 #uploadFile.modal.fade(tabindex='-1')
-  .modal-dialog.modal-sm
+  .modal-dialog
     .modal-content
       .modal-header
         button.close(type='button', data-dismiss='modal')
@@ -9,20 +9,20 @@
       .modal-body
         form#uploadForm(ng-submit='managefiles()')
           .form-group(ng-if='!installDataBase')
-            label(for='dir') فهرست فایلهای موجود در فضای کاربری
-            .well.col-md-12(id='dir', style='overflow:auto; padding:5px', ng-init='dir()')
+            label(for='dir') مدیریت فایلهای موجود در فضای کاربری
+            .well.col-md-12(id='dir', style='height:200px; overflow:auto;', ng-init='dir()')
               label.btn-xs.btn-info.well-item(ng-repeat='fi in dir', ng-int='selected=false', ng-click='selected=!selected') {{fi}}
                 span.glyphicon.glyphicon-check(ng-show='selected')
                 span.glyphicon.glyphicon-unchecked(ng-show='!selected')
-              .col-md-12.btn-group
-                  button.btn.btn-danger.col-md-4 حذف
-                      span.glyphicon.glyphicon-remove
-                  button.btn.btn-default.col-md-4 دریافت
-                      span.glyphicon.glyphicon-download
-                  button.btn.btn-warning.col-md-4 پیوست
-                      span.glyphicon.glyphicon-paperclip
+            .col-md-12.btn-group
+              button.btn.btn-danger.col-md-4 حذف
+                span.glyphicon.glyphicon-remove
+              button.btn.btn-default.col-md-4 دریافت
+                span.glyphicon.glyphicon-download
+              button.btn.btn-warning.col-md-4 پیوست
+                span.glyphicon.glyphicon-paperclip
           .form-group
-              label ارسال فایل 
+              label(style='margin-top:20px') ارسال فایل 
               .well
                   .form-group(ng-if='!installDataBase')
                     label(for='filename') عنوان فایل

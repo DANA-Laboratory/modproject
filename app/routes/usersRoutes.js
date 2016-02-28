@@ -7,7 +7,9 @@
 'use strict';
 var mypassport = require('../passport/mypassport');
 var multer = require('multer');
-var upload = multer({ dest : 'uploads/' });
+var upload = multer({ dest : 'uploads/',
+                      limits: { fileSize: 10000000 }
+                    });
 var dbpath = __dirname + '/../database/Requests';
 var fs = require('fs');
 
