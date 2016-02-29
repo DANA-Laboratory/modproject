@@ -83,7 +83,11 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
             if($scope.installDataBase) {
                 window.location.href = '/';
             } else {
+                $scope.selected = {};
                 $scope.dir = dir;
+                for (var fi in dir) {
+                    $scope.selected[dir[fi]] = false;
+                }
             }
         }
         if (whattodo === 'upload') {
@@ -91,18 +95,12 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
             fd.append('file', $scope.uploadme);
             fd.append('filename', $('#filename').val());
             if($scope.installDataBase) {
-                itRequestService.managefiles('admin/import', fd, callback);
+                itRequestService.uploadto('admin/import', fd, callback);
             } else {
-                itRequestService.managefiles('users/' + whattodo, fd, callback);
+                itRequestService.uploadto('users/' + whattodo, fd, callback);
             }
         } else if (whattodo === 'dir') {
-            $scope.selected = {};
-            itRequestService.managefiles('users/dir', {}, function(dir) {
-                $scope.dir = dir;
-                for (var fi in dir) {
-                    $scope.selected[dir[fi]] = false;
-                }
-            });
+            itRequestService.managefiles('users/dir', {}, callback); 
         } else if (whattodo === 'download') {
 
         } else if (whattodo === 'remove') {
@@ -112,7 +110,7 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
                     filename.push(fi)
                 }
             }
-            itRequestService.managefiles('users/' + whattodo, filename, callback);
+            itRequestService.managefiles('users/' + whattodo, {'filename' : filename}, callback);
         } else if (whattodo === 'attach') {
 
         }

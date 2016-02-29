@@ -63,6 +63,7 @@ module.exports = function (app, db, readAppConfig, initialize) {
             });
         } else if (req.params.whattodo === 'remove') {
             src = 'uploads/users/' + req.user.id;
+            console.log(req.body);
             if (typeof(req.body.requestid) !== 'undefined') {
                 src = 'uploads/requests/' + req.body.requestid;
             }

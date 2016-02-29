@@ -206,17 +206,30 @@ dashboardApp.service('itRequestService', function($http, $sce){
         });
     };
 
-    this.managefiles = function (to, data, callback) {
+    this.uploadto = function (to, data, callback) {
         $http.post(to, data, {
             transformRequest: angular.identity,
             headers: {'Content-Type': undefined}
         })
         .success(function(data, status, headers, config){
-            console.log('manage files ' + to + ' done.');
+            console.log('upload files to ' + to + ' done.');
             callback(data);
         })
         .error(function(data, status, headers, config){
-            console.log('Error');
+            console.log('uploadto Error');
+        });
+    };
+
+    this.managefiles = function (to, data, callback) {
+        $http({
+            method: 'post',
+            url: to,
+            data: data
+        }).success(function(data, status, headers, config){
+            console.log('manage files ' + to + ' done.');
+            callback(data);
+        }).error(function(data, status, headers, config){
+            console.log('managefiles Error');
         });
     };
 });
