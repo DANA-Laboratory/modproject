@@ -99,18 +99,21 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
             } else {
                 itRequestService.uploadto('users/' + whattodo, fd, callback);
             }
-        } else if (whattodo === 'dir') {
-            itRequestService.managefiles('users/dir', {}, callback); 
-        } else if (whattodo === 'download') {
-
-        } else if (whattodo === 'remove') {
+        } else if (whattodo === 'dir' || whattodo === 'removeall') {
+            itRequestService.managefiles('users/' + whattodo, {}, callback);
+        } else if (whattodo === 'remove' ||  whattodo === 'download') {
             var filename = [];
             for (var fi in $scope.selected) {
                 if ($scope.selected[fi]) {
-                    filename.push(fi)
+                    filename.push(fi);
+                    $scope.selected[fi] = false;
                 }
             }
-            itRequestService.managefiles('users/' + whattodo, {'filename' : filename}, callback);
+            if (filename.length > 0) {
+                itRequestService.managefiles('users/' + whattodo, {'filename' : filename}, whattodo === 'remove' ? callback : false);
+            } else {
+                //TODO alert
+            }
         } else if (whattodo === 'attach') {
 
         }

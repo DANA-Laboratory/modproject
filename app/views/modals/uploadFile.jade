@@ -15,12 +15,12 @@
                 span.glyphicon.glyphicon-check(ng-show='selected[fi]')
                 span.glyphicon.glyphicon-unchecked(ng-show='!selected[fi]')
             .col-md-12.btn-group
-              .btn.btn-danger.col-md-4(ng-click='managefiles("remove")') حذف
-                span.glyphicon.glyphicon-remove
-              .btn.btn-default.col-md-4(ng-click='managefiles("download")') دریافت
+              .btn.btn-default.col-md-4(ng-click='managefiles("download")') دریافت 
                 span.glyphicon.glyphicon-download
-              .btn.btn-warning.col-md-4(ng-click='managefiles("attach")') پیوست
-                span.glyphicon.glyphicon-paperclip
+              .btn.btn-warning.col-md-4(ng-click='managefiles("remove")') حذف منتخب 
+                span.glyphicon.glyphicon-remove
+              .btn.btn-danger.col-md-4(ng-click='managefiles("removeall")') حذف همه 
+                span.glyphicon.glyphicon-warning-sign
           .form-group
               label(style='margin-top:20px') ارسال فایل 
               .well
@@ -33,4 +33,4 @@
                       input.form-control(type='file', name='attachment', fileread='uploadme', required)
                     input.btn.btn-primary.pull-left(type='submit', value='ارسال', name='submit')
                     span.label.label-default
-                      | حجم : {{uploadme.size}}  نام : {{uploadme.name}}
+                      | حجم : {{uploadme.size}} 

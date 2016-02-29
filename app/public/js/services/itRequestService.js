@@ -224,10 +224,16 @@ dashboardApp.service('itRequestService', function($http, $sce){
         $http({
             method: 'post',
             url: to,
+            responseType: callback ? false : 'arraybuffer',
             data: data
         }).success(function(data, status, headers, config){
             console.log('manage files ' + to + ' done.');
-            callback(data);
+            if (callback) {
+                callback(data);
+            } else {
+                var file = new Blob([data], {type: 'application/zip'});
+                window.location = URL.createObjectURL(file);
+            }
         }).error(function(data, status, headers, config){
             console.log('managefiles Error');
         });
