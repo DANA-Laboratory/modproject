@@ -42,6 +42,7 @@ module.exports = function (app, db, readAppConfig, initialize) {
 
     app.post('/users/:whattodo', mypassport.ensureAuthenticated, upload.single('file'), function (req, res) {
         var src = 'uploads/users/' + req.user.id;
+        var fi = '';
         if (typeof(req.body.requestid) !== 'undefined') {
             src = 'uploads/requests/' + req.body.requestid;
         }
@@ -67,12 +68,12 @@ module.exports = function (app, db, readAppConfig, initialize) {
                 }
             });
         } else if (req.params.whattodo === 'remove') {
-            for (var fi in req.body.filename) {
+            for (fi in req.body.filename) {
                 fs.unlinkSync(src + '/' + req.body.filename[fi]);
             }
             callback(src);
         } else if (req.params.whattodo === 'removeall') {
-            rimraf(src, function(error) {
+            rimraf(src, function (error) {
                 console.log('removeall Error: ', error);
                 callback(src);
             });
@@ -101,18 +102,18 @@ module.exports = function (app, db, readAppConfig, initialize) {
         } else if (req.params.whattodo === 'download') {
             if (req.body.filename.length > 1) {
                 var archive = archiver('zip');
-                archive.on('error', function(err) {
+                archive.on('error', function (err) {
                     res.status(500).send({error: err.message});
                 });
                 //on stream closed we can end the request
-                archive.on('end', function() {
+                archive.on('end', function () {
                     console.log('Archive wrote %d bytes', archive.pointer());
                 });
                 //set the archive name
                 res.attachment('userarchive.zip');
                 //this is the streaming magic
                 archive.pipe(res);
-                for (var fi in req.body.filename) {
+                for (fi in req.body.filename) {
                     var _file = src + '/' + req.body.filename[fi];
                     archive.file(_file, { name: p.basename(_file) });
                 }

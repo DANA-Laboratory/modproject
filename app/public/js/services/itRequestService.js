@@ -231,6 +231,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
             if (callback) {
                 callback(data);
             } else {
+                var header = headers('Content-Disposition');
                 var file = new Blob([data], {type: 'application/zip'});
                 window.location = URL.createObjectURL(file);
             }

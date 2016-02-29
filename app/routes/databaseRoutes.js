@@ -207,7 +207,7 @@ module.exports = function (app, io, appConfig, db) {
                 res.sendStatus(404);
             } else {
                 if (rows.length === 1) {
-                    res.sendFile(path.resolve('uploads/requests/' ,req.params.requestID, req.params.attachmentID));
+                    res.sendFile(path.resolve('uploads/requests/', req.params.requestID, req.params.attachmentID));
                 } else {
                     console.log(rows.length);
                     res.sendStatus(404);
