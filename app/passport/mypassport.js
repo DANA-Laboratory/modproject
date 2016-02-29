@@ -160,7 +160,7 @@ exports.readAccounts = function (callback) {
 
 exports.findIdByMeliCode = function(melicode) {
     var idx = 0;
-    while (idx<userAccounts.length && userAccounts[idx].melicode!==melicode) {
+    while (idx<userAccounts.length && userAccounts[idx].melicode!=melicode) {
         idx++;
     }
     if (userAccounts[idx]) {

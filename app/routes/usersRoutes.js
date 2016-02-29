@@ -72,8 +72,10 @@ module.exports = function (app, db, readAppConfig, initialize) {
             }
             callback(src);
         } else if (req.params.whattodo === 'removeall') {
-            rimraf(src);
-            callback(src);
+            rimraf(src, function(error) {
+                console.log('removeall Error: ', error);
+                callback(src);
+            });
         } else if (req.params.whattodo === 'attachto') {
             if (typeof(req.body.requestid) !== 'undefined' &&  req.body.requestid >= 0 && req.body.filename !== 'undefined') {
                 var dst = 'uploads/requests/' + req.body.requestid + '/';
@@ -116,7 +118,7 @@ module.exports = function (app, db, readAppConfig, initialize) {
                 }
                 archive.finalize();
             } else if (req.body.filename.length === 1) {
-                res.sendFile(p.join(__dirname, '..', '..', src, req.body.filename[0]));
+                res.sendFile(p.resolve(src, req.body.filename[0]));
             }
         }
     });

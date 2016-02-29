@@ -135,7 +135,7 @@ module.exports = function (app, io, appConfig, db) {
                     if (typeof(row) !== 'undefined') {
                         newshomare = row.newshomare + 1;
                     }
-                    db().run('INSERT INTO requests (useritems,owneritems,owner,user,status,initdate,inittime,description,applicant,requesttype) VALUES (?,?,?,?,?,?,?,?,?,?)', [JSON.stringify(req.body.useritems), JSON.stringify(req.body.owneritems), mypassport.findIdByMeliCode(Number(req.body.useritems.melicode)), req.user.id, appConfig.status[0], req.body.initdate, req.body.inittime, newshomare, req.body.useritems.melicode, req.body.requesttype], callback);
+                    db().run('INSERT INTO requests (useritems,owneritems,owner,user,status,initdate,inittime,description,applicant,requesttype) VALUES (?,?,?,?,?,?,?,?,?,?)', [JSON.stringify(req.body.useritems), JSON.stringify(req.body.owneritems), mypassport.findIdByMeliCode(req.body.useritems.melicode), req.user.id, appConfig.status[0], req.body.initdate, req.body.inittime, newshomare, req.body.useritems.melicode, req.body.requesttype], callback);
                 }
             });
         } else {
@@ -197,5 +197,23 @@ module.exports = function (app, io, appConfig, db) {
             }
         };
         db().all('SELECT * from requests where ((' + req.user.isKarshenas  + ' OR owner=' + req.user.id + ') AND applicant=? AND requesttype="contract") ORDER BY id ASC', req.params.melicode, callback);
+    });
+
+    app.get('/data/contract/attachment/:requestID/:attachmentID', mypassport.ensureAuthenticated, function (req, res) {
+        var path = require('path');
+        var callback = function (err, rows) {
+            if (err) {
+                console.log(err);
+                res.sendStatus(404);
+            } else {
+                if (rows.length === 1) {
+                    res.sendFile(path.resolve('uploads/requests/' ,req.params.requestID, req.params.attachmentID));
+                } else {
+                    console.log(rows.length);
+                    res.sendStatus(404);
+                }
+            }
+        };
+        db().all('SELECT id from requests where ((' + req.user.isKarshenas  + ' OR owner=' + req.user.id + ') AND id=? AND requesttype="contract")', req.params.requestID, callback);
     });
 };
