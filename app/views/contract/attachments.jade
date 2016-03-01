@@ -6,13 +6,24 @@ form.request.panel.panel-info()
     .row
       include parts/pagination.jade
       .col-md-12
+        .col-sm-6.col-md-4(ng-repeat='n in ["عکس", "صفحه اول شناسنامه", "کارت ملی"]')
+          span.label.label-default {{n}} 
+          a.thumbnail(href='')
+            img(src='src', alt='{{n}}')
+      .col-md-12
+        .col-sm-6.col-md-4(ng-repeat='n in ["آخرین مدرک تحصیلی", "حکم کارگزینی", "صفحه اول دفترچه بیمه"]')
+          span.label.label-default {{n}} 
+          a.thumbnail(href='')
+            img(src='src', alt='{{n}}')
+      .col-md-12
+        .col-sm-6.col-md-8
+          p مدرس محترم!
+          p پس از تکمیل قرارداد میتوانید با اشاره به نماد چاپگر در سمت چپ فرم اقدام به چاپ قرارداد نمایید
+          p از صبر و دقت جنابعالی در تکمیل مندرجات قرارداد و پیوست های آن متشکریم
         .col-sm-6.col-md-4
-          .thumbnail
-            img(src='...', alt='...')
-            .caption
-              h3 صفحه اول شناسنامه
-                a.btn.btn-primary(href='#', role='button') ارسال
-                  span.glyphicon.glyphicon-upload
+          span.label.label-default امضاء 
+          a.thumbnail(href='')
+            img(src='src', alt='امضاء')
   .panel-footer
     .btn.btn-default(name='buttoncancel', ng-click='backclick()') خروج
       .span.glyphicon.glyphicon-remove
