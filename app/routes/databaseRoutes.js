@@ -3,6 +3,7 @@
  */
 'use strict';
 var mypassport = require('../passport/mypassport');
+var fs = require('fs');
 //var path = require('path');
 
 module.exports = function (app, io, appConfig, db) {
@@ -203,14 +204,14 @@ module.exports = function (app, io, appConfig, db) {
         var path = require('path');
         var callback = function (err, rows) {
             if (err) {
-                console.log(err);
-                res.sendStatus(404);
+                console.log('get attachment error ', err);
+                res.sendFile(path.resolve('app/public/images/attachment.png'));
             } else {
-                if (rows.length === 1) {
+                var p = path.resolve('uploads/requests/', req.params.requestID, req.params.attachmentID);
+                if (rows.length === 1 && fs.existsSync(p)) {
                     res.sendFile(path.resolve('uploads/requests/', req.params.requestID, req.params.attachmentID));
                 } else {
-                    console.log(rows.length);
-                    res.sendStatus(404);
+                    res.sendFile(path.resolve('app/public/images/attachment.png'));
                 }
             }
         };

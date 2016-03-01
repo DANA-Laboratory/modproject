@@ -12,5 +12,5 @@
         li
           a(href='#itprimary', ng-click='newrequestclick("itrequest")') درخواست خدمت واحد خدمات کامپیوتری 
   .col-md-2
-    a.btn.btn-success.col-md-12(ng-href='{{primary}}', ng-click='openrequestclick()', ng-disabled='isCreator===null') بررسی 
+    a.btn.btn-success.col-md-12(ng-href='{{primary}}', ng-click='isCreator ? openrequestclick() : false', ng-disabled='isCreator===null') بررسی 
       span.glyphicon.glyphicon-zoom-in
