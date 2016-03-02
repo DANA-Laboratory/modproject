@@ -1,4 +1,4 @@
-#uploadFile.modal.fade(tabindex='-1', ng-controller='filemanCont')
+#fileman.modal.fade(tabindex='-1', ng-controller='filemanCont')
   .modal-dialog
     .modal-content
       .modal-header
@@ -9,19 +9,22 @@
         h4.modal-title(ng-if='filemanstatus === "attachfile"') انتخاب ضمائم 
       .modal-body
         form#uploadForm(ng-submit='managefiles("upload")')
-          .form-group(ng-if='filemanstatus === "managefiles"')
-            label(for='dir') مدیریت فایلهای موجود در فضای کاربری
+          .form-group(ng-if='filemanstatus === "managefiles" || filemanstatus === "attachfile"')
+            label(for='dir') فایلهای موجود در فضای کاربری
             .well.col-md-12(id='dir', style='height:200px; overflow:auto;', ng-init='managefiles("dir");')
-              label.btn-xs.btn-info.well-item(ng-repeat='fi in dir', ng-click='selected[fi]=!selected[fi]') {{fi}}
+              label.btn-xs.btn-info.well-item(ng-repeat='fi in dir', ng-click='select(fi)') {{fi}}
                 span.glyphicon.glyphicon-check(ng-show='selected[fi]')
                 span.glyphicon.glyphicon-unchecked(ng-show='!selected[fi]')
-            .col-md-12.btn-group
+            .col-md-12.btn-group(ng-if='filemanstatus === "managefiles"')
               .btn.btn-default.col-md-4(ng-click='managefiles("download")') دریافت 
                 span.glyphicon.glyphicon-download
               .btn.btn-warning.col-md-4(ng-click='managefiles("remove")') حذف منتخب 
                 span.glyphicon.glyphicon-remove
               .btn.btn-danger.col-md-4(ng-click='managefiles("removeall")') حذف همه 
                 span.glyphicon.glyphicon-warning-sign
+            .col-md-12.btn-group(ng-if='filemanstatus === "attachfile"')
+              .btn.btn-default.col-md-4(ng-click='managefiles("attach")') پیوست گردد
+                span.glyphicon.glyphicon-paperclip
           .form-group
               label(style='margin-top:20px') ارسال فایل (Max File Size=10MB)
               .well

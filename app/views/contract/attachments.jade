@@ -1,4 +1,4 @@
-form.request.panel.panel-info()
+form.request.panel.panel-info(ng-init = ' attachments = ["عکس","صفحه اول شناسنامه","کارت ملی","آخرین مدرک تحصیلی","آخرین حکم کارگزینی", "صفحه اول دفترچه بیمه","امضاء"]')
   .panel-heading
     h3.panel-title
       b فرم قراداد تدريس - پیوستها
@@ -17,20 +17,20 @@ form.request.panel.panel-info()
         .col-sm-4.col-md-3
           p با تشکر از توجه و دقت جنابعالی
       .col-md-12
-        .col-sm-6.col-md-3(ng-repeat='n in ["عکس","صفحه اول شناسنامه","کارت ملی","آخرین مدرک تحصیلی"]')
-          span.label.label-default {{n}} 
+        .col-sm-6.col-md-3(ng-repeat='n in [0,1,2,3]')
+          span.label.label-default {{attachments[n]}} 
           a(href='')
             span.glyphicon.glyphicon-remove
-          a.thumbnail(href='', data-toggle='modal', data-target='#uploadFile', ng-click='$emit("thumbnailclick", { message: data.id})')
-            img(src='/data/contract/attachment/{{data.id}}/1', alt='{{n}}', style='height:150px')
+          a.thumbnail(href='', data-toggle='modal', data-target='#fileman', ng-click='$emit("thumbnailclick", { requestID: data.id, attachemntID: n})')
+            img(src='/data/contract/attachment/{{data.id}}/1', alt='{{attachments[n]}}', style='height:150px')
       .col-md-12
         .col-sm-6.col-md-3
-        .col-sm-6.col-md-3(ng-repeat='n in ["آخرین حکم کارگزینی", "صفحه اول دفترچه بیمه","امضاء"]')
-          span.label.label-default {{n}} 
+        .col-sm-6.col-md-3(ng-repeat='n in [4,5,6]')
+          span.label.label-default {{attachments[n]}} 
           a(href='')
             span.glyphicon.glyphicon-remove
-          a.thumbnail(href='', data-toggle='modal', data-target='#uploadFile', ng-click='$emit("thumbnailclick", { message: data.id})')
-            img(src='/data/contract/attachment/{{data.id}}/1', alt='{{n}}', style='height:150px')
+          a.thumbnail(href='', data-toggle='modal', data-target='#fileman', ng-click='$emit("thumbnailclick", { requestID: data.id, attachmentID: n})')
+            img(src='/data/contract/attachment/{{data.id}}/1', alt='{{attachments[n]}}', style='height:150px')
   .panel-footer
     .btn.btn-default(name='buttoncancel', ng-click='backclick()') خروج
       span.glyphicon.glyphicon-remove

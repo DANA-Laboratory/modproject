@@ -38,7 +38,7 @@ include head.jade
         .embed-responsive.embed-responsive-16by9(ng-show='pageroute==="statement"')
           iframe.embed-responsive-item(ng-src='{{pdfcontent}}')
       if (user.isItUser || user.isGuest || user.isTeacher || user.isKarshenas)
-        include modals/uploadFile.jade
+        include modals/fileman.jade
       include modals/accountsManegement.jade
     else
       include intro.jade

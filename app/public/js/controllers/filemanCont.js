@@ -1,6 +1,18 @@
 'use strict';
 
 dashboardApp.controller('filemanCont', function ($scope, itRequestService) {
+
+    $scope.select = function(fi) {
+        $scope.selected[fi] = !$scope.selected[fi];
+        if ($scope.selected[fi] && $scope.filemanstatus === 'attachfile') {
+            for (var i in $scope.selected) {
+                if (i != fi && $scope.selected[i]) {
+                    $scope.selected[i] = false;
+                }
+            }
+        }
+    }
+
     $scope.managefiles = function(whattodo) {
         var callback = function(dir) {
             if($scope.installDataBase) {
@@ -46,5 +58,14 @@ dashboardApp.controller('filemanCont', function ($scope, itRequestService) {
 
     $scope.$watch('uploadme.name', function(){
         $('#filename').val($scope.uploadme.name);
+    });
+
+    $('#fileman').on('show.bs.modal', function () {
+      if ($scope.filemanstatus === 'attachfile' || $scope.filemanstatus === 'managefiles') {
+          for (var i in $scope.selected) {
+              $scope.selected[i] = false;
+          }
+      }
+      //TODO set focus $('#myInput').focus()
     });
 });
