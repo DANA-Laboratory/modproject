@@ -209,6 +209,7 @@ module.exports = function (app, io, appConfig, db) {
             } else {
                 var p = path.resolve('uploads/requests/', req.params.requestID, req.params.attachmentID);
                 if (rows.length === 1 && fs.existsSync(p)) {
+                    console.log('attach file exists: ' + p);
                     res.sendFile(path.resolve('uploads/requests/', req.params.requestID, req.params.attachmentID));
                 } else {
                     res.sendFile(path.resolve('app/public/images/attachment.png'));

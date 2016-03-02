@@ -37,7 +37,7 @@ include head.jade
       if (user.isMaliUser || user.isMaliAdmin)
         .embed-responsive.embed-responsive-16by9(ng-show='pageroute==="statement"')
           iframe.embed-responsive-item(ng-src='{{pdfcontent}}')
-      if (user.isItAdmin || user.isSysAdmin)
+      if (user.isItUser || user.isGuest || user.isTeacher || user.isKarshenas)
         include modals/uploadFile.jade
       include modals/accountsManegement.jade
     else

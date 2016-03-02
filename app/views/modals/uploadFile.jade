@@ -1,14 +1,15 @@
-#uploadFile.modal.fade(tabindex='-1')
+#uploadFile.modal.fade(tabindex='-1', ng-controller='filemanCont')
   .modal-dialog
     .modal-content
       .modal-header
         button.close(type='button', data-dismiss='modal')
           span ×
-        h4.modal-title(ng-if='installDataBase') نصب بانک پشتیبان
-        h4.modal-title(ng-if='!installDataBase') مدیرت فضای کاربری 
+        h4.modal-title(ng-if='filemanstatus === "installDataBase"') نصب بانک پشتیبان
+        h4.modal-title(ng-if='filemanstatus === "managefiles"') مدیرت فضای کاربری 
+        h4.modal-title(ng-if='filemanstatus === "attachfile"') انتخاب ضمائم 
       .modal-body
         form#uploadForm(ng-submit='managefiles("upload")')
-          .form-group(ng-if='!installDataBase')
+          .form-group(ng-if='filemanstatus === "managefiles"')
             label(for='dir') مدیریت فایلهای موجود در فضای کاربری
             .well.col-md-12(id='dir', style='height:200px; overflow:auto;', ng-init='managefiles("dir");')
               label.btn-xs.btn-info.well-item(ng-repeat='fi in dir', ng-click='selected[fi]=!selected[fi]') {{fi}}
@@ -24,7 +25,7 @@
           .form-group
               label(style='margin-top:20px') ارسال فایل (Max File Size=10MB)
               .well
-                  .form-group(ng-if='!installDataBase')
+                  .form-group(ng-if='filemanstatus === "managefiles"')
                     label(for='filename') عنوان فایل
                     input.form-control(id='filename', type='text', ng-value='uploadme.name', required) 
                   .form-group

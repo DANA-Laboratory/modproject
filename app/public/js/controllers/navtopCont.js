@@ -4,8 +4,8 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
 
     $scope.requestStatus = ['ثبت شده','در دست اقدام','خاتمه يافته','متوقف شده'];
     $scope.isreceive = 1;
-    $scope.pageroute = "intro";
-
+    $scope.pageroute = 'intro';
+    $scope.filemanstatus = '';
     var activeid = null;
 
     var active = function (id) {
@@ -17,20 +17,20 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
     }
 
     $scope.liclick = function (id) {
-        if (id === "receive") {
+        if (id === 'receive') {
             $scope.isreceive = 1;
         }
-        if (id === "send") {
+        if (id === 'send') {
             $scope.isreceive = 0;
         }
         activeid = id;
         $scope.active = active(activeid);
         itRequestService.refreshTable(activeid, 'ALL', $scope.isreceive);
         $scope.$broadcast('topnavClick');
-        $scope.pageroute = "dashboard";
+        $scope.pageroute = 'dashboard';
     };
 
-    $scope.active = active("receive");
+    $scope.active = active('receive');
     itRequestService.refereshnavbar(function(data) {$scope.ndata = data;});
 
     $scope.$on('refereshnavbar', function(event){
@@ -75,53 +75,4 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
         $scope.selectedpid = item;
     }
 
-    $scope.dir = function() {
-    }
-
-    $scope.managefiles = function(whattodo) {
-        var callback = function(dir) {
-            if($scope.installDataBase) {
-                window.location.href = '/';
-            } else {
-                $scope.selected = {};
-                $scope.dir = dir;
-                for (var fi in dir) {
-                    $scope.selected[dir[fi]] = false;
-                }
-            }
-        }
-        if (whattodo === 'upload') {
-            var fd = new FormData();
-            fd.append('file', $scope.uploadme);
-            fd.append('filename', $('#filename').val());
-            if($scope.installDataBase) {
-                itRequestService.uploadto('admin/import', fd, callback);
-            } else {
-                itRequestService.uploadto('users/' + whattodo, fd, callback);
-            }
-        } else if (whattodo === 'dir' || whattodo === 'removeall') {
-            itRequestService.managefiles('users/' + whattodo, {}, callback);
-        } else if (whattodo === 'remove' ||  whattodo === 'download') {
-            var filename = [];
-            for (var fi in $scope.selected) {
-                if ($scope.selected[fi]) {
-                    filename.push(fi);
-                    $scope.selected[fi] = false;
-                }
-            }
-            if (filename.length > 0) {
-                itRequestService.managefiles('users/' + whattodo, {'filename' : filename}, whattodo === 'remove' ? callback : false);
-            } else {
-                //TODO alert
-            }
-        } else if (whattodo === 'attach') {
-
-        }
-    }
-
-    $scope.uploadme = {name:''};
-
-    $scope.$watch('uploadme.name', function(){
-        $('#filename').val($scope.uploadme.name);
-    });
  });
