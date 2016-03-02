@@ -16,6 +16,11 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
         return ac
     }
 
+    $scope.$on('thumbnailclick', function (event, args) {
+        $scope.filemanstatus = 'attachfile';
+        $scope.message = args.message;
+    });
+
     $scope.liclick = function (id) {
         if (id === 'receive') {
             $scope.isreceive = 1;

@@ -21,7 +21,7 @@ form.request.panel.panel-info()
           span.label.label-default {{n}} 
           a(href='')
             span.glyphicon.glyphicon-remove
-          a.thumbnail(href='', data-toggle='modal', data-target='#uploadFile', ng-click='filemanstatus="attachfile"')
+          a.thumbnail(href='', data-toggle='modal', data-target='#uploadFile', ng-click='$emit("thumbnailclick", { message: data.id})')
             img(src='/data/contract/attachment/{{data.id}}/1', alt='{{n}}', style='height:150px')
       .col-md-12
         .col-sm-6.col-md-3
@@ -29,7 +29,7 @@ form.request.panel.panel-info()
           span.label.label-default {{n}} 
           a(href='')
             span.glyphicon.glyphicon-remove
-          a.thumbnail(href='', data-toggle='modal', data-target='#uploadFile', ng-click='filemanstatus="attachfile"')
+          a.thumbnail(href='', data-toggle='modal', data-target='#uploadFile', ng-click='$emit("thumbnailclick", { message: data.id})')
             img(src='/data/contract/attachment/{{data.id}}/1', alt='{{n}}', style='height:150px')
   .panel-footer
     .btn.btn-default(name='buttoncancel', ng-click='backclick()') خروج
