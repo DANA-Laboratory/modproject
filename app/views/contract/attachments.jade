@@ -19,14 +19,18 @@ form.request.panel.panel-info()
       .col-md-12
         .col-sm-6.col-md-3(ng-repeat='n in ["عکس","صفحه اول شناسنامه","کارت ملی","آخرین مدرک تحصیلی"]')
           span.label.label-default {{n}} 
+          a(href='')
+            span.glyphicon.glyphicon-remove
           a.thumbnail(href='')
             img(src='/data/contract/attachment/{{data.id}}/1', alt='{{n}}', style='height:150px')
       .col-md-12
         .col-sm-6.col-md-3
         .col-sm-6.col-md-3(ng-repeat='n in ["آخرین حکم کارگزینی", "صفحه اول دفترچه بیمه","امضاء"]')
           span.label.label-default {{n}} 
+          a(href='')
+            span.glyphicon.glyphicon-remove
           a.thumbnail(href='')
             img(src='/data/contract/attachment/{{data.id}}/1', alt='{{n}}', style='height:150px')
   .panel-footer
     .btn.btn-default(name='buttoncancel', ng-click='backclick()') خروج
-      .span.glyphicon.glyphicon-remove
+      span.glyphicon.glyphicon-remove
