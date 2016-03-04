@@ -11,116 +11,29 @@ var upload = multer({ dest : 'uploads/',
                     });
 var dbpath = __dirname + '/../database/Requests';
 var fs = require('fs');
-var archiver = require('archiver');
-var p = require('path');
-var rimraf = require('rimraf');
 
 module.exports = function (app, db, readAppConfig, initialize) {
     app.post('/admin/import', mypassport.ensureAuthenticated, upload.single('file'), function (req, res) {
         if (req.user.isItAdmin || req.user.isSysAdmin) {
             console.log('file uploaded', req.file);
             var file = dbpath + '.sqlite';
+            console.log('logout du to db restore request');
             req.logout();
-            db().close(function () {
-                fs.rename(file, dbpath + Date.now() + '.sqlite', function (err) {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        fs.rename(req.file.path, dbpath + '.sqlite', function (err) {
-                            if (err) {
-                                console.log(err);
-                            } else {
-                                initialize();
-                            }
-                        });
-                    }
-                });
-            });
-        }
-        res.redirect('/');
-    });
-
-    app.post('/users/:whattodo', mypassport.ensureAuthenticated, upload.single('file'), function (req, res) {
-        var src = 'uploads/users/' + req.user.id;
-        var fi = '';
-        if (typeof(req.body.requestid) !== 'undefined') {
-            src = 'uploads/requests/' + req.body.requestid;
-        }
-        var callback = function (path) {
-            if (fs.existsSync(path)) {
-                res.json(fs.readdirSync(path));
-            } else {
-                res.json({});
-            }
-        };
-        if (req.params.whattodo === 'upload') {
-            console.log(req.file);
-            var dpath = req.file.destination + 'users/' + req.user.id;
-            if (!fs.existsSync(dpath)) {
-                fs.mkdirSync(dpath);
-            }
-            fs.rename(req.file.path, dpath + '/' + req.body.filename, function (err) {
+            db().close(function (err) {
                 if (err) {
-                    console.log(err);
-                    res.sendStatus(403);
+                    console.log('error close db ' + err);
                 } else {
-                    callback(dpath);
-                }
-            });
-        } else if (req.params.whattodo === 'remove') {
-            for (fi in req.body.filename) {
-                fs.unlinkSync(src + '/' + req.body.filename[fi]);
-            }
-            callback(src);
-        } else if (req.params.whattodo === 'removeall') {
-            rimraf(src, function (error) {
-                console.log('removeall Error: ', error);
-                callback(src);
-            });
-        } else if (req.params.whattodo === 'attachto') {
-            if (typeof(req.body.requestid) !== 'undefined' &&  req.body.requestid >= 0 && req.body.filename !== 'undefined') {
-                var dst = 'uploads/requests/' + req.body.requestid + '/';
-                if (req.params.whattodo === 'attachto') {
-                    src = 'uploads/users/' + req.user.id + '/' + req.body.filename;
-                    if (!fs.existsSync(dst + req.body.filename) && fs.existsSync(src)) {
-                        if (!fs.existsSync(dst)) {
-                            fs.mkdirSync(dst);
-                        }
-                        fs.createReadStream(src).pipe(fs.createWriteStream(dst + req.body.filename));
-                        callback(dst);
-                    } else {
-                        console.log('source not exists or dist allready exists');
-                        res.sendStatus(403);
+                    try {
+                        fs.renameSync(file, dbpath + Date.now() + '.sqlite');
+                        fs.renameSync(req.file.path, dbpath + '.sqlite');
+                    } catch (e) {
+                        console.log(e);
+                    } finally {
+                        initialize();
+                        res.redirect('/');
                     }
                 }
-            } else {
-                console.log(req.params.whattodo + ' error');
-                res.sendStatus(403);
-            }
-        } else if (req.params.whattodo === 'dir') {
-            callback(src);
-        } else if (req.params.whattodo === 'download') {
-            if (req.body.filename.length > 1) {
-                var archive = archiver('zip');
-                archive.on('error', function (err) {
-                    res.status(500).send({error: err.message});
-                });
-                //on stream closed we can end the request
-                archive.on('end', function () {
-                    console.log('Archive wrote %d bytes', archive.pointer());
-                });
-                //set the archive name
-                res.attachment('userarchive.zip');
-                //this is the streaming magic
-                archive.pipe(res);
-                for (fi in req.body.filename) {
-                    var _file = src + '/' + req.body.filename[fi];
-                    archive.file(_file, { name: p.basename(_file) });
-                }
-                archive.finalize();
-            } else if (req.body.filename.length === 1) {
-                res.sendFile(p.resolve(src, req.body.filename[0]));
-            }
+            });
         }
     });
 

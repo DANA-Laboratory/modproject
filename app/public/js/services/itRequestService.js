@@ -172,8 +172,11 @@ dashboardApp.service('itRequestService', function($http, $sce){
             data: data
         }).success(function(data, status, headers, config) {
             console.log(whattodo + ' item OK');
-            if(callback)
+            if(callback) {
                 callback(data);
+            }
+            else {
+            }
         }).error(function(data, status, headers, config) {
             console.log('error ' + whattodo + ' item');
         });
@@ -213,7 +216,9 @@ dashboardApp.service('itRequestService', function($http, $sce){
         })
         .success(function(data, status, headers, config){
             console.log('upload files to ' + to + ' done.');
-            callback(data);
+            if (callback) {
+                callback(data);
+            }
         })
         .error(function(data, status, headers, config){
             console.log('uploadto Error');
@@ -223,17 +228,23 @@ dashboardApp.service('itRequestService', function($http, $sce){
     this.managefiles = function (to, data, callback) {
         $http({
             method: 'post',
-            url: to,
-            responseType: callback ? false : 'arraybuffer',
+            url: 'fileman/' + to,
+            responseType: (to === 'download') ? 'arraybuffer' : false,
             data: data
         }).success(function(data, status, headers, config){
             console.log('manage files ' + to + ' done.');
             if (callback) {
                 callback(data);
             } else {
-                var header = headers('Content-Disposition');
-                var file = new Blob([data], {type: 'application/zip'});
-                window.location = URL.createObjectURL(file);
+                if (to === 'attachto') {
+
+                } else if (to === 'download') {
+                    var cd = headers('Content-Disposition');
+                    var ct = headers('Content-Type');
+                    var file = new Blob([data], {type: ct});
+                    var popup = window.open("about:blank", "myPopup");
+                    popup.location.href = URL.createObjectURL(file);
+                }
             }
         }).error(function(data, status, headers, config){
             console.log('managefiles Error');

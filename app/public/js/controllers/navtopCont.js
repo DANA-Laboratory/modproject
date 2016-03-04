@@ -17,8 +17,9 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
     }
 
     $scope.$on('thumbnailclick', function (event, args) {
-        $scope.filemanstatus = 'attachfile';
-        $scope.message = args.message;
+        $scope.filemanstatus = 'attachto';
+        $scope.attachemntid = args.attachemntid;
+        $scope.requestid = args.requestid;
     });
 
     $scope.liclick = function (id) {

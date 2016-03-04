@@ -6,10 +6,10 @@
           span ×
         h4.modal-title(ng-if='filemanstatus === "installDataBase"') نصب بانک پشتیبان
         h4.modal-title(ng-if='filemanstatus === "managefiles"') مدیرت فضای کاربری 
-        h4.modal-title(ng-if='filemanstatus === "attachfile"') انتخاب ضمائم 
+        h4.modal-title(ng-if='filemanstatus === "attachto"') انتخاب ضمائم 
       .modal-body
         form#uploadForm(ng-submit='managefiles("upload")')
-          .form-group(ng-if='filemanstatus === "managefiles" || filemanstatus === "attachfile"')
+          .form-group(ng-if='filemanstatus === "managefiles" || filemanstatus === "attachto"')
             label(for='dir') فایلهای موجود در فضای کاربری
             .well.col-md-12(id='dir', style='height:200px; overflow:auto;', ng-init='managefiles("dir");')
               label.btn-xs.btn-info.well-item(ng-repeat='fi in dir', ng-click='select(fi)') {{fi}}
@@ -22,13 +22,13 @@
                 span.glyphicon.glyphicon-remove
               .btn.btn-danger.col-md-4(ng-click='managefiles("removeall")') حذف همه 
                 span.glyphicon.glyphicon-warning-sign
-            .col-md-12.btn-group(ng-if='filemanstatus === "attachfile"')
-              .btn.btn-default.col-md-4(ng-click='managefiles("attach")') پیوست گردد
+            .col-md-12.btn-group(ng-if='filemanstatus === "attachto"')
+              .btn.btn-default.col-md-4(ng-click='managefiles("attachto")', data-dismiss='modal') پیوست گردد
                 span.glyphicon.glyphicon-paperclip
           .form-group
               label(style='margin-top:20px') ارسال فایل (Max File Size=10MB)
               .well
-                  .form-group(ng-if='filemanstatus === "managefiles"')
+                  .form-group(ng-if='filemanstatus === "managefiles" || filemanstatus === "attachto"')
                     label(for='filename') عنوان فایل
                     input.form-control(id='filename', type='text', ng-value='uploadme.name', required) 
                   .form-group

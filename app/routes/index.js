@@ -60,4 +60,5 @@ module.exports = function (app, passport, io) {
     require('./usersRoutes')(app, dbref, readAppConfig, initializerequests);
     require('./maliRoutes')(app, dbmaf);
     require('./contractRoutes')(app);
+    require('./filemanRoutes')(app);
 };
