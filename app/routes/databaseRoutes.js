@@ -3,7 +3,6 @@
  */
 'use strict';
 var mypassport = require('../passport/mypassport');
-var fs = require('fs');
 //var path = require('path');
 
 module.exports = function (app, io, appConfig, db) {
@@ -198,24 +197,5 @@ module.exports = function (app, io, appConfig, db) {
             }
         };
         db().all('SELECT * from requests where ((' + req.user.isKarshenas  + ' OR owner=' + req.user.id + ') AND applicant=? AND requesttype="contract") ORDER BY id ASC', req.params.melicode, callback);
-    });
-
-    app.get('/data/contract/attachment/:requestID/:attachmentID', mypassport.ensureAuthenticated, function (req, res) {
-        var path = require('path');
-        var callback = function (err, rows) {
-            if (err) {
-                console.log('get attachment error ', err);
-                res.sendFile(path.resolve('app/public/images/attachment.png'));
-            } else {
-                var p = path.resolve('uploads/requests/', req.params.requestID, req.params.attachmentID);
-                if (rows.length === 1 && fs.existsSync(p)) {
-                    console.log('attach file exists: ' + p);
-                    res.sendFile(path.resolve('uploads/requests/', req.params.requestID, req.params.attachmentID));
-                } else {
-                    res.sendFile(path.resolve('app/public/images/attachment.png'));
-                }
-            }
-        };
-        db().all('SELECT id from requests where ((' + req.user.isKarshenas  + ' OR owner=' + req.user.id + ') AND id=? AND requesttype="contract")', req.params.requestID, callback);
     });
 };

@@ -194,7 +194,7 @@ dashboardApp.service('itRequestService', function($http, $sce){
             var fileURL = URL.createObjectURL(file);
             callback($sce.trustAsResourceUrl(fileURL));
         }).error(function(data, status, headers, config) {
-            console.log('error Open state');
+            console.log('error Open ' + requesttype);
         });
     };
 

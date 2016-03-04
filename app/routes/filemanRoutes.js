@@ -10,10 +10,30 @@ var upload = multer({ dest : 'uploads/',
                       limits: { fileSize: 10000000 }
                     });
 var archiver = require('archiver');
-var p = require('path');
+var path = require('path');
 var rimraf = require('rimraf');
+var glob = require('glob');
 
-module.exports = function (app) {
+module.exports = function (app, db) {
+
+    app.get('/fileman/contract/attachment/:requestID/:attachmentID', mypassport.ensureAuthenticated, function (req, res) {
+        var callback = function (err, rows) {
+            if (err) {
+                console.log('get attachment error ', err);
+                res.sendFile(path.resolve('app/public/images/attachment.png'));
+            } else {
+                var p = path.resolve('uploads/requests/', req.params.requestID, req.params.attachmentID);
+                if (rows.length === 1 && fs.existsSync(p)) {
+                    console.log('attach file exists: ' + p);
+                    res.sendFile(path.resolve('uploads/requests/', req.params.requestID, req.params.attachmentID));
+                } else {
+                    res.sendFile(path.resolve('app/public/images/attachment.png'));
+                }
+            }
+        };
+        db().all('SELECT id from requests where ((' + req.user.isKarshenas  + ' OR owner=' + req.user.id + ') AND id=? AND requesttype="contract")', req.params.requestID, callback);
+    });
+
     app.post('/fileman/:whattodo', mypassport.ensureAuthenticated, upload.single('file'), function (req, res) {
         var src = 'uploads/users/' + req.user.id;
         var fi = '';
@@ -55,12 +75,12 @@ module.exports = function (app) {
             if (typeof(req.body.requestid) !== 'undefined' &&  req.body.requestid >= 0 && req.body.filename !== 'undefined') {
                 var dst = 'uploads/requests/' + req.body.requestid + '/';
                 src = 'uploads/users/' + req.user.id + '/' + req.body.filename;
-                var files = require('glob').sync(dst + req.body.attachemntid + '.*');
+                var files = glob.sync(dst + req.body.attachemntid + '.*');
                 if (files.length === 0 && fs.existsSync(src)) {
                     if (!fs.existsSync(dst)) {
                         fs.mkdirSync(dst);
                     }
-                    fs.createReadStream(src).pipe(fs.createWriteStream(dst + req.body.attachemntid + p.extname(src)));
+                    fs.createReadStream(src).pipe(fs.createWriteStream(dst + req.body.attachemntid + path.extname(src)));
                     res.sendStatus(200);
                 } else {
                     console.log('source not exists or dist allready exists');
@@ -88,12 +108,12 @@ module.exports = function (app) {
                 archive.pipe(res);
                 for (fi in req.body.filename) {
                     var _file = src + '/' + req.body.filename[fi];
-                    archive.file(_file, { name: p.basename(_file) });
+                    archive.file(_file, { name: path.basename(_file) });
                 }
                 archive.finalize();
             } else if (req.body.filename.length === 1) {
                 res.attachment(req.body.filename[0]);
-                res.sendFile(p.resolve(src, req.body.filename[0]));
+                res.sendFile(path.resolve(src, req.body.filename[0]));
             }
         }
     });
