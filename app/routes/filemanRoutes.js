@@ -16,22 +16,35 @@ var glob = require('glob');
 
 module.exports = function (app, db) {
 
-    app.get('/fileman/contract/attachment/:requestID/:attachmentID', mypassport.ensureAuthenticated, function (req, res) {
+    var havepermission = function (user, requestid, mode, outercallback) {
         var callback = function (err, rows) {
             if (err) {
-                console.log('get attachment error ', err);
-                res.sendFile(path.resolve('app/public/images/attachment.png'));
+                console.log('havepermission error ', err);
+                outercallback(false);
+            } else if (rows.length !== 1) {
+                console.log('havepermission no such request');
+                outercallback(false);
             } else {
-                var p = path.resolve('uploads/requests/', req.params.requestID, req.params.attachmentID);
-                if (rows.length === 1 && fs.existsSync(p)) {
-                    console.log('attach file exists: ' + p);
-                    res.sendFile(path.resolve('uploads/requests/', req.params.requestID, req.params.attachmentID));
-                } else {
-                    res.sendFile(path.resolve('app/public/images/attachment.png'));
-                }
+                outercallback(true);
             }
         };
-        db().all('SELECT id from requests where ((' + req.user.isKarshenas  + ' OR owner=' + req.user.id + ') AND id=? AND requesttype="contract")', req.params.requestID, callback);
+
+        if (mode === 'r') {
+            db().all('SELECT id from requests where ((' + user.isKarshenas  + ' OR owner=' + user.id + ') AND id=? AND requesttype="contract")', requestid, callback);
+        } else {
+            console.log('havepermission TODO');
+            outercallback(false);
+        }
+    };
+
+    app.get('/fileman/contract/attachment/:requestid/:attachmentid', mypassport.ensureAuthenticated, function (req, res) {
+        havepermission(req.user,  req.params.requestid, 'r', function(authenticated) {
+            if (authenticated && fs.existsSync(path.resolve('uploads/requests/', req.params.requestid, req.params.attachmentid);)) {
+                res.sendFile(path.resolve('uploads/requests/', req.params.requestID, req.params.attachmentid));
+            } else {
+                res.sendFile(path.resolve('app/public/images/attachment.png'));
+            }
+        });
     });
 
     app.post('/fileman/:whattodo', mypassport.ensureAuthenticated, upload.single('file'), function (req, res) {
