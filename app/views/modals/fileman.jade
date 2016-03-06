@@ -23,7 +23,7 @@
               .btn.btn-danger.col-md-4(ng-click='managefiles("removeall")') حذف همه 
                 span.glyphicon.glyphicon-warning-sign
             .col-md-12.btn-group(ng-if='filemanstatus === "attachto"')
-              .btn.btn-default.col-md-4(ng-click='managefiles("attachto")', data-dismiss='modal') پیوست گردد
+              .btn.btn-default.col-md-4(ng-click='managefiles("attachto"); $emit("fileattached")', data-dismiss='modal') پیوست گردد
                 span.glyphicon.glyphicon-paperclip
           .form-group
               label(style='margin-top:20px') ارسال فایل (Max File Size=10MB)

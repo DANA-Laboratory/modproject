@@ -38,12 +38,15 @@ module.exports = function (app, db) {
     };
 
     app.get('/fileman/contract/attachment/:requestid/:attachmentid', mypassport.ensureAuthenticated, function (req, res) {
-        havepermission(req.user,  req.params.requestid, 'r', function(authenticated) {
-            if (authenticated && fs.existsSync(path.resolve('uploads/requests/', req.params.requestid, req.params.attachmentid);)) {
-                res.sendFile(path.resolve('uploads/requests/', req.params.requestID, req.params.attachmentid));
-            } else {
-                res.sendFile(path.resolve('app/public/images/attachment.png'));
+        havepermission(req.user,  req.params.requestid, 'r', function (authenticated) {
+            if (authenticated) {
+                var files = glob.sync(path.resolve('uploads/requests/', req.params.requestid, req.params.attachmentid + '.*'));
+                if (files.length === 1) {
+                    res.sendFile(files[0]);
+                    return;
+                }
             }
+            res.sendFile(path.resolve('app/public/images/attachment.png'));
         });
     });
 

@@ -1,4 +1,5 @@
 dashboardApp.controller('contractCont', function ($scope, itRequestService) {
+
     $scope.setmodat = function() {
         if (typeof $scope.data.useritems.startdate !== 'undefined' && typeof $scope.data.useritems.enddate !== 'undefined') {
             $scope.data.useritems.moddat = datediff($scope.data.useritems.startdate, $scope.data.useritems.enddate);

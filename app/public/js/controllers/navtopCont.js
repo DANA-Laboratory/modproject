@@ -22,6 +22,11 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
         $scope.requestid = args.requestid;
     });
 
+    $scope.random = [0,0,0,0,0,0,0,0];
+    $scope.$on('fileattached', function (event, args) {
+        $scope.random[$scope.attachemntid] = (new Date()).toString();
+    });
+
     $scope.liclick = function (id) {
         if (id === 'receive') {
             $scope.isreceive = 1;
