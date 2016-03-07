@@ -11,11 +11,17 @@ form.request.panel.panel-primary(ng-controller='contractCont', ng-submit='submit
     .row
       include parts/pagination.jade
       .col-md-12
+          .form-inline
+            .col-md-3
+                label(for='name')نام &nbsp;
+                input.form-control(type='text', id='name', ng-model='data.owneritems.name', ng-required='#{user.isGuest}')
+            .col-md-3
+                label(for='family')نام خانوادگي  &nbsp;
+                input.form-control(type='text', id='family', ng-model='data.owneritems.family', ng-required='#{user.isGuest}')
+            .col-md-6
+              button.btn.pull-left(ng-class='requestLevel===0 ? "btn-success" : "btn-warning"' ,name='buttonsubmit', type='submit') اطلاعات قراداد ثبت گردد
+                .span.glyphicon.glyphicon-ok
+      .col-md-12
         include parts/karshenas.jade
       .col-md-12
         include parts/teacher.jade
-  .panel-footer
-    .btn.btn-default(name='buttoncancel', ng-click='backclick()') خروج
-      .span.glyphicon.glyphicon-remove
-    button.btn.pull-left(ng-class='requestLevel===0 ? "btn-success" : "btn-warning"' ,name='buttonsubmit', type='submit') ثبت
-      .span.glyphicon.glyphicon-ok
