@@ -17,12 +17,13 @@ var express = require('express'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
     errorHandler = require('errorhandler');
-    
+
 var app = express();
 // all environments
 app.set('port', process.env.PORT || PORT_LISTENER);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
+app.set('rootpath', path.resolve(__dirname + '/..'));
 
 app.use(logger('dev'));
 // parse application/x-www-form-urlencoded
@@ -60,5 +61,3 @@ if ('development' === app.get('env')) {
 server.listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
-
-

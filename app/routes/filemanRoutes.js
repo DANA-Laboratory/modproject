@@ -6,15 +6,16 @@
 var mypassport = require('../passport/mypassport');
 var fs = require('fs');
 var multer = require('multer');
-var upload = multer({ dest : 'uploads/',
-                      limits: { fileSize: 10000000 }
-                    });
-var archiver = require('archiver');
 var path = require('path');
 var rimraf = require('rimraf');
 var glob = require('glob');
+var archiver = require('archiver');
 
 module.exports = function (app, db) {
+
+    var upload = multer({ dest : path.resolve(app.get('rootpath'), 'uploads/'),
+                      limits: { fileSize: 10000000 }
+                    });
 
     var havepermission = function (user, requestid, mode, outercallback) {
         var callback = function (err, rows) {
@@ -42,18 +43,18 @@ module.exports = function (app, db) {
     app.get('/fileman/contract/attachment/:requestid/:attachmentid', mypassport.ensureAuthenticated, function (req, res) {
         havepermission(req.user,  req.params.requestid, 'r', function (authenticated) {
             if (authenticated) {
-                var files = glob.sync(path.resolve('uploads/requests/', req.params.requestid, req.params.attachmentid + '.*'));
+                var files = glob.sync(path.resolve(app.get('rootpath'), 'uploads/requests/' + req.params.requestid, req.params.attachmentid + '.*'));
                 if (files.length === 1) {
                     res.sendFile(files[0]);
                     return;
                 }
             }
-            res.sendFile(path.resolve('app/public/images/attachment.png'));
+            res.sendFile(path.resolve(app.get('rootpath'), 'app/public/images/attachment.png'));
         });
     });
 
     app.post('/fileman/:whattodo', mypassport.ensureAuthenticated, upload.single('file'), function (req, res) {
-        var src = 'uploads/users/' + req.user.id;
+        var src = path.resolve(app.get('rootpath'), 'uploads/users/' + req.user.id);
         var fi = '';
         var callback = function (path) {
             if (fs.existsSync(path)) {
@@ -64,7 +65,7 @@ module.exports = function (app, db) {
         };
         if (req.params.whattodo === 'upload') {
             console.log(req.file);
-            var dpath = req.file.destination + 'users/' + req.user.id;
+            var dpath = path.resolve(req.file.destination, 'users/' + req.user.id);
             if (!fs.existsSync(dpath)) {
                 fs.mkdirSync(dpath);
             }
@@ -88,14 +89,14 @@ module.exports = function (app, db) {
             });
         } else if (req.params.whattodo === 'attachto') {
             if (typeof(req.body.requestid) !== 'undefined' &&  req.body.requestid >= 0 && req.body.filename !== 'undefined') {
-                var dst = 'uploads/requests/' + req.body.requestid + '/';
-                src = 'uploads/users/' + req.user.id + '/' + req.body.filename;
-                var files = glob.sync(dst + req.body.attachmentid + '.*');
+                var dst = path.resolve(app.get('rootpath'), 'uploads/requests/' + req.body.requestid);
+                src = path.resolve(src, req.body.filename);
+                var files = glob.sync(dst + '/' + req.body.attachmentid + '.*');
                 if (files.length === 0 && fs.existsSync(src)) {
                     if (!fs.existsSync(dst)) {
                         fs.mkdirSync(dst);
                     }
-                    fs.createReadStream(src).pipe(fs.createWriteStream(dst + req.body.attachmentid + path.extname(src)));
+                    fs.createReadStream(src).pipe(fs.createWriteStream(dst + '/' + req.body.attachmentid + path.extname(src)));
                     res.sendStatus(200);
                 } else {
                     console.log('source not exists or dist allready exists');
@@ -133,7 +134,7 @@ module.exports = function (app, db) {
         } else if (req.params.whattodo === 'removeattachment') {
             havepermission(req.user,  req.body.requestid, 'w', function (authenticated) {
                 if (authenticated) {
-                    var files = glob.sync(path.resolve('uploads/requests/' + req.body.requestid + '/' + req.body.attachmentid + '.*'));
+                    var files = glob.sync(path.resolve(app.get('rootpath'), 'uploads/requests/' + req.body.requestid, req.body.attachmentid + '.*'));
                     if (files.length === 1) {
                         fs.unlinkSync(files[0]);
                         res.sendStatus('200');
