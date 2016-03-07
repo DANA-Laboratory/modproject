@@ -18,13 +18,13 @@ dashboardApp.controller('navbarCont', function ($scope, itRequestService) {
 
     $scope.$on('thumbnailclick', function (event, args) {
         $scope.filemanstatus = 'attachto';
-        $scope.attachemntid = args.attachemntid;
+        $scope.attachmentid = args.attachmentid;
         $scope.requestid = args.requestid;
     });
 
     $scope.random = [0,0,0,0,0,0,0,0];
     $scope.$on('fileattached', function (event, args) {
-        $scope.random[$scope.attachemntid] = (new Date()).toString();
+        $scope.random[args.attachmentid] = (new Date()).toString();
     });
 
     $scope.liclick = function (id) {

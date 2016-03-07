@@ -31,6 +31,8 @@ module.exports = function (app, db) {
 
         if (mode === 'r') {
             db().all('SELECT id from requests where ((' + user.isKarshenas  + ' OR owner=' + user.id + ') AND id=? AND requesttype="contract")', requestid, callback);
+        } else if (mode === 'w') {
+            db().all('SELECT id from requests where ((' + user.isKarshenas  + ' OR owner=' + user.id + ') AND id=? AND requesttype="contract")', requestid, callback);
         } else {
             console.log('havepermission TODO');
             outercallback(false);
@@ -53,9 +55,6 @@ module.exports = function (app, db) {
     app.post('/fileman/:whattodo', mypassport.ensureAuthenticated, upload.single('file'), function (req, res) {
         var src = 'uploads/users/' + req.user.id;
         var fi = '';
-        if (typeof(req.body.requestid) !== 'undefined') {
-            src = 'uploads/requests/' + req.body.requestid;
-        }
         var callback = function (path) {
             if (fs.existsSync(path)) {
                 res.json(fs.readdirSync(path));
@@ -91,12 +90,12 @@ module.exports = function (app, db) {
             if (typeof(req.body.requestid) !== 'undefined' &&  req.body.requestid >= 0 && req.body.filename !== 'undefined') {
                 var dst = 'uploads/requests/' + req.body.requestid + '/';
                 src = 'uploads/users/' + req.user.id + '/' + req.body.filename;
-                var files = glob.sync(dst + req.body.attachemntid + '.*');
+                var files = glob.sync(dst + req.body.attachmentid + '.*');
                 if (files.length === 0 && fs.existsSync(src)) {
                     if (!fs.existsSync(dst)) {
                         fs.mkdirSync(dst);
                     }
-                    fs.createReadStream(src).pipe(fs.createWriteStream(dst + req.body.attachemntid + path.extname(src)));
+                    fs.createReadStream(src).pipe(fs.createWriteStream(dst + req.body.attachmentid + path.extname(src)));
                     res.sendStatus(200);
                 } else {
                     console.log('source not exists or dist allready exists');
@@ -131,6 +130,18 @@ module.exports = function (app, db) {
                 res.attachment(req.body.filename[0]);
                 res.sendFile(path.resolve(src, req.body.filename[0]));
             }
+        } else if (req.params.whattodo === 'removeattachment') {
+            havepermission(req.user,  req.body.requestid, 'w', function (authenticated) {
+                if (authenticated) {
+                    var files = glob.sync(path.resolve('uploads/requests/' + req.body.requestid + '/' + req.body.attachmentid + '.*'));
+                    if (files.length === 1) {
+                        fs.unlinkSync(files[0]);
+                        res.sendStatus('200');
+                        return;
+                    }
+                }
+                res.sendStatus('403');
+            });
         }
     });
 };

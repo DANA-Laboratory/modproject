@@ -2,12 +2,17 @@
 
 dashboardApp.controller('filemanCont', function ($scope, itRequestService) {
 
+    $scope.nothingselected = true;
+
     $scope.select = function(fi) {
         $scope.selected[fi] = !$scope.selected[fi];
-        if ($scope.selected[fi] && $scope.filemanstatus === 'attachto') {
-            for (var i in $scope.selected) {
-                if (i != fi && $scope.selected[i]) {
-                    $scope.selected[i] = false;
+        if ($scope.filemanstatus === 'attachto') {
+            $scope.nothingselected = !$scope.selected[fi];
+            if ($scope.selected[fi]) {
+                for (var i in $scope.selected) {
+                    if (i != fi && $scope.selected[i]) {
+                        $scope.selected[i] = false;
+                    }
                 }
             }
         }
@@ -54,7 +59,7 @@ dashboardApp.controller('filemanCont', function ($scope, itRequestService) {
                 if ($scope.selected[fi]) {
                     filename = fi;
                     $scope.selected[fi] = false;
-                    itRequestService.managefiles(whattodo, {'filename' : filename, 'requestid' : $scope.requestid, 'attachemntid' : $scope.attachemntid}, false);
+                    itRequestService.managefiles(whattodo, {'filename' : filename, 'requestid' : $scope.requestid, 'attachmentid' : $scope.attachmentid}, false);
                 }
             }
         }

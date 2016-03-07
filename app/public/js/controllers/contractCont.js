@@ -107,4 +107,7 @@ dashboardApp.controller('contractCont', function ($scope, itRequestService) {
         }
     }
 
+    $scope.removeattachment = function (attachmentid) {
+        itRequestService.managefiles('removeattachment', {requestid: $scope.data.id, attachmentid: attachmentid}, $scope.$emit('fileattached', {attachmentid : attachmentid}));
+    }
 });
