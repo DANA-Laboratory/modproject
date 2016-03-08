@@ -150,6 +150,10 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         itRequestService.updatestatus($scope.backclick, $scope.data);
     }
 
+    $scope.linkclicked = function() {
+        console.log(selectedRequestId);
+    }
+
     var getdataCallback = function(data) {
         $scope.requestLevel = 1 + requestStatus.indexOf(data.status);
         //data binding
@@ -209,6 +213,7 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         .on('search.bs.table', function (e, text) {
         });
     });
+
 });
 
 function rowStyle(row, index) {
