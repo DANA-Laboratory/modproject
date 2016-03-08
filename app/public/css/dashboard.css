@@ -8,6 +8,12 @@ body {
   padding-bottom: 20px;
   background-color: lightslategrey;
 }
+.fixed-table-toolbar .dropdown-menu {
+    text-align: right;
+}
+.fixed-table-container tbody{
+    font-size: 12px;
+}
 .fixed-table-container thead th .th-inner {
   text-align: center;
 }
@@ -67,8 +73,4 @@ body {
 /* rows of different tasks after login */
 .top-buffer {
   margin-top:10px;
-}
-
-.fixed-table-toolbar .dropdown-menu {
-    text-align: right;
 }

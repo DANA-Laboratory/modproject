@@ -9,18 +9,31 @@ module.exports = function (app, io, appConfig, db) {
 
     var replaceIDwithNameFamily = function (row) {
         var userAccounts = mypassport.userAccounts();
+        var namefam = '';
         for (var user in userAccounts) {
-            if (userAccounts[user].id === row.owner) {
-                row.owner = userAccounts[user].name + ' ' + userAccounts[user].family;
+            namefam = '';
+            if (userAccounts[user].name !== null) {
+                namefam = userAccounts[user].name;
             }
-            if (userAccounts[user].id === row.user) {
-                row.user = userAccounts[user].name + ' ' + userAccounts[user].family;
+            if (userAccounts[user].family !== null) {
+                namefam += ' ' + userAccounts[user].family;
             }
-            if (userAccounts[user].id === row.canceluser) {
-                row.canceluser = userAccounts[user].name + ' ' + userAccounts[user].family;
-            }
-            if (userAccounts[user].id === row.enduser) {
-                row.enduser = userAccounts[user].name + ' ' + userAccounts[user].family;
+            if (namefam.trim().length > 0) {
+                if (userAccounts[user].id === row.owner) {
+                    row.owner = namefam;
+                }
+                if (userAccounts[user].id === row.user) {
+                    row.user = namefam;
+                }
+                if (userAccounts[user].id === row.canceluser) {
+                    row.canceluser = namefam;
+                }
+                if (userAccounts[user].id === row.enduser) {
+                    row.enduser = namefam;
+                }
+                if (Number(userAccounts[user].melicode) === Number(row.applicant)) {
+                    row.applicant = namefam;
+                }
             }
         }
     };
