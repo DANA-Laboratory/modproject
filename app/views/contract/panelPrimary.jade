@@ -2,11 +2,7 @@ form.request.panel.panel-primary(ng-controller='contractCont', ng-submit='submit
   .panel-heading
     h3.panel-title
       b فرم قراداد تدريس
-      span.label.label-warning{{message}}
-      span.label.label-info.pull-left 
-        | شماره: {{data.description}}
-      span.label.label-info.pull-left 
-        | تاریخ: {{data.initdate}}
+      include parts/info.jade
   .request.panel-body
     .row
       include parts/pagination.jade
@@ -25,3 +21,5 @@ form.request.panel.panel-primary(ng-controller='contractCont', ng-submit='submit
         include parts/karshenas.jade
       .col-md-12
         include parts/teacher.jade
+  .panel-footer
+    include parts/alertinfo.jade

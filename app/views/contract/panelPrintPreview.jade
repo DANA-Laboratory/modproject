@@ -1,10 +1,13 @@
 .request.panel.panel-primary
   .panel-heading
     h3.panel-title
-      b فرم قراداد تدريس
+      b فرم قراداد تدريس - نمای آماده چاپ
+      include parts/info.jade
   .request.panel-body
     .row
       include parts/pagination.jade
       .col-md-12
-        .embed-responsive.embed-responsive-16by9()
+        .embed-responsive.embed-responsive-16by9(style='height:415px; padding-bottom: unset')
           iframe.embed-responsive-item(ng-src='{{pdfcontent}}')
+  .panel-footer
+    include parts/alertinfo.jade

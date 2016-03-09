@@ -1,14 +1,14 @@
 .alert.alert-info(role='alert', ng-if='requestLevel===1')
   span.glyphicon.glyphicon-hourglass
-  |  ثبت شده
+  |  انتظار تکمیل  
   span.label.label-danger.pull-left {{message}}
 .alert.alert-info(role='alert', ng-if='requestLevel===2')
   span.glyphicon.glyphicon-hourglass
-  |  در دست اقدام     
+  |  تکمیل گردید، انتظار چاپ
   span.label.label-danger.pull-left {{message}}
 .alert.alert-success(role='alert', ng-if='requestLevel===3')
   span.glyphicon.glyphicon-ok
   |  خاتمه یافته
 .alert.alert-warning(role='alert', ng-if='requestLevel===4')
   span.glyphicon.glyphicon-exclamation-sign
-  |  متوقف شده
+  |  باطل شده

@@ -2,35 +2,25 @@ form.request.panel.panel-info(ng-controller='contractCont', ng-init = ' attachme
   .panel-heading
     h3.panel-title
       b فرم قراداد تدريس - پیوستها
+      include parts/info.jade
   .request.panel-body
     .row
       include parts/pagination.jade
       .col-md-12
-        .col-md-12
-          h4 مدرس محترم!، جهت تکمیل قراداد، فایل حاوی تصویر مدارک ذیل را با اشاره به محل درنظر گرفته شده بصورت خودکار به فضای کاربری خود ارسال و کپی آنرا پیوست قراداد فرمایید. 
-        .col-sm-4.col-md-3
-          p پس از تکمیل قرارداد میتوانید با اشاره به نماد چاپگر در سمت چپ فرم اقدام به چاپ قرارداد نمایید
-        .col-sm-4.col-md-3
-          p قرارداد الکترونیکی از طریق کارتابل کارشناسان آموزش در شرکت ره آوران توسط ایشان ملاحظه خواهد شد 
-        .col-sm-4.col-md-3
-          p در صورت تایید ایشان وضعیت سند، به خاتمه یافته تغییر خواهد کرد و مفاد آن غیر قابل تغییر خواهند بود.
-        .col-sm-4.col-md-3
-          p با تشکر از توجه و دقت جنابعالی
-      .col-md-12
-        .col-sm-6.col-md-3(ng-repeat='n in [0,1,2,3]')
+        .col-sm-3.col-md-2(ng-repeat='n in [0,1,2,3,4,5]')
           span.label.label-default {{attachments[n]}} 
           a(href='', ng-click='removeattachment(n)')
             span.glyphicon.glyphicon-remove
           a.thumbnail(href='', data-toggle='modal', data-target='#fileman', ng-click='$emit("thumbnailclick", {requestid: data.id, attachmentid: n})')
-            img(ng-src='/fileman/contract/attachment/{{data.id}}/{{n}}?cb={{random[n]}}', alt='{{attachments[n]}}', style='height:150px')
+            img(ng-src='/fileman/contract/attachment/{{data.id}}/{{n}}?cb={{random[n]}}', alt='{{attachments[n]}}')
       .col-md-12
-        .col-sm-6.col-md-3
-        .col-sm-6.col-md-3(ng-repeat='n in [4,5,6]')
+        .col-sm-6.col-md-10
+          h4   مدرس محترم!، جهت تکمیل قراداد، فایل حاوی تصویر مدارک ذیل را با اشاره به محل درنظر گرفته شده بصورت خودکار به فضای کاربری خود ارسال و کپی آنرا پیوست قراداد فرمایید. 
+        .col-sm-6.col-md-2(ng-repeat='n in [6]')
           span.label.label-default {{attachments[n]}} 
           a(href='', ng-click='removeattachment(n)')
             span.glyphicon.glyphicon-remove
           a.thumbnail(href='', data-toggle='modal', data-target='#fileman', ng-click='$emit("thumbnailclick", {requestid: data.id, attachmentid: n})')
-            img(ng-src='/fileman/contract/attachment/{{data.id}}/{{n}}?cb={{random[n]}}', alt='{{attachments[n]}}', style='height:150px')
+            img(ng-src='/fileman/contract/attachment/{{data.id}}/{{n}}?cb={{random[n]}}', alt='{{attachments[n]}}')
   .panel-footer
-    .btn.btn-default(name='buttoncancel', ng-click='backclick()') خروج
-      span.glyphicon.glyphicon-remove
+    include parts/alertinfo.jade

@@ -14,6 +14,9 @@ dashboardApp.config(['$routeProvider', function($routeProvider) {
     .when('/itaction', {
       templateUrl: 'itRequest/panelAction'
     })
+    .when('/contractaction', {
+      templateUrl: 'contract/panelAction'
+    })
     .when('/contractprimary', {
       templateUrl: 'contract/panelPrimary'
     })

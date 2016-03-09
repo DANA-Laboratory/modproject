@@ -1,0 +1,40 @@
+.request.panel.panel-warning(ng-if='requestLevel>0')
+  .panel-heading
+    h3.panel-title 
+      b فرم قراداد تدریس - دستورات
+      include parts/info.jade
+  .request.panel-body
+    .row
+      include parts/pagination.jade
+      .col-md-12
+        .col-sm-4.col-md-3
+          p پس از تکمیل قرارداد میتوانید با اشاره به نماد چاپگر در سمت چپ فرم اقدام به چاپ قرارداد نمایید
+        .col-sm-4.col-md-3
+          p قرارداد الکترونیکی از طریق کارتابل کارشناسان آموزش در شرکت ره آوران توسط ایشان ملاحظه خواهد شد 
+        .col-sm-4.col-md-3
+          p در صورت تایید ایشان وضعیت سند، به خاتمه یافته تغییر خواهد کرد و مفاد آن غیر قابل تغییر خواهند بود.
+        .col-sm-4.col-md-3
+          p با تشکر از توجه و دقت جنابعالی
+      .col-md-12
+        .form-group
+          .row.form-group    
+            .form-group 
+              - var captions = ['data.actionuser', 'data.actiondate', 'data.actiontime']
+              include parts/datetime.jade
+            .btn.btn-primary(type='button', ng-if='requestLevel===1', ng-click='updatestatus(1)', ng-if='requestLevel===1 && isOwner') آغاز کار
+              .span.glyphicon.glyphicon-arrow-left()
+          .well(ng-if='(requestLevel===2 && isOwner) || requestLevel===3')
+            .row.form-group
+              .form-group
+                label.col-md-9.control-label(for='textarea') شرح فعالیت های انجام شده
+                  textarea#textarea.form-control(ng-model='data.actiondescription', ng-readonly='requestLevel!==2')
+              .btn.btn-success(type='button', ng-click='updatestatus(2)', ng-if='requestLevel===2') خاتمه
+                .span.glyphicon.glyphicon-ok()
+        .well(ng-if='requestLevel===1 || requestLevel===2 || requestLevel===4')
+          .input-group.col-md-10
+            input.form-control(type='text', placeholder='علت لغو...', ng-model='data.cancelwhy', ng-readonly='requestLevel===4')
+            .span.input-group-btn
+              .btn.btn-warning(type='button', ng-click='updatestatus(3)', ng-if='requestLevel===1 || (requestLevel===2 && isOwner)') لغو درخواست
+                .span.glyphicon.glyphicon-remove()
+  .panel-footer  
+    include parts/alertinfo.jade
