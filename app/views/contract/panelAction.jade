@@ -18,23 +18,23 @@
       .col-md-12
         .form-group
           .row.form-group    
+            p ارسال سند، آنرا در وضعیت انتظار برای چاپ قرار میدهد، در صورتی که داده ها و پیوستهای مربوطه را تکمیل نموداید، میتوانید اقدام به ارسال سند فرمایید.
             .form-group 
               - var captions = ['data.actionuser', 'data.actiondate', 'data.actiontime']
               include parts/datetime.jade
-            .btn.btn-primary(type='button', ng-if='requestLevel===1', ng-click='updatestatus(1)', ng-if='requestLevel===1 && isOwner') آغاز کار
+            .btn.btn-primary(type='button', ng-if='requestLevel===1', ng-click='updatestatus(1)', ng-if='requestLevel===1 && isOwner') ارسال جهت بررسی و چاپ 
               .span.glyphicon.glyphicon-arrow-left()
-          .well(ng-if='(requestLevel===2 && isOwner) || requestLevel===3')
+          .well(ng-if='(requestLevel!==4 && isCreator)')
             .row.form-group
-              .form-group
-                label.col-md-9.control-label(for='textarea') شرح فعالیت های انجام شده
-                  textarea#textarea.form-control(ng-model='data.actiondescription', ng-readonly='requestLevel!==2')
-              .btn.btn-success(type='button', ng-click='updatestatus(2)', ng-if='requestLevel===2') خاتمه
+              p تغییر وضعیت سند به خاتمه یافته در زمانی انجام میگردد که کلیه داده های لازم تکمیل و عملیات چاپ متن سند با موفقیت انجام شده باشد، پس از خاتمه هیچیک از مفاد قرارداد یا پیوستهای آن قابل تغییر نخواهند بود.
+              .btn.btn-success(type='button', ng-click='updatestatus(2)', ng-if='requestLevel!==3') خاتمه
                 .span.glyphicon.glyphicon-ok()
         .well(ng-if='requestLevel===1 || requestLevel===2 || requestLevel===4')
+          p تغییر وضعیت سند به باطل شده آنرا از کارتابل اسناد فعال خارج و به بخش باطل شده ها منتقل میکند، این سند پس از مدتی بطور کامل از بان اطلاعاتی حذف خواهد شد.
           .input-group.col-md-10
-            input.form-control(type='text', placeholder='علت لغو...', ng-model='data.cancelwhy', ng-readonly='requestLevel===4')
+            input.form-control(type='text', placeholder='علت ابطال...', ng-model='data.cancelwhy', ng-readonly='requestLevel===4')
             .span.input-group-btn
-              .btn.btn-warning(type='button', ng-click='updatestatus(3)', ng-if='requestLevel===1 || (requestLevel===2 && isOwner)') لغو درخواست
-                .span.glyphicon.glyphicon-remove()
+              .btn.btn-warning(type='button', ng-click='updatestatus(3)', ng-if='requestLevel===1 || (requestLevel===2 && isCreator)')  ابطال سند
+                .span.glyphicon.glyphicon-trash()
   .panel-footer  
     include parts/alertinfo.jade

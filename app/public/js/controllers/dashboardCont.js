@@ -131,7 +131,6 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
     $scope.submitbtnclick = function () {
         if ($scope.requestLevel!==0) {
             $scope.updaterequest();
-            $scope.backclick();
         } else {
             itRequestService.insertrequest($scope.backclick, $scope.data);
         }

@@ -26,7 +26,6 @@
             input.form-control(type='text', placeholder='علت لغو...', ng-model='data.cancelwhy', ng-readonly='requestLevel===4')
             .span.input-group-btn
               .btn.btn-warning(type='button', ng-click='updatestatus(3)', ng-if='requestLevel===1 || (requestLevel===2 && isOwner)') لغو درخواست
-                .span.glyphicon.glyphicon-remove()
+                .span.glyphicon.glyphicon-trash()
   .panel-footer  
     include parts/alertinfo.jade
-
