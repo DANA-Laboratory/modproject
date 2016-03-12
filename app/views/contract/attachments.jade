@@ -1,4 +1,4 @@
-form.request.panel.panel-info(ng-controller='contractCont', ng-init = ' attachments = ["عکس","صفحه اول شناسنامه","کارت ملی","آخرین مدرک تحصیلی","آخرین حکم کارگزینی", "صفحه اول دفترچه بیمه","امضاء"]')
+form.request.panel.panel-info(ng-controller='contractCont', ng-init = 'pathtoimage=""; attachments=["عکس","صفحه اول شناسنامه","کارت ملی","آخرین مدرک تحصیلی","آخرین حکم کارگزینی", "صفحه اول دفترچه بیمه","امضاء"]')
   .panel-heading
     h3.panel-title
       b فرم قراداد تدريس - پیوستها
@@ -9,18 +9,24 @@ form.request.panel.panel-info(ng-controller='contractCont', ng-init = ' attachme
       .col-md-12
         .col-sm-3.col-md-2(ng-repeat='n in [0,1,2,3,4,5]')
           span.label.label-default {{attachments[n]}} 
-          a(href='', ng-click='removeattachment(n)')
+          a(ng-if='requestLevel<3', href='', ng-click='removeattachment(n)')
             span.glyphicon.glyphicon-remove
-          a.thumbnail(href='', data-toggle='modal', data-target='#fileman', ng-click='$emit("thumbnailclick", {requestid: data.id, attachmentid: n})')
+          a.thumbnail(ng-if='requestLevel<3', href='', data-toggle='modal', data-target='#fileman', ng-click='$emit("thumbnailclick", {requestid: data.id, attachmentid: n})')
+            img(ng-src='/fileman/contract/attachment/{{data.id}}/{{n}}?cb={{random[n]}}', alt='{{attachments[n]}}')
+          a.thumbnail(ng-if='requestLevel>2')
             img(ng-src='/fileman/contract/attachment/{{data.id}}/{{n}}?cb={{random[n]}}', alt='{{attachments[n]}}')
       .col-md-12
         .col-sm-6.col-md-10
-          h4   مدرس محترم!، جهت تکمیل قراداد، فایل حاوی تصویر مدارک ذیل را با اشاره به محل درنظر گرفته شده بصورت خودکار به فضای کاربری خود ارسال و کپی آنرا پیوست قراداد فرمایید. 
+          P مدرس محترم!
+          P جهت تکمیل قرارداد لازم است تصویر مدارک فهرست شده در این صفحه را با اشاره
+            | به محل در نظر گرفته شده، به فضای کاربری خود منتقل و سپس پیوست این قرارداد فرمایید.
         .col-sm-6.col-md-2(ng-repeat='n in [6]')
           span.label.label-default {{attachments[n]}} 
-          a(href='', ng-click='removeattachment(n)')
+          a(ng-if='requestLevel<3', href='', ng-click='removeattachment(n)')
             span.glyphicon.glyphicon-remove
-          a.thumbnail(href='', data-toggle='modal', data-target='#fileman', ng-click='$emit("thumbnailclick", {requestid: data.id, attachmentid: n})')
+          a.thumbnail(ng-if='requestLevel<3', href='', data-toggle='modal', data-target='#fileman', ng-click='$emit("thumbnailclick", {requestid: data.id, attachmentid: n})')
+            img(ng-src='/fileman/contract/attachment/{{data.id}}/{{n}}?cb={{random[n]}}', alt='{{attachments[n]}}')
+          a.thumbnail(ng-if='requestLevel>2')
             img(ng-src='/fileman/contract/attachment/{{data.id}}/{{n}}?cb={{random[n]}}', alt='{{attachments[n]}}')
   .panel-footer
     include parts/alertinfo.jade

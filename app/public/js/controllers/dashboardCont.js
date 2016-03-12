@@ -163,6 +163,18 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
         $scope.data = data;
         $scope.isCreator = data.isCreator;
         $scope.isOwner = data.isOwner;
+        $scope.data.actionuser = $scope.currentUserFullName;
+        if ($scope.requestLevel === 3) {
+            $scope.data.actiondate = $scope.data.enddate;
+            $scope.data.actiontime = $scope.data.endtime;
+            $scope.data.actionuser = $scope.data.enduser;
+        }
+        if ($scope.requestLevel === 4) {
+            $scope.data.actiondate = $scope.data.canceldate;
+            $scope.data.actiontime = $scope.data.canceltime;
+            $scope.data.actionuser = $scope.data.canceluser;
+            $scope.data.cancelwhy  = $scope.data.actiondescription;
+        }
         if($scope.data.requesttype === 'itrequest') {
             $scope.primary = '#itprimary';
             for (var task in $scope.tasks) {
@@ -171,18 +183,6 @@ dashboardApp.controller('dashboardCont', function ($scope, itRequestService) {
                 } else {
                     $scope.tasks[task].selected = false;
                 }
-            }
-            $scope.data.actionuser = $scope.currentUserFullName;
-            if ($scope.requestLevel === 3) {
-                $scope.data.actiondate = $scope.data.enddate;
-                $scope.data.actiontime = $scope.data.endtime;
-                $scope.data.actionuser = $scope.data.enduser;
-            }
-            if ($scope.requestLevel === 4) {
-                $scope.data.actiondate = $scope.data.canceldate;
-                $scope.data.actiontime = $scope.data.canceltime;
-                $scope.data.actionuser = $scope.data.canceluser;
-                $scope.data.cancelwhy  = $scope.data.actiondescription;
             }
         } else if($scope.data.requesttype ===  'contract') {
             $scope.primary = '#contractprimary';

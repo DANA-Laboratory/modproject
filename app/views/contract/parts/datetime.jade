@@ -1,5 +1,5 @@
 - var values = ['کاربر' ,'تاریخ' , 'ساعت']
-.col-sm-3
+.col-md-2
   label.col-sm-1.control-label(for='#{captions[0]}')=values[0] 
   .dropdown(ng-if='isOwner && requestLevel===0')
     button.btn.btn-default.dropdown-toggle.form-control(id='#{captions[0]}', type='button', data-toggle='dropdown')
@@ -10,9 +10,9 @@
         li
           a(href='', ng-click='data.applicant = "#{val[1]}"') #{val[1]}
   input.form-control(ng-if='!isOwner || requestLevel!==0', id='#{captions[0]}', ng-model='#{captions[0]}', type='text', placeholder=values[0], style='text-align : center', readonly)
-.col-sm-3
+.col-md-2
   label.col-sm-1.control-label(for='#{captions[1]}')=values[1]    
   input.form-control(id='#{captions[1]}', ng-model='#{captions[1]}', type='text', placeholder=values[1], style='text-align : center', ng-readonly='!isOwner || requestLevel!==0', mask='1499/19/39', restrict='reject')
-.col-sm-2
+.col-md-2
   label.col-sm-1.control-label(for='#{captions[2]}')=values[2]    
   input.form-control(id='#{captions[2]}', ng-model='#{captions[2]}', type='text', placeholder=values[2], style='text-align : center', ng-readonly='!isOwner || requestLevel!==0', restrict='reject') 
