@@ -17,7 +17,7 @@ var dbma = null;
 function dbmaf() {
     return dbma;
 }
-var appConfig = require('../config/appConfig.json');
+var appConfig = require('../config/app-config.json');
 var readAppConfig = null;
 
 function initializerequests() {

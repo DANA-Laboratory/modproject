@@ -1,6 +1,6 @@
 'use strict';
 
-var appConfig = require('./config/appConfig.json');
+var appConfig = require('./config/app-config.json');
 
 var PORT_LISTENER = appConfig.app.devPort;
 
@@ -16,8 +16,30 @@ var express = require('express'),
     session = require('express-session'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
-    errorHandler = require('errorhandler');
-
+    errorHandler = require('errorhandler'),
+    nodemailer = require('nodemailer');
+ 
+// create reusable transporter object using the default SMTP transport 
+var transporter = nodemailer.createTransport('smtps://' + appConfig.gmailaccount + '%40gmail.com:' + appConfig.gmailpassword + '@smtp.gmail.com');
+ 
+// setup e-mail data with unicode symbols 
+var mailOptions = {
+    from: '"مدیر سیستم مکانیزه شرکت ره آوران - رضا افضلان" <rafzalan@gmail.com>', // sender address 
+    to: 'rafzalan@gmail.com', // list of receivers 
+    subject: 'دعوت جهت تکمیل قرارداد تدریس', // Subject line 
+    text: 'با سلام، احتراما از شما دعوت میگردد با رجوع به آدرس http://91.106.95.114:3005 و با اطلاعات کاربری ذیل اقدام به تکمیل قراداد و ضمائم آن فرمایید.\nنام کاربری:<کد ملی>\nکلمه عبور:<کد ملی>' 
+    + '\nجهت دسترسی سریع به اطلاعات آخرین قرارداد کلیک نمایید ->  http://91.106.95.114:3005',
+};
+ 
+// send mail with defined transport object 
+transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+        return console.log(error);
+    }
+    console.log('Message sent: ' + info.response);
+});
+    
+    
 var app = express();
 // all environments
 app.set('port', process.env.PORT || PORT_LISTENER);
