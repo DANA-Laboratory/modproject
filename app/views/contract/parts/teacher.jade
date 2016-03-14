@@ -6,38 +6,38 @@
     .col-md-2
       .form-group
         label(for='farzand')نام پدر  
-        input.form-control(type='text', id='farzand', ng-model='data.owneritems.farzand', ng-required='#{user.isGuest}')
+        input.form-control(type='text', id='farzand', ng-model='data.owneritems.farzand', ng-required='#{user.isGuest}', ng-readonly='requestLevel>2')
     .col-md-2
       .form-group
         label(for='madrak')مدرک تحصيلي
-        input.form-control(type='text', id='madrak', ng-model='data.owneritems.madrak', ng-required='#{user.isGuest}')
+        input.form-control(type='text', id='madrak', ng-model='data.owneritems.madrak', ng-required='#{user.isGuest}', ng-readonly='requestLevel>2')
     .col-md-2
       .form-group
         label(for='tel')تلفن 
-        input.form-control(type='text', pattern='[0-9]+', id='tel', ng-model='data.owneritems.tel', ng-required='#{user.isGuest}', placeholder='تنها عدد قابل قبول است')
+        input.form-control(type='text', pattern='[0-9]+', id='tel', ng-model='data.owneritems.tel', ng-required='#{user.isGuest}', placeholder='تنها عدد قابل قبول است', ng-readonly='requestLevel>2')
     .col-md-2.col-md-offset-1
       .form-group
         label(for='branch')شعبه بانک
-        input.form-control(type='text', id='branch', ng-model='data.owneritems.branch', ng-required='#{user.isGuest}')
+        input.form-control(type='text', id='branch', ng-model='data.owneritems.branch', ng-required='#{user.isGuest}', ng-readonly='requestLevel>2')
     .col-md-3
       .form-group
         label(for='account')شماره شبا حساب
-        input.form-control(type='text', pattern='[0-9]{24}', id='account', ng-model='data.owneritems.account', ng-required='#{user.isGuest}', placeholder='یک عدد 24 رقمی')
+        input.form-control(type='text', pattern='[0-9]{24}', id='account', ng-model='data.owneritems.account', ng-required='#{user.isGuest}', placeholder='یک عدد 24 رقمی', ng-readonly='requestLevel>2')
   .row
     .col-md-4
       .form-group
         label(for='address')نشاني  
-        input.form-control(type='text', id='address', ng-model='data.owneritems.address', ng-required='#{user.isGuest}')
+        input.form-control(type='text', id='address', ng-model='data.owneritems.address', ng-required='#{user.isGuest}', ng-readonly='requestLevel>2')
     .col-md-2
       .form-group
         label(for='c1')عناوین دوره های قابل ارائه
-        input.form-control(type='text', id='c1', ng-model='data.owneritems.courseA', placeholder='عنوان 1', ng-required='#{user.isGuest}')
+        input.form-control(type='text', id='c1', ng-model='data.owneritems.courseA', placeholder='عنوان 1', ng-required='#{user.isGuest}', ng-readonly='requestLevel>2')
     .col-md-2
         label(for='c2')عنوان 2
-        input.form-control(type='text', id='c2', ng-model='data.owneritems.courseB', placeholder='عنوان 2')        
+        input.form-control(type='text', id='c2', ng-model='data.owneritems.courseB', placeholder='عنوان 2' , ng-readonly='requestLevel>2')       
     .col-md-2
         label(for='c3')عنوان 3
-        input.form-control(type='text', id='c3', ng-model='data.owneritems.courseC', placeholder='عنوان 3')
+        input.form-control(type='text', id='c3', ng-model='data.owneritems.courseC', placeholder='عنوان 3', ng-readonly='requestLevel>2')
     .col-md-2
         label(for='c4')عنوان 4
-        input.form-control(type='text', id='c4', ng-model='data.owneritems.courseD', placeholder='عنوان 4')
+        input.form-control(type='text', id='c4', ng-model='data.owneritems.courseD', placeholder='عنوان 4', ng-readonly='requestLevel>2')
