@@ -22,7 +22,7 @@ module.exports = function (grunt) {
 
     // Project configuration.
     grunt.initConfig({
-            appConfig: grunt.file.readJSON('./app/config/appConfig.json'),
+            appConfig: grunt.file.readJSON('./app/config/app-config.json'),
 
 
             // Task configuration.

@@ -1,6 +1,6 @@
 'use strict';
 
-var appConfig = require('./config/appConfig.json');
+var appConfig = require('./config/app-config.json');
 
 var PORT_LISTENER = appConfig.app.devPort;
 
@@ -16,7 +16,29 @@ var express = require('express'),
     session = require('express-session'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
-    errorHandler = require('errorhandler');
+    errorHandler = require('errorhandler'),
+    nodemailer = require('nodemailer');
+
+var transporter = nodemailer.createTransport('smtps://' + appConfig.gmailaccount + '%40gmail.com:' + appConfig.gmailpassword + '@smtp.gmail.com');
+
+
+// send mail with defined transport object
+var sendTeacherNotificationEmail = function (to) {
+    // setup e-mail data with unicode symbols
+    var mailOptions = {
+        from: '" رضا افضلان - مدیر خدمات مکانیزه شرتک ره آوران" <rafzalan@gmail.com>', // sender address
+        subject: 'تکیمل فرم قرارداد تدریس شرکت ره آوران', // Subject line
+        to: to, // list of receivers
+        text: 'با سلام\nمدرس محترم، جهت دسترسی به پایگاه شرکت ره آوران و تکمیل اطلاعات قراداد خویش میتوانید از طریق آدرس http://91.106.95.114:3005 اقدام فرمایید.\nنام کاربری و کلمه عبور شما بصورت پیشفرض\nنام کاربری:<کد ملی>\nکلمه عبور:<کدملی>\nمیباشد که از طریق فرم تنظیمات کاربری امکان تغییر آنرا دارید.'
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Message sent: ' + info.response);
+        }
+    });
+};
 
 var app = express();
 // all environments
@@ -51,7 +73,7 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 
 //routes
-require('./routes/index')(app, passport, io);
+require('./routes/index')(app, passport, io, sendTeacherNotificationEmail);
 
 // error handling middleware should be loaded after the loading the routes
 if ('development' === app.get('env')) {
