@@ -5,7 +5,7 @@
 var mypassport = require('../passport/mypassport');
 //var path = require('path');
 
-module.exports = function (app, io, appConfig, db) {
+module.exports = function (app, io, appConfig, db, sendTeacherNotificationEmail) {
 
     var replaceIDwithNameFamily = function (row) {
         var userAccounts = mypassport.userAccounts();
@@ -137,6 +137,9 @@ module.exports = function (app, io, appConfig, db) {
             console.log('insert request error=', err);
             io.emit('update');
             res.sendStatus(200);
+            if (!err && req.body.requesttype === 'contract' && typeof(req.body.owneritems.email) === 'string') {
+                sendTeacherNotificationEmail(req.body.owneritems.email);
+            }
         };
         if (req.body.requesttype === 'contract') {
             db().get('SELECT MAX(description) as newshomare FROM requests WHERE (requesttype="contract")', function (err, row) {
@@ -161,6 +164,9 @@ module.exports = function (app, io, appConfig, db) {
         var callback = function (err) {
             console.log('update request error=', err);
             res.sendStatus(200);
+            if (!err && req.body.requesttype === 'contract' && typeof(req.body.owneritems.email) === 'string') {
+                sendTeacherNotificationEmail(req.body.owneritems.email);
+            }
         };
         if (req.body.requesttype === 'contract') {
             if (req.user.isKarshenas) {

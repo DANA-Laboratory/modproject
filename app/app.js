@@ -17,29 +17,29 @@ var express = require('express'),
     methodOverride = require('method-override'),
     logger = require('morgan'),
     errorHandler = require('errorhandler'),
-    nodemailer = require('nodemailer'),
-    fs = require('fs'),
-    
-// create reusable transporter object using the default SMTP transport 
+    nodemailer = require('nodemailer');
+
 var transporter = nodemailer.createTransport('smtps://' + appConfig.gmailaccount + '%40gmail.com:' + appConfig.gmailpassword + '@smtp.gmail.com');
- 
-// setup e-mail data with unicode symbols 
-var mailOptions = {
-    from: '"مدیر سیستم مکانیزه شرکت ره آوران - رضا افضلان" <rafzalan@gmail.com>', // sender address 
-    to: 'rafzalan@gmail.com', // list of receivers 
-    subject: 'دعوت جهت تکمیل قرارداد تدریس', // Subject line 
-    text: 'با سلام، احتراما از شما دعوت میگردد با رجوع به آدرس http://91.106.95.114:3005 و با اطلاعات کاربری ذیل اقدام به تکمیل قراداد و ضمائم آن فرمایید.\nنام کاربری:<کد ملی>\nکلمه عبور:<کد ملی>' + '\nجهت دسترسی سریع به اطلاعات آخرین قرارداد کلیک نمایید ->  http://91.106.95.114:3005'
+
+
+// send mail with defined transport object
+var sendTeacherNotificationEmail = function (to) {
+    // setup e-mail data with unicode symbols
+    var mailOptions = {
+        from: '" رضا افضلان - مدیر خدمات مکانیزه شرتک ره آوران" <rafzalan@gmail.com>', // sender address
+        subject: 'تکیمل فرم قرارداد تدریس شرکت ره آوران', // Subject line
+        to: to, // list of receivers
+        text: 'با سلام\nمدرس محترم، جهت دسترسی به پایگاه شرکت ره آوران و تکمیل اطلاعات قراداد خویش میتوانید از طریق آدرس http://91.106.95.114:3005 اقدام فرمایید.\nنام کاربری و کلمه عبور شما بصورت پیشفرض\nنام کاربری:<کد ملی>\nکلمه عبور:<کدملی>\nمیباشد که از طریق فرم تنظیمات کاربری امکان تغییر آنرا دارید.'
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Message sent: ' + info.response);
+        }
+    });
 };
- 
-// send mail with defined transport object 
-transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-        return console.log(error);
-    }
-    console.log('Message sent: ' + info.response);
-});
-    
-    
+
 var app = express();
 // all environments
 app.set('port', process.env.PORT || PORT_LISTENER);
@@ -73,7 +73,7 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(httpsServer);
 
 //routes
-require('./routes/index')(app, passport, io);
+require('./routes/index')(app, passport, io, sendTeacherNotificationEmail);
 
 // error handling middleware should be loaded after the loading the routes
 if ('development' === app.get('env')) {

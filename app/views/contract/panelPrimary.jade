@@ -10,12 +10,15 @@ form.request.panel.panel-primary(ng-controller='contractCont', ng-submit='submit
           .form-inline
             .col-md-3
                 label(for='name')نام &nbsp;
-                input.form-control(type='text', id='name', ng-model='data.owneritems.name', ng-required='#{user.isGuest}')
+                input.form-control(type='text', id='name', ng-model='data.owneritems.name', ng-required='#{user.isGuest}', ng-readonly='requestLevel>2')
             .col-md-3
                 label(for='family')نام خانوادگي  &nbsp;
-                input.form-control(type='text', id='family', ng-model='data.owneritems.family', ng-required='#{user.isGuest}')
-            .col-md-6
-              button.btn.pull-left(ng-class='requestLevel===0 ? "btn-success" : "btn-warning"' ,name='buttonsubmit', type='submit') اطلاعات قراداد ثبت گردد
+                input.form-control(type='text', id='family', ng-model='data.owneritems.family', ng-required='#{user.isGuest}', ng-readonly='requestLevel>2')
+            .col-md-4
+                label(for='email')پست الکترونیک &nbsp;
+                input.form-control(type='email', id='email', ng-model='data.owneritems.email', ng-required='#{user.isGuest}', ng-readonly='requestLevel>2')
+            .col-md-2
+              button.btn.pull-left(ng-if='requestLevel<3', ng-class='requestLevel===0 ? "btn-success" : "btn-warning"' ,name='buttonsubmit', type='submit') اطلاعات قراداد ثبت گردد
                 .span.glyphicon.glyphicon-ok
       .col-md-12
         include parts/karshenas.jade

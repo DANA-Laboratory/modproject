@@ -53,9 +53,9 @@ if (!exists2) {
 
 initializerequests();
 
-module.exports = function (app, passport, io) {
+module.exports = function (app, passport, io, sendTeacherNotificationEmail) {
     require('./passportRoutes')(app, passport, appConfig);
-    require('./databaseRoutes')(app, io, appConfig, dbref);
+    require('./databaseRoutes')(app, io, appConfig, dbref, sendTeacherNotificationEmail);
     require('./mapRoutes')(app, dbref);
     require('./usersRoutes')(app, dbref, readAppConfig, initializerequests);
     require('./maliRoutes')(app, dbmaf);
