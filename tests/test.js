@@ -4,6 +4,10 @@
 var assert = require('chai').assert;
 var fs = require('fs');
 var ddl = '\
+    CREATE TABLE tblRequests (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, manualId INTEGER NOT NULL, status INTEGER NOT NULL, description TEXT, requestType TEXT);\
+    CREATE TABLE tblDiscipline (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, requestId INTEGER NOT NULL, fromUser INTEGER NOT NULL, toUser INTEGER NOT NULL);\
+    CREATE TABLE tblRequestItems (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, requestId  INTEGER NOT NULL, item TEXT, privilege TINYINT, ownerUser INTEGER NOT NULL, description TEXT, createTime  INTEGER NOT NULL, modifiedTime INTEGER);\
+    CREATE TABLE tblActions (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, requestId INTEGER NOT NULL, actionDescription TEXT NOT NULL, actionTime INTEGER NOT NULL, actionUser INTEGER NOT NULL);\
     CREATE TABLE statements (pid INTEGER NOT NULL, date TEXT NOT NULL, data TEXT NOT NULL, PRIMARY KEY (pid, date));\
     CREATE TABLE config (id INTEGER PRIMARY KEY AUTOINCREMENT, itemName STRING NOT NULL, itemType INTEGER NOT NULL);\
     CREATE TABLE mapdetails (name STRING NOT NULL, x REAL NOT NULL, y REAL NOT NULL, type INTEGER, info TEXT);\
@@ -11,7 +15,7 @@ var ddl = '\
     CREATE TABLE users (id INTEGER PRIMARY KEY, username STRING NOT NULL UNIQUE, password STRING NOT NULL, name STRING, family STRING, melicode STRING, pid STRING, isSysAdmin BOOLEAN NOT NULL DEFAULT (0), isItAdmin BOOLEAN NOT NULL DEFAULT (0), isMaliAdmin BOOLEAN NOT NULL DEFAULT (0), isItUser BOOLEAN DEFAULT (0) NOT NULL, isMaliUser BOOLEAN NOT NULL DEFAULT (0), isKarshenas BOOLEAN NOT NULL DEFAULT (0), isGuest BOOLEAN NOT NULL DEFAULT (0), isTeacher BOOLEAN NOT NULL DEFAULT (0), defaultpass STRING NOT NULL, email STRING)';
 var dbpath = __dirname + '/testdb.sqlite3';
 var basedb = new (require('../app/models-sqlite3/basedb'))(dbpath);
-var contractModel = require('../app/models-sqlite3/contracts');
+var requestModel = require('../app/models-sqlite3/requests');
 describe('models-sqlite3', function() {
     before(function(done){
         if (fs.existsSync(dbpath)) {
@@ -30,24 +34,57 @@ describe('models-sqlite3', function() {
             done();
         })
     });
-    it('basedb returns an error if try to recreate existing db', function () {
+    it('basedb returns an error if try to recreate existing db', function (done) {
         basedb.createdb(ddl, function (err) {
             assert.isDefined(err);
+            done();
         })
     });
-    it('insertContract inserts new contract', function(){
-        contractModel.insertContract(basedb.db, '', '', 0, 0, '', '', '', '', function (res, err) {
-            assert.isUndefined(err);
+    it('create new request', function(done){
+        requestModel.insertRequest(basedb.db, 0, 'description', 'contract', 1, function (err, requestId) {
+            assert.isNull(err);
+            this.requestId = requestId;
+            done();
         });
     });
-    it('insertRequest inserts new request', function(){
-        contractModel.insertRequest(basedb.db, '', '', 0, 0, '', '', '', '10', '', 'contract', function (res, err) {
-             assert.isUndefined(err);
+    it('add item to a request', function(done){
+        requestModel.addRequestItem(basedb.db, requestId, 'testItem', 333, 'item description', 1, function(err) {
+            assert.isNull(err);
+            done();
         });
+    });
+    it('send request to someone', function(done){
+        requestModel.sendRequestTo(basedb.db, requestId, 2, function(err) {
+            assert.isNull(err);
+            done();
+        });
+        done();
+    });
+    it('get last receiver, sender', function(done){
+        requestModel.getRequestWho(basedb.db, requestId, function(err, fromUser, toUser) {
+            assert.isNull(err);
+            done();
+        });
+        done();
+    });
+    it('get request items', function(done){
+        requestModel.getRequestWho(basedb.db, requestId, function(err, fromUser, toUser) {
+            assert.isNull(err);
+            done();
+        });
+        done();
+    });
+    it('edit request item', function(done){
+        requestModel.getRequestWho(basedb.db, requestId, function(err, fromUser, toUser) {
+            assert.isNull(err);
+            done();
+        });
+        done();
     });
     after(function() {
-        basedb.disconnect(function() {
+        basedb.disconnect(function(done) {
             fs.unlinkSync(dbpath);
+            done();
         })
     });
 });
