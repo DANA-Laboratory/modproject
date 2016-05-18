@@ -84,7 +84,7 @@ describe('models-sqlite3', function() {
             });
         });
         it('updates request item', function(done){
-            requestModel.updateItem(basedb.db, requestId, description, 'testItem2', null, function(err) {
+            requestModel.updateItem(basedb.db, requestId, description, 'testItem2', creator, function(err) {
                 assert.isNull(err);
                 done();
             });
@@ -96,8 +96,8 @@ describe('models-sqlite3', function() {
             done();
         });
     });
-    after(function() {
-        basedb.disconnect(function(done) {
+    after(function(done) {
+        basedb.disconnect(function() {
             fs.unlinkSync(dbpath);
             done();
         })

@@ -111,13 +111,17 @@ exports.addRequestItem = function(/*sqlite3.Database*/ db, requestId, requestIte
 };
 
 exports.getRequestItems = function(/*sqlite3.Database*/ db, requestId, callback) {
-    db.all('SELECT item FROM tblRequestItems WHERE requestId=? ', [requestId], function(err, rows) {
+    db.all('SELECT item, privilege, ownerUser FROM tblRequestItems WHERE requestId=? ', [requestId], function(err, rows) {
         if(err) {
             callback(err);
         } else {
             var items=[];
+            var privileges=[];
+            var ownerUsers=[];
             for (var row in rows) {
                 items.push(rows[row].item);
+                privileges.push(rows[row].privilege);
+                ownerUsers.push(rows[row].ownerUser);
             }
             callback(err, items);
         }
