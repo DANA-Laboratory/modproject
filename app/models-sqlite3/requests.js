@@ -2,7 +2,7 @@
  * Created by AliReza on 5/13/2016.
  */
 'use strict';
-var findMaxContract = function(/*sqlite3.Database*/ db, requestType, callback) {
+var createNewId = function(/*sqlite3.Database*/ db, requestType, callback) {
     db.get('SELECT MAX(manualId) as newId FROM tblRequests WHERE (requesttype=?)', [requestType], function (err, row) {
         if (err) {
             callback('select max description err=', err);
@@ -22,21 +22,70 @@ var addRequestAction = function(/*sqlite3.Database*/ db, requestId, actionDescri
 
 var whoDid = function(/*sqlite3.Database*/ db, requestId, actionDescription, callback) {
     db.get('SELECT actionUser FROM tblActions WHERE requestId=? AND actionDescription=?;', [requestId, actionDescription], function(err, row) {
+        !err ? (row ? callback(null, row.actionUser) : callback("no one")) : callback(err);
+    });
+
+};
+
+var getItemPermissions = function(/*sqlite3.Database*/ db, requestId, description, callback) {
+    db.get('SELECT privilege FROM tblRequestItems WHERE requestId=? AND description=?', [requestId, description], function(err , row){
+        if(!err) {
+            var h = parseInt(row.privilege/100);
+            var t = parseInt(row.privilege/10)-h*10;
+            var o = row.privilege - t*10 - h*100;
+            callback(null,[h, t, o])
+        } else {
+            callback(err);
+        }
+    });
+};
+
+var permissionTo = {};
+
+exports.addItem = function(/*sqlite3.Database*/ db, requestId, requestItem, itemPrivilege, itemDescription, ownerUser, callback) {
+    db.get('SELECT COUNT(id) as itemCount FROM tblRequestItems WHERE requestId=? AND description=?', [requestId, itemDescription], function(err, row){
         if (err) {
             callback(err);
         } else {
-            if (row) {
-                callback(null, row.actionUser);
+            if (row.itemCount > 0) {
+                callback('item exists');
             } else {
-                callback("no one");
+                db.run('INSERT INTO tblRequestItems (requestId, item, privilege, description, ownerUser, createTime) VALUES (?, ?, ?, ?, ?, ?);', [requestId, requestItem, itemPrivilege, itemDescription, ownerUser, Date.now()], callback);
             }
         }
     });
+};
 
-}
+exports.updateItem = function(/*sqlite3.Database*/ db, requestId, description, newValue, userId, callback) {
+    permissionTo[exports.updateItem](db, requestId, description, userId, function(err, can) {
+        if (can) {
+            db.run('UPDATE tblRequestItems SET item=? WHERE requestId=? AND description=?', [newValue, requestId, description], callback);
+        } else {
+            callback(err);
+        }
+    });
+};
+
+exports.getItems = function(/*sqlite3.Database*/ db, requestId, callback) {
+    db.all('SELECT item, privilege, ownerUser FROM tblRequestItems WHERE requestId=? ', [requestId], function(err, rows) {
+        if(err) {
+            callback(err);
+        } else {
+            var items=[];
+            var privileges=[];
+            var ownerUsers=[];
+            for (var row in rows) {
+                items.push(rows[row].item);
+                privileges.push(rows[row].privilege);
+                ownerUsers.push(rows[row].ownerUser);
+            }
+            callback(err, items);
+        }
+    })
+};
 
 exports.insertRequest = function(/*sqlite3.Database*/ db, status, description, requestType, creator, callback) {
-    findMaxContract(db, requestType, function(newId, err) {
+    createNewId(db, requestType, function(newId, err) {
         if(!err) {
             db.run('INSERT INTO tblRequests (manualId, status, description, requestType) VALUES (?,?,?,?);', [newId, status, description, requestType], function (err) {
                 if (err) {
@@ -51,16 +100,6 @@ exports.insertRequest = function(/*sqlite3.Database*/ db, status, description, r
             callback(err);
         }
     });
-};
-
-exports.sendRequestTo = function(/*sqlite3.Database*/ db, requestId, toUser, callback) {
-    exports.whereIs(db, requestId, function(err, fromUser) {
-        if (err) {
-            callback(err);
-        } else {
-            db.run('INSERT INTO tblDiscipline(requestId, fromUser, toUser, time) VALUES(?, ?, ?, ?)',[requestId, fromUser, toUser, Date.now()], callback);
-        }
-    })
 };
 
 exports.whereIs = function(/*sqlite3.Database*/ db, requestId, callback) {
@@ -85,51 +124,70 @@ exports.whereIs = function(/*sqlite3.Database*/ db, requestId, callback) {
 };
 
 exports.updateStatus = function(/*sqlite3.Database*/ db, requestId, newStatus, userId, callback) {
-    addRequestAction(db, requestId, newStatus, userId, function(err){
-        if (err) {
-            callback(err);
-        } else {
-            db.run('UPDATE tblRequests SET status=? WHERE id=?',[newStatus, requestId], function(err) {
+    db.serialize(function() {
+        db.exec("BEGIN");
+        addRequestAction(db, requestId, newStatus, userId, function (err) {
+            if (err) {
                 callback(err);
-            });
+            } else {
+                db.run('UPDATE tblRequests SET status=? WHERE id=?', [newStatus, requestId], function (err) {
+                    if (err) {
+                        db.exec("ROLLBACK");
+                    } else {
+                        db.exec("COMMIT");
+                    }
+                    callback(err);
+                })
+            }
+        });
+    });
+};
+
+exports.sendRequestTo = function(/*sqlite3.Database*/ db, requestId, toUser, userId, callback) {
+    permissionTo[exports.sendRequestTo](db, requestId, userId, function(err, can) {
+        if(can) {
+            exports.whereIs(db, requestId, function(err, fromUser) {
+                if (err) {
+                    callback(err);
+                } else {
+                    db.run('INSERT INTO tblDiscipline(requestId, fromUser, toUser, time) VALUES(?, ?, ?, ?)',[requestId, fromUser, toUser, Date.now()], callback);
+                }
+            })
+        } else {
+            callback(err);
         }
     });
 };
 
-exports.addRequestItem = function(/*sqlite3.Database*/ db, requestId, requestItem, itemPrivilege, itemDescription, ownerUser, callback) {
-    db.get('SELECT COUNT(id) as itemCount FROM tblRequestItems WHERE requestId=? AND description=?', [requestId, itemDescription], function(err, row){
+
+permissionTo[exports.updateItem] = function (/*sqlite3.Database*/ db, requestId, description, userId, callback) {
+    getItemPermissions(db, requestId, description, function (err, permissions) {
+        if (err) {
+            callback(err, false);
+        } else {
+            if (permissions[2] > 2) {
+                callback(null, exports.updateItem);
+            } else {
+                exports.whereIs(db, requestId, function (err, whereUser) {
+                    if (!err && whereUser === userId) {
+                        db.run('SELECT id FROM tblRequestItems WHERE requestId=? AND description=? AND ((ownerUser=? AND ?>2) OR (ownerUser!=? AND ?>2))', [requestId, description, userId, permissions[0], userId, permissions[1]], function (err) {
+                            callback(null, true);
+                        });
+                    } else {
+                        callback('that is not here, you can`t touch that', false);
+                    }
+                });
+            }
+        }
+    });
+};
+
+permissionTo[exports.sendRequestTo] = function (/*sqlite3.Database*/ db, requestId, userId, callback) {
+    exports.whereIs(db, requestId, function(err, whereUser) {
         if (err) {
             callback(err);
         } else {
-            if (row.itemCount > 0) {
-                callback('item exists');
-            } else {
-                db.run('INSERT INTO tblRequestItems (requestId, item, privilege, description, ownerUser, createTime) VALUES (?, ?, ?, ?, ?, ?);', [requestId, requestItem, itemPrivilege, itemDescription, ownerUser, Date.now()], callback);
-            }
-        }
-    });
-};
-
-exports.getRequestItems = function(/*sqlite3.Database*/ db, requestId, callback) {
-    db.all('SELECT item, privilege, ownerUser FROM tblRequestItems WHERE requestId=? ', [requestId], function(err, rows) {
-        if(err) {
-            callback(err);
-        } else {
-            var items=[];
-            var privileges=[];
-            var ownerUsers=[];
-            for (var row in rows) {
-                items.push(rows[row].item);
-                privileges.push(rows[row].privilege);
-                ownerUsers.push(rows[row].ownerUser);
-            }
-            callback(err, items);
+            whereUser === userId ? callback(null, true) : callback('that is not here, you can`t touch that');
         }
     })
-};
-
-exports.updateItem = function(/*sqlite3.Database*/ db, requestId, description, newValue, userId, callback) {
-    db.run('UPDATE tblRequestItems SET item=? WHERE requestId=? AND description=?', [newValue, requestId, description], function(err){
-        callback(err);
-    });
-};
+}

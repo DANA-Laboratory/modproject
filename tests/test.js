@@ -58,7 +58,7 @@ describe('models-sqlite3', function() {
     });
     var sendto = 2;
     it('sends request to someone', function(done){
-        requestModel.sendRequestTo(basedb.db, requestId, sendto, function(err) {
+        requestModel.sendRequestTo(basedb.db, requestId, sendto, creator, function(err) {
             assert.isNull(err);
             done();
         });
@@ -66,25 +66,31 @@ describe('models-sqlite3', function() {
     describe('working with items', function() {
         var description = 'item description';
         it('writes request item', function(done){
-            requestModel.addRequestItem(basedb.db, requestId, 'testItem', 300, description, creator, function(err) {
+            requestModel.addItem(basedb.db, requestId, 'testItem', 300, description, creator, function(err) {
                 assert.isNull(err);
                 done();
             });
         });
         it('donsn`t duplicate description', function(done){
-            requestModel.addRequestItem(basedb.db, requestId, 'testItem2', 300, description, creator, function(err) {
+            requestModel.addItem(basedb.db, requestId, 'testItem2', 300, description, creator, function(err) {
                 assert.isNotNull(err);
                 done();
             });
         });
         it('reads request items', function(done){
-            requestModel.getRequestItems(basedb.db, requestId, function(err, items) {
+            requestModel.getItems(basedb.db, requestId, function(err, items) {
                 assert.isNull(err);
                 done();
             });
         });
-        it('updates request item', function(done){
+        it('doesn`t update untouchable request item', function(done){
             requestModel.updateItem(basedb.db, requestId, description, 'testItem2', creator, function(err) {
+                assert.equal(err, 'that is not here, you can`t touch that');
+                done();
+            });
+        });
+        it('updates request item', function(done){
+            requestModel.updateItem(basedb.db, requestId, description, 'testItem2', sendto, function(err) {
                 assert.isNull(err);
                 done();
             });
