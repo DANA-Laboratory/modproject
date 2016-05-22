@@ -1,6 +1,23 @@
 /**
  * Created by AliReza on 5/12/2016.
  */
+function RequestData() {
+    this.description= 'description';
+    this.requestType= 'contract';
+
+    this.requestId= 1;
+    this.userId= 0;
+    this.toUser= 2;
+
+    this.itemDescription= 'item description';
+    this.requestItem='{test : 100}';
+    this.itemPrivilege= 220;
+    this.ownerUser= 1;
+
+    this.actionDescription= '';
+    this.status= 3;
+};
+
 var assert = require('chai').assert;
 var fs = require('fs');
 var ddl = '\
@@ -28,6 +45,7 @@ describe('models-sqlite3', function() {
     });
     beforeEach(function(){
         // The beforeEach() callback gets run before each test in the suite.
+        data = new RequestData();
     });
     it('basedb could create new db if not exists', function (done) {
         basedb.createdb(ddl, function (err) {
@@ -41,63 +59,116 @@ describe('models-sqlite3', function() {
             done();
         })
     });
-    var creator = 1;
     it('create new request', function(done){
-        requestModel.insertRequest(basedb.db, 0, 'description', 'contract', creator, function (err, requestId) {
+        requestModel.insertRequest(basedb.db, data, function (err, requestId) {
             assert.isNull(err);
-            this.requestId = requestId;
+            assert.equal(1, requestId);
+            done();
+        });
+    });
+    it('add request', function(done){
+        requestModel.insertRequest(basedb.db, data, function (err, requestId) {
+            assert.isNull(err);
+            assert.equal(2, requestId);
             done();
         });
     });
     it('finds where is a new request', function(done){
-        requestModel.whereIs(basedb.db, requestId, function(err, userId) {
+        requestModel.whereIs(basedb.db, {requestId : 1}, function(err, userId) {
             assert.isNull(err);
-            assert.equal(userId, creator);
+            assert.equal(userId, data.userId);
             done();
         });
     });
-    var sendto = 2;
+
+    it('doesn`t send untouchable request', function(done){
+        data.userId= 1;
+        requestModel.sendRequestTo(basedb.db, data, function(err) {
+            assert.equal(err, 'that is not here, you can`t touch that');
+            done();
+        });
+    });
+
     it('sends request to someone', function(done){
-        requestModel.sendRequestTo(basedb.db, requestId, sendto, creator, function(err) {
+        data.toUser= 2;
+        requestModel.sendRequestTo(basedb.db, data, function(err) {
             assert.isNull(err);
             done();
         });
     });
+
     describe('working with items', function() {
-        var description = 'item description';
         it('writes request item', function(done){
-            requestModel.addItem(basedb.db, requestId, 'testItem', 300, description, creator, function(err) {
+            requestModel.addItem(basedb.db, data, function(err) {
                 assert.isNull(err);
                 done();
             });
         });
-        it('donsn`t duplicate description', function(done){
-            requestModel.addItem(basedb.db, requestId, 'testItem2', 300, description, creator, function(err) {
+        it('doesn`t duplicate description', function(done){
+            requestModel.addItem(basedb.db, data, function(err) {
                 assert.isNotNull(err);
                 done();
             });
         });
+        it('dosen`t read other`s request items', function(done){
+            requestModel.getItems(basedb.db, data, function(err, items) {
+                assert.equal(err, 'user don`t have permission to get this request items');
+                done();
+            });
+        });
         it('reads request items', function(done){
-            requestModel.getItems(basedb.db, requestId, function(err, items) {
+            data.userId= data.toUser;
+            requestModel.getItems(basedb.db, data, function(err, items) {
                 assert.isNull(err);
+                assert.equal(items.length, 1);
+                assert.equal(items[0], data.requestItem);
                 done();
             });
         });
         it('doesn`t update untouchable request item', function(done){
-            requestModel.updateItem(basedb.db, requestId, description, 'testItem2', creator, function(err) {
+            requestModel.updateItem(basedb.db, data, function(err) {
                 assert.equal(err, 'that is not here, you can`t touch that');
                 done();
             });
         });
         it('updates request item', function(done){
-            requestModel.updateItem(basedb.db, requestId, description, 'testItem2', sendto, function(err) {
+            data.userId = data.toUser;
+            data.requestItem = {test : 200};
+            requestModel.updateItem(basedb.db, data, function(err) {
                 assert.isNull(err);
                 done();
             });
         });
     });
-    it('changes request status', function(done){
-        requestModel.updateStatus(basedb.db, requestId, 1, 3, function(err) {
+    it('doesn`t change status of untouchable request', function(done){
+        requestModel.updateStatus(basedb.db, data, function(err) {
+            assert.equal(err, 'that is not here, you can`t touch that');
+            done();
+        });
+    });
+    it('changes status of touchable request', function(done){
+        data.userId = data.toUser;
+        requestModel.updateStatus(basedb.db, data, function(err) {
+            assert.isNull(err);
+            done();
+        });
+    });
+    it('get dashboard', function (done) {
+        data.userId = data.toUser;
+        requestModel.getDashboard(basedb.db, data, function(err, dashboard) {
+            assert.isNull(err);
+            done();
+        });
+    });
+    it('doesn`t remove working request', function (done) {
+        requestModel.rmRequest(basedb.db, data, function(err) {
+            assert.equal(err, 'only just created requests could removed by creator');
+            done();
+        });
+    });
+    it('removes request', function (done) {
+        data.requestId = 2;
+        requestModel.rmRequest(basedb.db, data, function(err) {
             assert.isNull(err);
             done();
         });
