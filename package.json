@@ -1,23 +1,7 @@
 {
-  "name": "rfpc mod",
-  "description": "E-Organization web application",
-  "version": "0.0.0",
-  "homepage": "http://www.rfpc.ir",
-  "author": {
-    "name": "Reza Afzalan",
-    "email": "rafzalan@gmail.com",
-    "url": "http://www.rfpc.ir"
-  },
-  "license": {
-    "type": "MIT",
-    "url": "http://www.alt-f1.be"
-  },
-  "private": true,
-  "scripts": {
-    "start": "grunt"
-  },
   "dependencies": {
     "chai": "^3.5.0",
+    "moment-jalaali": "^0.3.8",
     "sqlite3": "^3.0.8"
   }
 }

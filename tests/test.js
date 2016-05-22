@@ -1,6 +1,24 @@
 /**
  * Created by AliReza on 5/12/2016.
  */
+var moment = require('moment-jalaali');
+var sqlite3 = require('sqlite3');
+var dbToImport = new sqlite3.Database(__dirname + '/Requests.sqlite', function(err){
+   if(err) {
+       console.log(err);
+   } else {
+       dbToImport.all('SELECT * FROM requests', function(err, rows){
+           if(!err) {
+               rows.forEach(function(row, i){
+                   var mm=moment().getMilliseconds();
+                   var d=[row.initdate, row.enddate, row.startdate, row.canceldate].map(function(jd){return moment(jd, 'jYYYY/jM/jD').format('YYYY/M/D')});
+               })
+           } else {
+               console.log(err);
+           }
+       })
+   }
+});
 function RequestData() {
     this.description= 'description';
     this.requestType= 'contract';
@@ -33,9 +51,9 @@ var ddl = '\
 var dbpath = __dirname + '/testdb.sqlite3';
 var modelsSqlite3 = require('../app/models-sqlite3');
 var basedb = new (modelsSqlite3.basedb)(dbpath);
-var requestModel = modelsSqlite3.requests;
 describe('models-sqlite3', function() {
     before(function(done){
+        
         if (fs.existsSync(dbpath)) {
             fs.unlinkSync(dbpath);
             done();
@@ -60,21 +78,21 @@ describe('models-sqlite3', function() {
         })
     });
     it('create new request', function(done){
-        requestModel.insertRequest(basedb.db, data, function (err, requestId) {
+        modelsSqlite3.insertRequest(basedb.db, data, function (err, requestId) {
             assert.isNull(err);
             assert.equal(1, requestId);
             done();
         });
     });
     it('add request', function(done){
-        requestModel.insertRequest(basedb.db, data, function (err, requestId) {
+        modelsSqlite3.insertRequest(basedb.db, data, function (err, requestId) {
             assert.isNull(err);
             assert.equal(2, requestId);
             done();
         });
     });
     it('finds where is a new request', function(done){
-        requestModel.whereIs(basedb.db, {requestId : 1}, function(err, userId) {
+        modelsSqlite3.whereIs(basedb.db, {requestId : 1}, function(err, userId) {
             assert.isNull(err);
             assert.equal(userId, data.userId);
             done();
@@ -83,7 +101,7 @@ describe('models-sqlite3', function() {
 
     it('doesn`t send untouchable request', function(done){
         data.userId= 1;
-        requestModel.sendRequestTo(basedb.db, data, function(err) {
+        modelsSqlite3.sendRequestTo(basedb.db, data, function(err) {
             assert.equal(err, 'that is not here, you can`t touch that');
             done();
         });
@@ -91,7 +109,7 @@ describe('models-sqlite3', function() {
 
     it('sends request to someone', function(done){
         data.toUser= 2;
-        requestModel.sendRequestTo(basedb.db, data, function(err) {
+        modelsSqlite3.sendRequestTo(basedb.db, data, function(err) {
             assert.isNull(err);
             done();
         });
@@ -99,26 +117,28 @@ describe('models-sqlite3', function() {
 
     describe('working with items', function() {
         it('writes request item', function(done){
-            requestModel.addItem(basedb.db, data, function(err) {
+            data.userId = data.toUser;
+            modelsSqlite3.addItem(basedb.db, data, function(err) {
                 assert.isNull(err);
                 done();
             });
         });
         it('doesn`t duplicate description', function(done){
-            requestModel.addItem(basedb.db, data, function(err) {
+            data.userId = data.toUser;
+            modelsSqlite3.addItem(basedb.db, data, function(err) {
                 assert.isNotNull(err);
                 done();
             });
         });
         it('dosen`t read other`s request items', function(done){
-            requestModel.getItems(basedb.db, data, function(err, items) {
+            modelsSqlite3.getItems(basedb.db, data, function(err, items) {
                 assert.equal(err, 'user don`t have permission to get this request items');
                 done();
             });
         });
         it('reads request items', function(done){
             data.userId= data.toUser;
-            requestModel.getItems(basedb.db, data, function(err, items) {
+            modelsSqlite3.getItems(basedb.db, data, function(err, items) {
                 assert.isNull(err);
                 assert.equal(items.length, 1);
                 assert.equal(items[0], data.requestItem);
@@ -126,7 +146,7 @@ describe('models-sqlite3', function() {
             });
         });
         it('doesn`t update untouchable request item', function(done){
-            requestModel.updateItem(basedb.db, data, function(err) {
+            modelsSqlite3.updateItem(basedb.db, data, function(err) {
                 assert.equal(err, 'that is not here, you can`t touch that');
                 done();
             });
@@ -134,41 +154,41 @@ describe('models-sqlite3', function() {
         it('updates request item', function(done){
             data.userId = data.toUser;
             data.requestItem = {test : 200};
-            requestModel.updateItem(basedb.db, data, function(err) {
+            modelsSqlite3.updateItem(basedb.db, data, function(err) {
                 assert.isNull(err);
                 done();
             });
         });
     });
     it('doesn`t change status of untouchable request', function(done){
-        requestModel.updateStatus(basedb.db, data, function(err) {
+        modelsSqlite3.updateStatus(basedb.db, data, function(err) {
             assert.equal(err, 'that is not here, you can`t touch that');
             done();
         });
     });
     it('changes status of touchable request', function(done){
         data.userId = data.toUser;
-        requestModel.updateStatus(basedb.db, data, function(err) {
+        modelsSqlite3.updateStatus(basedb.db, data, function(err) {
             assert.isNull(err);
             done();
         });
     });
     it('get dashboard', function (done) {
         data.userId = data.toUser;
-        requestModel.getDashboard(basedb.db, data, function(err, dashboard) {
+        modelsSqlite3.getDashboard(basedb.db, data, function(err, dashboard) {
             assert.isNull(err);
             done();
         });
     });
     it('doesn`t remove working request', function (done) {
-        requestModel.rmRequest(basedb.db, data, function(err) {
+        modelsSqlite3.rmRequest(basedb.db, data, function(err) {
             assert.equal(err, 'only just created requests could removed by creator');
             done();
         });
     });
     it('removes request', function (done) {
         data.requestId = 2;
-        requestModel.rmRequest(basedb.db, data, function(err) {
+        modelsSqlite3.rmRequest(basedb.db, data, function(err) {
             assert.isNull(err);
             done();
         });

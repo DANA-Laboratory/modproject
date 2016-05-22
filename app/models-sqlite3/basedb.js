@@ -2,7 +2,7 @@
  * Created by AliReza on 5/10/2016.
  */
 'use strict';
-var sqlite3 = require('sqlite3').verbose();
+var sqlite3 = require('sqlite3');
 var fs = require('fs');
 module.exports = function (dbname) {
     this.db = undefined;
