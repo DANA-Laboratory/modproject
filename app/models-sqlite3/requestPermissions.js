@@ -95,7 +95,7 @@ exports.getDashboard = allways;
 exports.whereIs = allways;
 
 exports.rmRequest = function(/*sqlite3.Database*/ db, /*RequestData*/ data, callback) {
-    db.get('SELECT requestId FROM tblActions WHERE requestId=? AND actionDescription="Create" AND actionUser=? AND requestId NOT IN (SELECT requestId FROM tblDiscipline)', [data.requestId, data.userId], function (err, row) {
+    db.get('SELECT requestId FROM tblActions WHERE requestId=? AND action="Create" AND actionUser=? AND requestId NOT IN (SELECT requestId FROM tblDiscipline)', [data.requestId, data.userId], function (err, row) {
         if (err) {
             callback(err);
         } else {

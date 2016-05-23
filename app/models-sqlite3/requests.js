@@ -20,7 +20,7 @@ var getNewId = function(/*sqlite3.Database*/ db, requestType, callback) {
 };
 
 var addRequestAction = function(/*sqlite3.Database*/ db, /*RequestData*/ data, callback) {
-    db.run('INSERT INTO tblActions (requestId, actionDescription, actionTime, actionUser) VALUES (?, ?, ?, ?);', [data.requestId, data.actionDescription, Date.now(), data.actionUser], callback);
+    db.run('INSERT INTO tblActions (requestId, action, actionComment, actionTime, actionUser) VALUES (?, ?, ?, ?, ?);', [data.requestId, data.action, data.actionComment, Number.isInteger(data.actionTime) ? data.actionTime : Date.now(), data.actionUser], callback);
 };
 
 exports.addItem = function(/*sqlite3.Database*/ db, /*RequestData*/ data, callback) {
@@ -38,7 +38,7 @@ exports.addItem = function(/*sqlite3.Database*/ db, /*RequestData*/ data, callba
 };
 
 exports.updateItem = function(/*sqlite3.Database*/ db, /*RequestData*/ data, callback) {
-    db.run('UPDATE tblRequestItems SET item=? WHERE requestId=? AND description=?', [data.requestItem, data.requestId, data.description], callback);
+    db.run('UPDATE tblRequestItems SET item=? WHERE requestId=? AND description=?', [data.requestItem, data.requestId, data.itemDescription], callback);
 };
 
 exports.getItems = function(/*sqlite3.Database*/ db, data, callback, can) {
@@ -62,26 +62,21 @@ exports.getItems = function(/*sqlite3.Database*/ db, data, callback, can) {
         }
     })
 };
-
+//requestType, userId = actionUser, actionComment, actionTime?
 exports.insertRequest = function(/*sqlite3.Database*/ db, /*RequestData*/ data, callback) {
     getNewId(db, data.requestType, function(newId, err) {
         if(!err) {
-            db.serialize(function() {
-                db.exec("BEGIN");
-                db.run('INSERT INTO tblRequests (manualId, status, description, requestType) VALUES (?,?,?,?);', [newId, 1, data.description, data.requestType], function (err) {
-                    if (err) {
-                        db.exec("ROLLBACK");
-                        callback(err);
-                    } else {
-                        data.actionDescription = 'Create';
-                        data.requestId = this.lastID;
-                        data.actionUser = data.userId;
-                        addRequestAction(db, data, function (err) {
-                            !err ? db.exec("COMMIT") : db.exec("ROLLBACK");
-                            callback(err, this.lastID);
-                        });
-                    }
-                });
+            db.run('INSERT INTO tblRequests (manualId, status, requestType) VALUES (?,?,?);', [newId, 1, data.requestType], function (err) {
+                if (err) {
+                    callback(err);
+                } else {
+                    data.action = 'Create';
+                    data.requestId = this.lastID;
+                    data.actionUser = data.userId;
+                    addRequestAction(db, data, function (err) {
+                        callback(err, this.lastID);
+                    });
+                }
             });
         } else {
             callback(err);
@@ -146,7 +141,7 @@ exports.getDashboard = function(/*sqlite3.Database*/ db, /*RequestData*/ data, c
         }
         f();
     });
-    db.all('SELECT * FROM tblRequests WHERE (id IN (SELECT requestId FROM tblActions WHERE actionDescription="Create" AND actionUser=?)) AND (id NOT IN (SELECT requestId FROM tblDiscipline WHERE toUser=? OR fromUser=?))', [data.userId, data.userId, data.userId], function (err, rows) {
+    db.all('SELECT * FROM tblRequests WHERE (id IN (SELECT requestId FROM tblActions WHERE action="Create" AND actionUser=?)) AND (id NOT IN (SELECT requestId FROM tblDiscipline WHERE toUser=? OR fromUser=?))', [data.userId, data.userId, data.userId], function (err, rows) {
         counter+=1;
         if (!err) {
             res.created = rows;

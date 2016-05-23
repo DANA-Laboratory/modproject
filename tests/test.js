@@ -1,26 +1,9 @@
 /**
  * Created by AliReza on 5/12/2016.
  */
-var moment = require('moment-jalaali');
-var sqlite3 = require('sqlite3');
-var dbToImport = new sqlite3.Database(__dirname + '/Requests.sqlite', function(err){
-   if(err) {
-       console.log(err);
-   } else {
-       dbToImport.all('SELECT * FROM requests', function(err, rows){
-           if(!err) {
-               rows.forEach(function(row, i){
-                   var mm=moment().getMilliseconds();
-                   var d=[row.initdate, row.enddate, row.startdate, row.canceldate].map(function(jd){return moment(jd, 'jYYYY/jM/jD').format('YYYY/M/D')});
-               })
-           } else {
-               console.log(err);
-           }
-       })
-   }
-});
+var modelsSqlite3 = require('../app/models-sqlite3');
+var dbToImport = require('../app/models-sqlite3/importer.js');
 function RequestData() {
-    this.description= 'description';
     this.requestType= 'contract';
 
     this.requestId= 1;
@@ -32,28 +15,32 @@ function RequestData() {
     this.itemPrivilege= 220;
     this.ownerUser= 1;
 
-    this.actionDescription= '';
+    this.actionComment= '';
+    this.action= 'END';
     this.status= 3;
+    this.actionTime = null;
 };
 
 var assert = require('chai').assert;
 var fs = require('fs');
 var ddl = '\
-    CREATE TABLE tblRequests (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, manualId INTEGER NOT NULL, status INTEGER NOT NULL, description TEXT, requestType TEXT);\
+    CREATE TABLE tblRequests (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, manualId INTEGER NOT NULL, status INTEGER NOT NULL, requestType TEXT);\
     CREATE TABLE tblDiscipline (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, requestId INTEGER NOT NULL, fromUser INTEGER NOT NULL, toUser INTEGER NOT NULL, time INTEGER NOT NULL);\
     CREATE TABLE tblRequestItems (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, requestId  INTEGER NOT NULL, item TEXT, privilege TINYINT, ownerUser INTEGER NOT NULL, description TEXT, createTime  INTEGER NOT NULL, modifiedTime INTEGER);\
-    CREATE TABLE tblActions (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, requestId INTEGER NOT NULL, actionDescription STRING NOT NULL, actionTime INTEGER NOT NULL, actionUser INTEGER NOT NULL);\
+    CREATE TABLE tblActions (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, requestId INTEGER NOT NULL, action STRING NOT NULL, actionTime INTEGER NOT NULL, actionUser INTEGER NOT NULL, actionComment TEXT);\
     CREATE TABLE statements (pid INTEGER NOT NULL, date TEXT NOT NULL, data TEXT NOT NULL, PRIMARY KEY (pid, date));\
     CREATE TABLE config (id INTEGER PRIMARY KEY AUTOINCREMENT, itemName STRING NOT NULL, itemType INTEGER NOT NULL);\
     CREATE TABLE mapdetails (name STRING NOT NULL, x REAL NOT NULL, y REAL NOT NULL, type INTEGER, info TEXT);\
     CREATE TABLE requests (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, owneritems TEXT, useritems TEXT, owner INTEGER NOT NULL, user INTEGER, status TEXT NOT NULL, initdate TEXT NOT NULL, inittime TEXT NOT NULL, enddate TEXT, endtime TEXT, description STRING, cancelwhy TEXT, startdate TEXT, starttime TEXT, canceldate TEXT, canceltime TEXT, canceluser INTEGER, startuser INTEGER, enduser INTEGER, applicant STRING NOT NULL, actiondescription TEXT, requesttype TEXT);\
     CREATE TABLE users (id INTEGER PRIMARY KEY, username STRING NOT NULL UNIQUE, password STRING NOT NULL, name STRING, family STRING, melicode STRING, pid STRING, isSysAdmin BOOLEAN NOT NULL DEFAULT (0), isItAdmin BOOLEAN NOT NULL DEFAULT (0), isMaliAdmin BOOLEAN NOT NULL DEFAULT (0), isItUser BOOLEAN DEFAULT (0) NOT NULL, isMaliUser BOOLEAN NOT NULL DEFAULT (0), isKarshenas BOOLEAN NOT NULL DEFAULT (0), isGuest BOOLEAN NOT NULL DEFAULT (0), isTeacher BOOLEAN NOT NULL DEFAULT (0), defaultpass STRING NOT NULL, email STRING)';
 var dbpath = __dirname + '/testdb.sqlite3';
-var modelsSqlite3 = require('../app/models-sqlite3');
+var olddbpath = __dirname + '/Requests.sqlite';
+
 var basedb = new (modelsSqlite3.basedb)(dbpath);
+var olddb = new (modelsSqlite3.basedb)(olddbpath);
+
 describe('models-sqlite3', function() {
     before(function(done){
-        
         if (fs.existsSync(dbpath)) {
             fs.unlinkSync(dbpath);
             done();
@@ -71,13 +58,16 @@ describe('models-sqlite3', function() {
             done();
         })
     });
+    it('olddb could connect', function (done) {
+        olddb.connect(done);
+    });
     it('basedb returns an error if try to recreate existing db', function (done) {
         basedb.createdb(ddl, function (err) {
             assert.isNotNull(err);
             done();
         })
     });
-    it('create new request', function(done){
+    it('first request', function(done){
         modelsSqlite3.insertRequest(basedb.db, data, function (err, requestId) {
             assert.isNull(err);
             assert.equal(1, requestId);
@@ -89,6 +79,20 @@ describe('models-sqlite3', function() {
             assert.isNull(err);
             assert.equal(2, requestId);
             done();
+        });
+    });
+    it('do data import', function(done){
+        this.timeout(50000);
+        dbToImport(olddb.db, function(err, oldData) {
+            assert.isNull(err);
+            oldData.forEach(function(oldRequest, i, arr){
+                var tmpData = {requestType: oldRequest.requestType, userId: oldRequest.actionUsers[0], actionComment: oldRequest.actionComment[0], actionTime: oldRequest.militimes[0]};
+                modelsSqlite3.insertRequest(basedb.db, tmpData, function (err, requestId) {
+                    assert.isNull(err);
+                    if (requestId === arr.length)
+                        done();
+                });
+            });
         });
     });
     it('finds where is a new request', function(done){
