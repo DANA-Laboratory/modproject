@@ -20,7 +20,7 @@ var getNewId = function(/*sqlite3.Database*/ db, requestType, callback) {
 };
 
 var addRequestAction = function(/*sqlite3.Database*/ db, /*RequestData*/ data, callback) {
-    db.run('INSERT INTO tblActions (requestId, action, actionComment, actionTime, actionUser) VALUES (?, ?, ?, ?, ?);', [data.requestId, data.action, data.actionComment, Number.isInteger(data.actionTime) ? data.actionTime : Date.now(), data.actionUser], callback);
+    db.run('INSERT INTO tblActions (requestId, action, actionComment, actionTime, actionUser) VALUES (?, ?, ?, ?, ?);', [data.requestId, data.action, data.actionComment, (typeof data.actionTime === 'number') ? data.actionTime : Date.now(), data.actionUser], callback);
 };
 
 exports.addItem = function(/*sqlite3.Database*/ db, /*RequestData*/ data, callback) {
