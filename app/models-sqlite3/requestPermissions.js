@@ -20,92 +20,102 @@ var getItemPermissions = function(/*sqlite3.Database*/ db, /*RequestData*/ data)
     });
 };
 
-exports.getItems = function (/*sqlite3.Database*/ db, data, callback) {
-    util.whereIs(db, {requestId : data.requestId})
-        .then(function(whereUser) {
-            var isReciever = false;
-            if (whereUser === data.userId) {
-                isReciever = true;
-            }
-            db.all('SELECT id FROM tblRequestItems WHERE requestId=? AND ((ownerUser=? AND (privilege like "1__" OR privilege like "2__")) OR (? AND (privilege like "_1_" OR privilege like "_2_")) OR (privilege like "__1") OR (privilege like "__2"))', [data.requestId, data.userId, isReciever], function (err, rows) {
-                if (err) {
-                    callback(err);
-                } else {
-                    if(rows.length) {
-                        var itemIds = [];
-                        for (var row in rows) {
-                            itemIds.push(rows[row].id);
-                        }
-                        callback(null, itemIds);
-                    } else {
-                        callback('user don`t have permission to get this request items', false);
-                    }
+exports.getItems = function (/*sqlite3.Database*/ db, data) {
+    return new Promise(function(resolve, reject) {
+        util.whereIs(db, {requestId: data.requestId})
+            .then(function (whereUser) {
+                var isReciever = false;
+                if (whereUser === data.userId) {
+                    isReciever = true;
                 }
-            });
-        })
-        .catch(function(err) {
-            callback(err, false);
-        });
-};
-
-exports.updateItem = function (/*sqlite3.Database*/ db, /*RequestData*/ data, callback) {
-    util.whereIs(db, {requestId : data.requestId})
-        .then(function (whereUser) {
-            if (whereUser === data.userId) {
-                getItemPermissions(db, data)
-                    .then(function(permissions){
-                        if (permissions[2] > 1) {
-                            callback(null, true);
+                db.all('SELECT id FROM tblRequestItems WHERE requestId=? AND ((ownerUser=? AND (privilege like "1__" OR privilege like "2__")) OR (? AND (privilege like "_1_" OR privilege like "_2_")) OR (privilege like "__1") OR (privilege like "__2"))', [data.requestId, data.userId, isReciever], function (err, rows) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        if (rows.length) {
+                            var itemIds = [];
+                            for (var row in rows) {
+                                itemIds.push(rows[row].id);
+                            }
+                            resolve(itemIds);
                         } else {
-                            db.get('SELECT id FROM tblRequestItems WHERE requestId=? AND description=? AND ((ownerUser=? AND ?>1) OR (ownerUser!=? AND ?>1))', [data.requestId, data.itemDescription, data.userId, permissions[0], data.userId, permissions[1]], function (err, row) {
-                                if (err) {
-                                    callback(err);
-                                } else {
-                                    row ? callback(null, true) : callback('user don`t have permission to update this request items', false);
-                                }
-                            });
+                            reject('user don`t have permission to get this request items');
                         }
-                    })
-                    .catch(function(err){
-                        callback(err, false);
-                    });
-            } else {
-                callback('that is not here, you can`t touch that', false);
-            }
-        })
-        .catch(function (err) {
-            callback(err, false);
-        });
+                    }
+                });
+            })
+            .catch(function (err) {
+                callback(err, false);
+            });
+    });
 };
 
-var touchable = function(/*sqlite3.Database*/ db, /*RequestData*/ data, callback) {
-    util.whereIs(db, {requestId : data.requestId})
-        .then(function(whereUser){
-            whereUser === data.userId ? callback(null, true) : callback('that is not here, you can`t touch that');
-        })
-        .catch(function(err){
-            callback(err);
-        });
+exports.updateItem = function (/*sqlite3.Database*/ db, /*RequestData*/ data) {
+    return new Promise(function(resolve, reject) {
+        util.whereIs(db, {requestId: data.requestId})
+            .then(function (whereUser) {
+                if (whereUser === data.userId) {
+                    getItemPermissions(db, data)
+                        .then(function (permissions) {
+                            if (permissions[2] > 1) {
+                                resolve();
+                            } else {
+                                db.get('SELECT id FROM tblRequestItems WHERE requestId=? AND description=? AND ((ownerUser=? AND ?>1) OR (ownerUser!=? AND ?>1))', [data.requestId, data.itemDescription, data.userId, permissions[0], data.userId, permissions[1]], function (err, row) {
+                                    if (err) {
+                                        reject(err);
+                                    } else {
+                                        row ? resolve() : reject('user don`t have permission to update this request items');
+                                    }
+                                });
+                            }
+                        })
+                        .catch(function (err) {
+                            reject(err);
+                        });
+                } else {
+                    reject('that is not here, you can`t touch that');
+                }
+            })
+            .catch(function (err) {
+                callback(err, false);
+            });
+    });
+};
+
+var touchable = function(/*sqlite3.Database*/ db, /*RequestData*/ data) {
+    return new Promise(function(resolve, reject) {
+        util.whereIs(db, {requestId : data.requestId})
+            .then(function(whereUser){
+                whereUser === data.userId ? resolve() : reject('that is not here, you can`t touch that');
+            })
+            .catch(function(err){
+                reject(err);
+            });
+    });
 };
 
 exports.updateStatus = touchable;
 exports.sendRequestTo = touchable;
 exports.addItem = touchable;
 
-var allways = function(/*sqlite3.Database*/ db, /*RequestData*/ data, callback) {
-    callback(null, true);
+var allways = function(/*sqlite3.Database*/ db, /*RequestData*/ data) {
+    return new Promise(function(resolve, reject) {
+        resolve();
+    });
 };
 
 exports.insertRequest = allways;
 exports.getDashboard = allways;
 exports.whereIs = allways;
 
-exports.rmRequest = function(/*sqlite3.Database*/ db, /*RequestData*/ data, callback) {
-    db.get('SELECT requestId FROM tblActions WHERE requestId=? AND action="Create" AND actionUser=? AND requestId NOT IN (SELECT requestId FROM tblDiscipline)', [data.requestId, data.userId], function (err, row) {
-        if (err) {
-            callback(err);
-        } else {
-            row ? callback(null, true) : callback('only just created requests could removed by creator', false);
-        }
+exports.rmRequest = function(/*sqlite3.Database*/ db, /*RequestData*/ data) {
+    return new Promise(function(resolve, reject) {
+        db.get('SELECT requestId FROM tblActions WHERE requestId=? AND action="Create" AND actionUser=? AND requestId NOT IN (SELECT requestId FROM tblDiscipline)', [data.requestId, data.userId], function (err, row) {
+            if (err) {
+                reject(err);
+            } else {
+                row ? resolve() : reject('only just created requests could removed by creator');
+            }
+        });
     });
 };

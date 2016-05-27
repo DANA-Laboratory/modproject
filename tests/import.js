@@ -39,8 +39,7 @@ describe('do import', function() {
                     actionComment: oldRequest.actionComment[0],
                     actionTime: oldRequest.militimes[0]
                 };
-                modelsSqlite3.insertRequest(basedb.db, tmpData, function (err, requestId) {
-                    assert.isNull(err);
+                modelsSqlite3.insertRequest(basedb.db, tmpData).then(function (requestId) {
                     if (requestId === arr.length)
                         done();
                 });
