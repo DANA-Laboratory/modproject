@@ -2,7 +2,6 @@
  * Created by AliReza on 5/12/2016.
  */
 var modelsSqlite3 = require('../app/models-sqlite3');
-var dbToImport = require('../app/models-sqlite3/importer.js');
 function RequestData() {
     this.requestType= 'contract';
 
@@ -34,11 +33,7 @@ var ddl = '\
     CREATE TABLE requests (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, owneritems TEXT, useritems TEXT, owner INTEGER NOT NULL, user INTEGER, status TEXT NOT NULL, initdate TEXT NOT NULL, inittime TEXT NOT NULL, enddate TEXT, endtime TEXT, description STRING, cancelwhy TEXT, startdate TEXT, starttime TEXT, canceldate TEXT, canceltime TEXT, canceluser INTEGER, startuser INTEGER, enduser INTEGER, applicant STRING NOT NULL, actiondescription TEXT, requesttype TEXT);\
     CREATE TABLE users (id INTEGER PRIMARY KEY, username STRING NOT NULL UNIQUE, password STRING NOT NULL, name STRING, family STRING, melicode STRING, pid STRING, isSysAdmin BOOLEAN NOT NULL DEFAULT (0), isItAdmin BOOLEAN NOT NULL DEFAULT (0), isMaliAdmin BOOLEAN NOT NULL DEFAULT (0), isItUser BOOLEAN DEFAULT (0) NOT NULL, isMaliUser BOOLEAN NOT NULL DEFAULT (0), isKarshenas BOOLEAN NOT NULL DEFAULT (0), isGuest BOOLEAN NOT NULL DEFAULT (0), isTeacher BOOLEAN NOT NULL DEFAULT (0), defaultpass STRING NOT NULL, email STRING)';
 var dbpath = __dirname + '/testdb.sqlite3';
-var olddbpath = __dirname + '/Requests.sqlite';
-
 var basedb = new (modelsSqlite3.basedb)(dbpath);
-var olddb = new (modelsSqlite3.basedb)(olddbpath);
-
 describe('models-sqlite3', function() {
     before(function(done){
         if (fs.existsSync(dbpath)) {
@@ -57,9 +52,6 @@ describe('models-sqlite3', function() {
             assert.isNull(err);
             done();
         })
-    });
-    it('olddb could connect', function (done) {
-        olddb.connect(done);
     });
     it('basedb returns an error if try to recreate existing db', function (done) {
         basedb.createdb(ddl, function (err) {
@@ -81,26 +73,16 @@ describe('models-sqlite3', function() {
             done();
         });
     });
-    it('do data import', function(done){
-        this.timeout(50000);
-        dbToImport(olddb.db, function(err, oldData) {
-            assert.isNull(err);
-            oldData.forEach(function(oldRequest, i, arr){
-                var tmpData = {requestType: oldRequest.requestType, userId: oldRequest.actionUsers[0], actionComment: oldRequest.actionComment[0], actionTime: oldRequest.militimes[0]};
-                modelsSqlite3.insertRequest(basedb.db, tmpData, function (err, requestId) {
-                    assert.isNull(err);
-                    if (requestId === arr.length)
-                        done();
-                });
-            });
-        });
-    });
+
     it('finds where is a new request', function(done){
-        modelsSqlite3.whereIs(basedb.db, {requestId : 1}, function(err, userId) {
-            assert.isNull(err);
-            assert.equal(userId, data.userId);
-            done();
-        });
+        var p=modelsSqlite3.whereIs(basedb.db, {requestId : 1});
+            p.then(function(userId){
+                assert.equal(userId, data.userId);
+                done();
+            });
+            p.catch(function(err){
+                done();
+            });
     });
 
     it('doesn`t send untouchable request', function(done){

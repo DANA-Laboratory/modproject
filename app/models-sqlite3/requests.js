@@ -105,13 +105,13 @@ exports.updateStatus = function(/*sqlite3.Database*/ db, /*RequestData*/ data, c
 };
 
 exports.sendRequestTo = function(/*sqlite3.Database*/ db, /*RequestData*/ data, callback) {
-    exports.whereIs(db, {requestId : data.requestId}, function(err, fromUser) {
-        if (err) {
-            callback(err);
-        } else {
+    exports.whereIs(db, {requestId : data.requestId})
+        .then(function(fromUser){
             db.run('INSERT INTO tblDiscipline(requestId, fromUser, toUser, time) VALUES(?, ?, ?, ?)',[data.requestId, fromUser, data.toUser, Date.now()], callback);
-        }
-    })
+        })
+        .catch(function(err){
+            callback(err);
+        });
 };
 
 exports.getDashboard = function(/*sqlite3.Database*/ db, /*RequestData*/ data, callback) {

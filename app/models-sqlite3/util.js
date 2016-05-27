@@ -3,30 +3,33 @@
  */
 'use strict';
 
-var whoDid = function(/*sqlite3.Database*/ db, /*RequestData*/ data, callback) {
-    db.get('SELECT actionUser FROM tblActions WHERE requestId=? AND action=?;', [data.requestId, data.action], function(err, row) {
-        !err ? (row ? callback(null, row.actionUser) : callback("no one")) : callback(err);
+var whoDid = function(/*sqlite3.Database*/ db, /*RequestData*/ data) {
+    return new Promise(function(resolve, reject) {
+        db.get('SELECT actionUser FROM tblActions WHERE requestId=? AND action=?;', [data.requestId, data.action], function (err, row) {
+            !err ? (row ? resolve(row.actionUser) : reject("no one")) : reject(err);
+        });
     });
-
 };
 
-exports.whereIs = function(/*sqlite3.Database*/ db, /*RequestData*/ data, callback) {
-    db.get('SELECT toUser FROM tblDiscipline WHERE requestId=? AND time in (SELECT MAX(time) FROM tblDiscipline WHERE requestId=?);', [data.requestId, data.requestId], function(err, row) {
-        if (err) {
-            callback(err);
-        } else {
-            if(row) {
-                callback(err, row.toUser);
+exports.whereIs = function(/*sqlite3.Database*/ db, /*RequestData*/ data) {
+    return new Promise(function(resolve, reject) {
+        db.get('SELECT toUser FROM tblDiscipline WHERE requestId=? AND time in (SELECT MAX(time) FROM tblDiscipline WHERE requestId=?);', [data.requestId, data.requestId], function(err, row) {
+            if (err) {
+                reject(err);
             } else {
-                data.action = 'Create';
-                whoDid(db, data, function(err, actionUser) {
-                    if (err) {
-                        err === 'no one' ? callback(err) : callback('i don`t know where is it');
-                    } else {
-                        callback(null, actionUser);
-                    }
-                });
+                if(row) {
+                    resolve(row.toUser);
+                } else {
+                    data.action = 'Create';
+                    whoDid(db, data)
+                        .then(function (actionUser) {
+                            resolve(actionUser);
+                        })
+                        .catch(function (err) {
+                            err === 'no one' ? reject(err) : reject('i don`t know where is it');
+                        });
+                }
             }
-        }
+        });
     });
 };

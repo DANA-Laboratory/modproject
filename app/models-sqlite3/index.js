@@ -7,10 +7,11 @@ var requestPermissions = require('./requestPermissions.js');
 
 Object.keys(requests).forEach (function(req_f) {
     exports[req_f] = function (/*sqlite3.Database*/ db, /*RequestData*/ data, callback) {
+        var p;
         if (requestPermissions.hasOwnProperty(req_f)) {
             requestPermissions[req_f](db, data, function (err, can) {
                 if (can) {
-                    requests[req_f](db, data, callback, can);
+                    p = requests[req_f](db, data, callback, can);
                 } else {
                     callback(err);
                 }
@@ -18,5 +19,6 @@ Object.keys(requests).forEach (function(req_f) {
         } else {
             callback('permission to ' + req_f + 'is not defined');
         }
+        return p;
     };
 });
