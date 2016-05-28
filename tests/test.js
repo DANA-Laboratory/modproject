@@ -3,20 +3,20 @@
  */
 var modelsSqlite3 = require('../app/models-sqlite3');
 function RequestData() {
-    this.requestType= 'contract';
+    this.requestType = 'contract';
 
-    this.requestId= 1;
-    this.userId= 0;
-    this.toUser= 2;
+    this.requestId = 1;
+    this.userId = 0;
+    this.toUser = 2;
 
-    this.itemDescription= 'item description';
-    this.requestItem='{test : 100}';
-    this.itemPrivilege= 220;
-    this.ownerUser= 1;
+    this.itemDescription = 'item description';
+    this.requestItem = '{test : 100}';
+    this.itemPrivilege = 220;
+    this.ownerUser = 1;
 
-    this.actionComment= '';
-    this.action= 'END';
-    this.status= 3;
+    this.actionComment = '';
+    this.action = 'END';
+    this.status = 3;
     this.actionTime = null;
 };
 
@@ -34,8 +34,8 @@ var ddl = '\
     CREATE TABLE users (id INTEGER PRIMARY KEY, username STRING NOT NULL UNIQUE, password STRING NOT NULL, name STRING, family STRING, melicode STRING, pid STRING, isSysAdmin BOOLEAN NOT NULL DEFAULT (0), isItAdmin BOOLEAN NOT NULL DEFAULT (0), isMaliAdmin BOOLEAN NOT NULL DEFAULT (0), isItUser BOOLEAN DEFAULT (0) NOT NULL, isMaliUser BOOLEAN NOT NULL DEFAULT (0), isKarshenas BOOLEAN NOT NULL DEFAULT (0), isGuest BOOLEAN NOT NULL DEFAULT (0), isTeacher BOOLEAN NOT NULL DEFAULT (0), defaultpass STRING NOT NULL, email STRING)';
 var dbpath = __dirname + '/testdb.sqlite3';
 var basedb = new (modelsSqlite3.basedb)(dbpath);
-describe('models-sqlite3', function() {
-    before(function(done){
+describe('models-sqlite3', function () {
+    before(function (done) {
         if (fs.existsSync(dbpath)) {
             fs.unlinkSync(dbpath);
             done();
@@ -43,7 +43,7 @@ describe('models-sqlite3', function() {
             done();
         }
     });
-    beforeEach(function(){
+    beforeEach(function () {
         // The beforeEach() callback gets run before each test in the suite.
         data = new RequestData();
     });
@@ -59,118 +59,118 @@ describe('models-sqlite3', function() {
             done();
         })
     });
-    it('first request', function(done){
+    it('first request', function (done) {
         modelsSqlite3.insertRequest(basedb.db, data)
-            .then(function(requestId){
+            .then(function (requestId) {
                 assert.equal(1, requestId);
                 done();
             });
     });
-    it('add request', function(done){
+    it('add request', function (done) {
         modelsSqlite3.insertRequest(basedb.db, data)
-            .then(function(requestId){
+            .then(function (requestId) {
                 assert.equal(2, requestId);
                 done();
             });
     });
 
-    it('finds where is a new request', function(done){
-        modelsSqlite3.whereIs(basedb.db, {requestId : 1})
-            .then(function(userId){
+    it('finds where is a new request', function (done) {
+        modelsSqlite3.whereIs(basedb.db, {requestId: 1})
+            .then(function (userId) {
                 assert.equal(userId, data.userId);
                 done();
             });
     });
 
-    it('doesn`t send untouchable request', function(done){
-        data.userId= 1;
+    it('doesn`t send untouchable request', function (done) {
+        data.userId = 1;
         modelsSqlite3.sendRequestTo(basedb.db, data)
-            .catch(function(err) {
+            .catch(function (err) {
                 assert.equal(err, 'that is not here, you can`t touch that');
                 done();
             });
     });
 
-    it('sends request to someone', function(done){
-        data.toUser= 2;
+    it('sends request to someone', function (done) {
+        data.toUser = 2;
         modelsSqlite3.sendRequestTo(basedb.db, data)
-            .then(function(res) {
+            .then(function (res) {
                 done();
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 assert.isNull(err);
                 done();
             });
     });
 
-    describe('working with items', function() {
-        it('writes request item', function(done){
+    describe('working with items', function () {
+        it('writes request item', function (done) {
             data.userId = data.toUser;
             modelsSqlite3.addItem(basedb.db, data)
-                .then(function() {
+                .then(function () {
                     done();
                 });
         });
-        it('doesn`t duplicate description', function(done){
+        it('doesn`t duplicate description', function (done) {
             data.userId = data.toUser;
-            modelsSqlite3.addItem(basedb.db, data) 
-                .catch(function(err) {
+            modelsSqlite3.addItem(basedb.db, data)
+                .catch(function (err) {
                     assert.equal(err, 'item exists');
                     done();
                 });
         });
-        it('dosen`t read other`s request items', function(done){
-            modelsSqlite3.getItems(basedb.db, data).catch(function(err) {
+        it('dosen`t read other`s request items', function (done) {
+            modelsSqlite3.getItems(basedb.db, data).catch(function (err) {
                 assert.equal(err, 'user don`t have permission to get this request items');
                 done();
             });
         });
-        it('reads request items', function(done){
-            data.userId= data.toUser;
-            modelsSqlite3.getItems(basedb.db, data).then(function(items) {
+        it('reads request items', function (done) {
+            data.userId = data.toUser;
+            modelsSqlite3.getItems(basedb.db, data).then(function (items) {
                 assert.equal(items.length, 1);
                 assert.equal(items[0], data.requestItem);
                 done();
             });
         });
-        it('doesn`t update untouchable request item', function(done){
-            modelsSqlite3.updateItem(basedb.db, data).catch(function(err) {
+        it('doesn`t update untouchable request item', function (done) {
+            modelsSqlite3.updateItem(basedb.db, data).catch(function (err) {
                 assert.equal(err, 'that is not here, you can`t touch that');
                 done();
             });
         });
-        it('updates request item', function(done){
+        it('updates request item', function (done) {
             data.userId = data.toUser;
-            data.requestItem = {test : 200};
-            modelsSqlite3.updateItem(basedb.db, data).then(function() {
+            data.requestItem = {test: 200};
+            modelsSqlite3.updateItem(basedb.db, data).then(function () {
                 done();
             });
         });
     });
-    it('doesn`t change status of untouchable request', function(done){
+    it('doesn`t change status of untouchable request', function (done) {
         modelsSqlite3.updateStatus(basedb.db, data)
-            .catch(function(err) {
-               assert.equal(err, 'that is not here, you can`t touch that');
-               done();
+            .catch(function (err) {
+                assert.equal(err, 'that is not here, you can`t touch that');
+                done();
             });
     });
-    it('changes status of touchable request', function(done){
+    it('changes status of touchable request', function (done) {
         data.userId = data.toUser;
         modelsSqlite3.updateStatus(basedb.db, data)
-            .then(function() {
+            .then(function () {
                 done();
             });
     });
     it('get dashboard', function (done) {
         data.userId = data.toUser;
         modelsSqlite3.getDashboard(basedb.db, data)
-            .then(function(dashboard) {
+            .then(function (dashboard) {
                 done();
             });
     });
     it('doesn`t remove working request', function (done) {
         modelsSqlite3.rmRequest(basedb.db, data)
-            .catch(function(err) {
+            .catch(function (err) {
                 assert.equal(err, 'only just created requests could removed by creator');
                 done();
             });
@@ -178,12 +178,12 @@ describe('models-sqlite3', function() {
     it('removes request', function (done) {
         data.requestId = 2;
         modelsSqlite3.rmRequest(basedb.db, data)
-            .then(function() {
+            .then(function () {
                 done();
             });
     });
-    after(function(done) {
-        basedb.disconnect(function() {
+    after(function (done) {
+        basedb.disconnect(function () {
             fs.unlinkSync(dbpath);
             done();
         })

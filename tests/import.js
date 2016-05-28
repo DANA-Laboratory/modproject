@@ -1,6 +1,7 @@
 /**
  * Created by AliReza on 5/26/2016.
  */
+
 var modelsSqlite3 = require('../app/models-sqlite3');
 var fs = require('fs');
 var dbToImport = require('../app/models-sqlite3/importer.js');
@@ -13,7 +14,7 @@ var ddl = '\
     CREATE TABLE tblRequests (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, manualId INTEGER NOT NULL, status INTEGER NOT NULL, requestType TEXT);\
     CREATE TABLE tblDiscipline (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, requestId INTEGER NOT NULL, fromUser INTEGER NOT NULL, toUser INTEGER NOT NULL, time INTEGER NOT NULL);\
     CREATE TABLE tblRequestItems (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, requestId  INTEGER NOT NULL, item TEXT, privilege TINYINT, ownerUser INTEGER NOT NULL, description TEXT, createTime  INTEGER NOT NULL, modifiedTime INTEGER);\
-    CREATE TABLE tblActions (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, requestId INTEGER NOT NULL, action STRING NOT NULL, actionTime INTEGER NOT NULL, actionUser INTEGER NOT NULL, actionComment TEXT);'
+    CREATE TABLE tblActions (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, requestId INTEGER NOT NULL, action STRING NOT NULL, actionTime INTEGER NOT NULL, actionUser INTEGER NOT NULL, actionComment TEXT);';
 
 describe('do import', function() {
     before(function (done) {
@@ -45,5 +46,11 @@ describe('do import', function() {
                 });
             });
         });
+    });
+    after(function (done) {
+        basedb.disconnect(function () {
+            fs.unlinkSync(dbpath);
+            done();
+        })
     });
 });
