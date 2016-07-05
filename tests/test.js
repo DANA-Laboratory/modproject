@@ -3,21 +3,22 @@
  */
 var modelsSqlite3 = require('../app/models-sqlite3');
 function RequestData() {
-    this.requestType = 'contract';
+    return {
+        requestType : 'contract',
+        requestId : 1,
+        userId : 0,
+        toUser : 2,
 
-    this.requestId = 1;
-    this.userId = 0;
-    this.toUser = 2;
+        itemDescription : 'item description',
+        requestItem : '{test : 100}',
+        itemPrivilege : 220,
+        ownerUser : 1,
 
-    this.itemDescription = 'item description';
-    this.requestItem = '{test : 100}';
-    this.itemPrivilege = 220;
-    this.ownerUser = 1;
-
-    this.actionComment = '';
-    this.action = 'END';
-    this.status = 3;
-    this.actionTime = null;
+        actionComment : '',
+        action : 'END',
+        status : 3,
+        actionTime : null
+    };
 };
 
 var assert = require('chai').assert;
