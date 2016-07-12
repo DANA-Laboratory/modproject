@@ -26,7 +26,7 @@ var ddl = `
     CREATE TABLE tblStatementTypes (ID INTEGER PRIMARY KEY AUTOINCREMENT, VerbID INTEGER REFERENCES tblVerbs (ID) NOT NULL, ActorType INTEGER REFERENCES tblActorTypes (ID) NOT NULL, ObjectType INTEGER REFERENCES tblObjectTypes (ID) NOT NULL, DateCaption STRING, Description STRING NOT NULL, AttributeType STRING);
     INSERT INTO tblStatementTypes (ID, VerbID, ActorType, ObjectType, DateCaption, Description, AttributeType) VALUES (1, 1, 2, 1, 'زمان ورود', 'ورود کارآموز به محل کارآموزی یا کارورزی', NULL);
     INSERT INTO tblStatementTypes (ID, VerbID, ActorType, ObjectType, DateCaption, Description, AttributeType) VALUES (2, 2, 2, 1, 'زمان خروج', 'خروج کارآموز از محل کارآموزی یا کارورزی به دلیل ترخیص، اتمام دوره یا اخراج', '{status:["ترخیص","اخراج"]}');
-    INSERT INTO tblStatementTypes (ID, VerbID, ActorType, ObjectType, DateCaption, Description, AttributeType) VALUES (3, 3, 2, 2, 'زمان قرار گفتن', 'گروه بندی', NULL);
+    INSERT INTO tblStatementTypes (ID, VerbID, ActorType, ObjectType, DateCaption, Description, AttributeType) VALUES (3, 3, 2, 2, 'زمان قرار گرفتن', 'گروه بندی', NULL);
     INSERT INTO tblStatementTypes (ID, VerbID, ActorType, ObjectType, DateCaption, Description, AttributeType) VALUES (4, 4, 2, 3, 'زمان شروع', 'شرکت در کلاس آموزشی', NULL);
     INSERT INTO tblStatementTypes (ID, VerbID, ActorType, ObjectType, DateCaption, Description, AttributeType) VALUES (5, 5, 2, 3, 'زمان اتمام', 'اتمام کلاس آموزشی', '{result:0, status:["قبول","رد"]}');
     INSERT INTO tblStatementTypes (ID, VerbID, ActorType, ObjectType, DateCaption, Description, AttributeType) VALUES (6, 6, 2, 3, 'تاریخ غیبت', 'غیبت در کلاس آموزشی', NULL);
@@ -94,6 +94,43 @@ describe('do import', function() {
     it('basedb could connect', function (done) {
         done();
     });
+    it('add trainee', function (done) {
+
+    });
+    it('add teacher', function (done) {
+
+    });
+    it('add course', function (done) {
+
+    });
+    it('add class', function (done) {
+
+    });
+    it('add group', function (done) {
+
+    });
+    it('remove trainee', function (done) {
+
+    });
+    it('remove teacher', function (done) {
+
+    });
+    it('remove course', function (done) {
+
+    });
+    it('remove class', function (done) {
+
+    });
+    it('remove group', function (done) {
+
+    });
+    it('add trainee to group', function (done) {
+
+    });
+    it('program a class for group', function (done) {
+
+    });
+
     after(function (done) {
         basedb.disconnect(function (err) {
             fs.unlinkSync(dbpath);
