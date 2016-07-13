@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "chai": "^3.5.0",
+    "fuzzysearch": "^1.0.3",
     "moment-jalaali": "^0.3.8",
     "sqlite3": "^3.0.8"
   }
