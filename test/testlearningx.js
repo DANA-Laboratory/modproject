@@ -7,6 +7,8 @@ var fs = require('fs');
 var assert = require('chai').assert;
 var dbpath = __dirname + '/learnxdb.sqlite';
 var basedb = new (modelsSqlite3.basedb)(dbpath);
+var learnX = require('../app/models-sqlite3/learningx');
+var CSVParser = require('../app/models-sqlite3/csv-parser');
 var ddl = `
     --
     -- File generated with SQLiteStudio v3.0.6 on چهارشنبه ژوئيه 6 11:12:41 2016
@@ -39,7 +41,7 @@ var ddl = `
     -- Table: tblActorTypes
     CREATE TABLE tblActorTypes (ID INTEGER PRIMARY KEY AUTOINCREMENT, Caption STRING NOT NULL);
     INSERT INTO tblActorTypes (ID, Caption) VALUES (1, 'مدرس');
-    INSERT INTO tblActorTypes (ID, Caption) VALUES (2, 'کارآموز');
+    INSERT INTO tblActorTypes (ID, Caption) VALUES (2, 'فرآگیر');
     
     -- Table: tblObjects
     CREATE TABLE tblObjects (ID INTEGER PRIMARY KEY AUTOINCREMENT, Type INTEGER NOT NULL REFERENCES tblObjectTypes (ID), ForeignKey INTEGER, Atributes STRING);
@@ -48,7 +50,7 @@ var ddl = `
     CREATE TABLE tblGroups (ID INTEGER PRIMARY KEY AUTOINCREMENT, Caption TEXT NOT NULL);
     
     -- Table: tblActors
-    CREATE TABLE tblActors (ID INTEGER PRIMARY KEY AUTOINCREMENT, Type INTEGER REFERENCES tblActorTypes (ID), Name STRING, Family STRING, Code STRING, Attributes STRING);
+    CREATE TABLE tblActors (ID INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER NOT NULL REFERENCES tblActorTypes (ID), name STRING NOT NULL, family STRING NOT NULL, code STRING NOT NULL UNIQUE, attributes STRING);
     
     -- Table: tblGrouping
     CREATE TABLE tblGrouping (ID INTEGER PRIMARY KEY AUTOINCREMENT, "Group" INTEGER NOT NULL REFERENCES tblGroups (ID), Actors STRING);
@@ -91,12 +93,56 @@ describe('do import', function() {
             done();
         })
     });
-    it('basedb could connect', function (done) {
-        done();
-    });
+    var counter = 0;
+    var counterCode = 0;
     it('add trainee', function (done) {
-
+        learnX.getMaxCounter(basedb.db, 'tblActors', 'code', 'test000')
+            .then(function (res) {
+                basedb.beginTransaction();
+                var csvParser = new (CSVParser)(function(err, record, count){
+                    if(!err) {
+                        var actorData = {};
+                        actorData.type = 'فرآگیر';
+                        actorData.name = record.first_name;
+                        actorData.family = record.last_name;
+                        counterCode += 1;
+                        actorData.code = 'test' + (res + counterCode).substr(-1 * res.length);
+                        delete record.first_name;
+                        delete record.last_name;
+                        actorData.attributes=JSON.stringify(record);
+                        learnX.addActor(basedb.db, actorData)
+                            .then(function (res) {
+                                counter += 1;
+                                if (count == counter) {
+                                    console.log(counter, ' is the last');
+                                    basedb.db.exec("COMMIT");
+                                    learnX.getMaxCounter(basedb.db, 'tblActors', 'code', 'test000')
+                                        .then(function (res) {
+                                            assert.equal(res, '500');
+                                            done();
+                                        })
+                                }
+                            })
+                            .catch(function (err) {
+                                counter += 1;
+                                console.log(counter, err);
+                                if (count == counter) {
+                                    console.log(counter, ' is the last');
+                                    basedb.commitTransaction();
+                                    done();
+                                }
+                            });
+                    } else {
+                        console.log(err);
+                    }
+                });
+                csvParser.read(__dirname + '/fs_read.csv');
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
     });
+/*
     it('add teacher', function (done) {
 
     });
@@ -130,7 +176,7 @@ describe('do import', function() {
     it('program a class for group', function (done) {
 
     });
-
+*/
     after(function (done) {
         basedb.disconnect(function (err) {
             fs.unlinkSync(dbpath);

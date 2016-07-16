@@ -30,6 +30,7 @@ describe('do import', function() {
         olddb.connect(done);
     });
     it('import old requests', function (done) {
+        basedb.beginTransaction();
         this.timeout(200000);
         dbToImport(olddb.db, function (err, oldData) {
             assert.isNull(err);
@@ -41,8 +42,10 @@ describe('do import', function() {
                     actionTime: oldRequest.militimes[0]
                 };
                 modelsSqlite3.insertRequest(basedb.db, tmpData).then(function (requestId) {
-                    if (requestId === arr.length)
+                    if (requestId === arr.length) {
+                        basedb.commitTransaction();
                         done();
+                    }
                 });
             });
         });

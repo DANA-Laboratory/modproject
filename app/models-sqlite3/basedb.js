@@ -7,6 +7,12 @@ var fs = require('fs');
 module.exports = function (dbname) {
     this.db = undefined;
     this.dbname = dbname;
+    this.beginTransaction = function () {
+        this.db.exec("BEGIN");
+    };
+    this.commitTransaction = function () {
+        this.db.exec("COMMIT");
+    };
     this.connect = function(callback) {
         if (!fs.existsSync(dbname)) {
             callback(dbname + ' not exists!');
