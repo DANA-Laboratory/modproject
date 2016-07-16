@@ -5,8 +5,8 @@
 var fs = require('fs');
 var parse = require('csv-parse');
 var transform = require('stream-transform');
-var parser = parse({delimiter: ',', columns: true});
 module.exports = function (callback) {
+    var parser = parse({delimiter: ',', columns: true});
     this.callback = callback;
     this.read = function(path) {
         var input = fs.createReadStream(path);

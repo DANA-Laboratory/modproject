@@ -82,6 +82,56 @@ var ddl = `
     COMMIT TRANSACTION;
     PRAGMA foreign_keys = on;
 `;
+function importActorsFromCSV(done, pre, actorType,  path) {
+    var counter = 0;
+    var counterCode = 0;
+    learnX.getMaxCounter(basedb.db, 'tblActors', 'code', pre + '000')
+        .then(function (res) {
+            basedb.beginTransaction();
+            var csvParser = new (CSVParser)(function(err, record, count){
+                if(!err) {
+                    var actorData = {};
+                    actorData.type = actorType;
+                    actorData.name = record.first_name;
+                    actorData.family = record.last_name;
+                    counterCode += 1;
+                    actorData.code = pre + (res + counterCode).substr(-1 * res.length);
+                    delete record.first_name;
+                    delete record.last_name;
+                    actorData.attributes=JSON.stringify(record);
+                    learnX.addActor(basedb.db, actorData)
+                        .then(function (res) {
+                            counter += 1;
+                            if (count == counter) {
+                                console.log(counter, ' is the last');
+                                basedb.db.exec("COMMIT");
+                                learnX.getMaxCounter(basedb.db, 'tblActors', 'code', pre + '000')
+                                    .then(function (res) {
+                                        assert.equal(res, count);
+                                        done();
+                                    })
+                            }
+                        })
+                        .catch(function (err) {
+                            counter += 1;
+                            console.log(counter, err);
+                            if (count == counter) {
+                                console.log(counter, ' is the last');
+                                basedb.commitTransaction();
+                                done();
+                            }
+                        });
+                } else {
+                    console.log(err);
+                }
+            });
+            csvParser.read(path);
+        })
+        .catch(function (err) {
+            fs.unlinkSync(dbpath);
+            console.log(err);
+        });
+}
 
 describe('do import', function() {
     before(function (done) {
@@ -93,54 +143,11 @@ describe('do import', function() {
             done();
         })
     });
-    var counter = 0;
-    var counterCode = 0;
+    it('add teacher', function (done) {
+        importActorsFromCSV(done, 'te954/', 'مدرس', __dirname + '/au-500.testcsv');
+    });
     it('add trainee', function (done) {
-        learnX.getMaxCounter(basedb.db, 'tblActors', 'code', 'test000')
-            .then(function (res) {
-                basedb.beginTransaction();
-                var csvParser = new (CSVParser)(function(err, record, count){
-                    if(!err) {
-                        var actorData = {};
-                        actorData.type = 'فرآگیر';
-                        actorData.name = record.first_name;
-                        actorData.family = record.last_name;
-                        counterCode += 1;
-                        actorData.code = 'test' + (res + counterCode).substr(-1 * res.length);
-                        delete record.first_name;
-                        delete record.last_name;
-                        actorData.attributes=JSON.stringify(record);
-                        learnX.addActor(basedb.db, actorData)
-                            .then(function (res) {
-                                counter += 1;
-                                if (count == counter) {
-                                    console.log(counter, ' is the last');
-                                    basedb.db.exec("COMMIT");
-                                    learnX.getMaxCounter(basedb.db, 'tblActors', 'code', 'test000')
-                                        .then(function (res) {
-                                            assert.equal(res, '500');
-                                            done();
-                                        })
-                                }
-                            })
-                            .catch(function (err) {
-                                counter += 1;
-                                console.log(counter, err);
-                                if (count == counter) {
-                                    console.log(counter, ' is the last');
-                                    basedb.commitTransaction();
-                                    done();
-                                }
-                            });
-                    } else {
-                        console.log(err);
-                    }
-                });
-                csvParser.read(__dirname + '/us-500.testcsv');
-            })
-            .catch(function (err) {
-                console.log(err);
-            });
+        importActorsFromCSV(done, 'tr954/', 'فرآگیر', __dirname + '/us-500.testcsv');
     });
 /*
     it('add teacher', function (done) {
