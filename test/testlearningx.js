@@ -136,7 +136,7 @@ describe('do import', function() {
                         console.log(err);
                     }
                 });
-                csvParser.read(__dirname + '/fs_read.csv');
+                csvParser.read(__dirname + '/us-500.testcsv');
             })
             .catch(function (err) {
                 console.log(err);
