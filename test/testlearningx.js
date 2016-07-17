@@ -108,38 +108,55 @@ describe('do import', function() {
             done();
         })
     });
-    it('add teacher', function (done) {
-        var pre = 'te954/';
-        learnX.importActorsFromCSV(basedb.db, pre, 'مدرس', __dirname + '/au-500.testcsv', getActorData)
+    it('import teachers', function (done) {
+        var startCode = 'teau/0000';
+        learnX.importActorsFromCSV(basedb.db, startCode, 'مدرس', __dirname + '/au-500.testcsv', getActorData)
             .then(function (count) {
-                learnX.getMaxCounter(basedb.db, 'tblActors', 'code', pre + '000')
-                    .then(function (res) {
-                        assert.equal(res, count);
-                        done();
-                    })
-            })
-            .catch(function (err) {
-
-            });
-    });
-    it('add trainee', function (done) {
-        var pre = 'te954/';
-        learnX.importActorsFromCSV(basedb.db, pre, 'فرآگیر', __dirname + '/us-500.testcsv', getActorData)
-            .then(function (count) {
-                learnX.getMaxCounter(basedb.db, 'tblActors', 'code', pre + '000')
-                    .then(function (res) {
-                        assert.equal(res, count);
+                learnX.getMaxCounter(basedb.db, 'tblActors', 'code', startCode)
+                    .then(function (maxCounter) {
+                        assert.equal(maxCounter, count);
                         done();
                     })
             })
             .catch(function (err) {
                 console.log(err);
+                assert.isNull(err);
+                done();
+            });
+    });
+    var startCode = '0000';
+    it('import trainees', function (done) {
+        learnX.importActorsFromCSV(basedb.db, 'trus/' + startCode, 'فرآگیر', __dirname + '/us-500.testcsv', getActorData)
+            .then(function (count) {
+                learnX.getMaxCounter(basedb.db, 'tblActors', 'code', 'trus/' + startCode)
+                    .then(function (maxCounter) {
+                        assert.equal(maxCounter, count);
+                        startCode = maxCounter;
+                        done();
+                    })
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
+    });
+    it('import trainees append', function (done) {
+        learnX.importAppendActorsFromCSV(basedb.db, 'trus/' + startCode, 'فرآگیر', __dirname + '/ca-500.testcsv', getActorData)
+            .then(function (count) {
+                learnX.getMaxCounter(basedb.db, 'tblActors', 'code', 'trus/' + startCode)
+                    .then(function (maxCounter) {
+                        assert.equal(maxCounter, parseInt(startCode) + count);
+                        done();
+                    })
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
             });
     });
 /*
-    it('add teacher', function (done) {
-
-    });
     it('add course', function (done) {
 
     });
