@@ -6,7 +6,7 @@ var modelsSqlite3 = require('../app/models-sqlite3');
 var fs = require('fs');
 var assert = require('chai').assert;
 var dbpath = __dirname + '/learnxdb.sqlite';
-var basedb = new (modelsSqlite3.basedb)(dbpath);
+var basedb = null;
 var learnX = require('../app/models-sqlite3/learningx');
 
 var ddl = `
@@ -82,39 +82,39 @@ var ddl = `
     COMMIT TRANSACTION;
     PRAGMA foreign_keys = on;
 `;
-function getActorData(record) {
-    var actorData = {};
-    actorData.name = record.first_name;
-    actorData.family = record.last_name;
+function transferActorData(record) {
+    var data = {};
+    data.name = record.first_name;
+    data.family = record.last_name;
     delete record.first_name;
     delete record.last_name;
-    actorData.attributes=JSON.stringify(record);
-    return actorData;
+    data.attributes=JSON.stringify(record);
+    return data;
 }
-/*
-learnX.getMaxCounter(basedb.db, 'tblActors', 'code', pre + '000')
-    .then(function (res) {
-        assert.equal(res, count);
-        done();
-    })
-*/
+function transferCourseData(record) {
+    var data = {};
+    data.caption = record.COURSE_TITLE;
+    delete record.caption;
+    data.attributes=JSON.stringify(record);
+    return data;
+}
 describe('do import', function() {
     before(function (done) {
         if (fs.existsSync(dbpath)) {
             fs.unlinkSync(dbpath);
         }
-        basedb.createdb(ddl, function (err) {
+        basedb = new (modelsSqlite3.basedb)(dbpath, ddl, function (err) {
             assert.isNull(err);
             done();
-        })
+        });
     });
     it('import teachers', function (done) {
         var startCode = 'teau/0000';
-        learnX.importActorsFromCSV(basedb.db, startCode, 'مدرس', __dirname + '/au-500.testcsv', getActorData)
+        learnX.importActorsFromCSV(basedb.db, startCode, 'مدرس', __dirname + '/au-500.testcsv', transferActorData)
             .then(function (count) {
                 learnX.getMaxCounter(basedb.db, 'tblActors', 'code', startCode)
                     .then(function (maxCounter) {
-                        assert.equal(maxCounter, count);
+                        assert.equal(maxCounter, 'teau/0' + count);
                         done();
                     })
             })
@@ -124,14 +124,15 @@ describe('do import', function() {
                 done();
             });
     });
-    var startCode = '0000';
+    var inserted = 0;
     it('import trainees', function (done) {
-        learnX.importActorsFromCSV(basedb.db, 'trus/' + startCode, 'فرآگیر', __dirname + '/us-500.testcsv', getActorData)
+        var startCode = 'trus/0000';
+        learnX.importActorsFromCSV(basedb.db, startCode, 'فرآگیر', __dirname + '/us-500.testcsv', transferActorData)
             .then(function (count) {
-                learnX.getMaxCounter(basedb.db, 'tblActors', 'code', 'trus/' + startCode)
+                learnX.getMaxCounter(basedb.db, 'tblActors', 'code', startCode)
                     .then(function (maxCounter) {
-                        assert.equal(maxCounter, count);
-                        startCode = maxCounter;
+                        assert.equal(maxCounter, 'trus/0' + count);
+                        inserted = count;
                         done();
                     })
             })
@@ -142,11 +143,12 @@ describe('do import', function() {
             });
     });
     it('import trainees append', function (done) {
-        learnX.importAppendActorsFromCSV(basedb.db, 'trus/' + startCode, 'فرآگیر', __dirname + '/ca-500.testcsv', getActorData)
+        var startCode = 'teau/0000';
+        learnX.importAppendActorsFromCSV(basedb.db, startCode, 'فرآگیر', __dirname + '/ca-500.testcsv', transferActorData)
             .then(function (count) {
-                learnX.getMaxCounter(basedb.db, 'tblActors', 'code', 'trus/' + startCode)
+                learnX.getMaxCounter(basedb.db, 'tblActors', 'code', startCode)
                     .then(function (maxCounter) {
-                        assert.equal(maxCounter, parseInt(startCode) + count);
+                        assert.equal(maxCounter, 'teau/' + (inserted + count));
                         done();
                     })
             })
@@ -156,10 +158,55 @@ describe('do import', function() {
                 done();
             });
     });
-/*
-    it('add course', function (done) {
-
+    it('import course', function (done) {
+        learnX.importCoursesFromCSV(basedb.db, __dirname + '/allpoly_2017courseslist_20160713.testcsv', transferCourseData)
+            .then(function (count) {
+                    assert.equal(count, 232);
+                    done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
     });
+    it('get record by id', function (done) {
+        basedb.getRecord('tblCourse', {id: 1})
+            .then(function (res) {
+                assert.equal(res.id, 1);
+                return basedb.getRecord('tblActors', {name: 'Rebbecca', family: 'Didio'});
+            })
+            .then(function (res) {
+                assert.equal(res.name, 'Rebbecca');
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
+    });
+    it('find records', function (done) {
+        basedb.matchRecords('tblCourse', {attributes: 'NYP'})
+            .then(function (res) {
+                assert.equal(res.length, 49);
+                return basedb.matchRecords('tblActors', {attributes: '"phone1":"07-9997-3366"'});
+            })
+            .then(function (res) {
+                assert.equal(res.length, 1);
+                return basedb.matchRecords('tblActors', {attributes: learnX.getSearchStrForAttribute({phone1 : "07-9997-3366"})});
+            })
+            .then(function (res) {
+                assert.equal(res.length, 1);
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
+    });
+    /*
     it('add class', function (done) {
 
     });

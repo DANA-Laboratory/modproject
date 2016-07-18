@@ -12,7 +12,11 @@ var getNextCode = function (lastCode) {
     var currentCounter =  lastCode.substr(len + 1);
     return pre + ("0".repeat(currentCounter.length) + (parseInt(currentCounter) + 1)).substr(-1 * currentCounter.length);
 };
-exports.getMaxCounter = function(/*sqlite3.Database*/ db, table, field, patt) {
+exports.getSearchStrForAttribute = function (attribute) {
+    var str = JSON.stringify(attribute);
+    return str.substr(1,str.length-2);
+};
+exports.getMaxCounter = function(db, table, field, patt) {
     var len = -1;
     var digi = '';
     var zero = '';
@@ -27,19 +31,26 @@ exports.getMaxCounter = function(/*sqlite3.Database*/ db, table, field, patt) {
             if (err) {
                 reject(err);
             } else {
-                row.max ? resolve(row.max.substr(patt.length + len + 1)) : resolve(zero);
+                row.max ? resolve(row.max) : resolve(pre + zero);
             }
         });
     });
 };
-exports.addActor = function (/*sqlite3.Database*/ db, /*LearningXData*/ data) {
+exports.addActor = function (db, data) {
     return new Promise(function (resolve, reject) {
           db.run('INSERT INTO tblActors (type, name, family, code, attributes) SELECT ID, ?, ?, ?, ? FROM tblActorTypes WHERE Caption=?;', [data.name, data.family, data.code, data.attributes, data.type], function (err) {
             err ? reject(err) : resolve();
         });
     });
 };
-exports.importActorsFromCSV = function (/*sqlite3.Database*/ db, startCode, actorType, path, transformFunction) {
+exports.addCourse = function (db, data) {
+    return new Promise(function (resolve, reject) {
+        db.run('INSERT INTO tblCourse (caption, attributes) VALUES(?, ?);', [data.caption, data.attributes], function (err) {
+            err ? reject(err) : resolve();
+        });
+    });
+};
+exports.importActorsFromCSV = function (/*basedb*/ db, startCode, actorType, path, transformFunction) {
     return new Promise(function (resolve, reject) {
         var counter = 0;
         var lastCode = null;
@@ -68,14 +79,35 @@ exports.importActorsFromCSV = function (/*sqlite3.Database*/ db, startCode, acto
         csvParser.read(path);
     });
 };
-exports.importAppendActorsFromCSV = function (/*sqlite3.Database*/ db, startCode, actorType, path, transformFunction) {
-    return exports.importActorsFromCSV(db, startCode, actorType, path, transformFunction);
-
-
-    /*
+exports.importCoursesFromCSV = function (db, path, transformFunction) {
+    return new Promise(function (resolve, reject) {
+        var counter = 0;
+        db.exec("BEGIN");
+        var csvParser = new (CSVParser)(function (err, courseData, count) {
+            if (!err) {
+                exports.addCourse(db, courseData)
+                    .then(function (res) {
+                        counter += 1;
+                        if (count == counter) {
+                            db.exec("COMMIT");
+                            resolve(count);
+                        }
+                    })
+                    .catch(function (err) {
+                        db.exec("ROLLBACK");
+                        reject('addCourse failed with ' + err);
+                    });
+            } else {
+                reject('Create new CSVParser failed with ' + err);
+            }
+        }, transformFunction);
+        csvParser.read(path);
+    });
+};
+exports.importAppendActorsFromCSV = function (db, startCode, actorType, path, transformFunction) {
     return new Promise(function (resolve, reject) {
         exports.getMaxCounter(db, 'tblActors', 'code', startCode)
-            .then(function (startCode) {
+            .then(function (startCode, pre) {
                 exports.importActorsFromCSV(db, startCode, actorType, path, transformFunction)
                     .then(function (count) {
                         resolve(count);
@@ -85,5 +117,4 @@ exports.importAppendActorsFromCSV = function (/*sqlite3.Database*/ db, startCode
                     })
             })
     })
-    */
 };
