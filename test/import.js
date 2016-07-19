@@ -7,9 +7,9 @@ var fs = require('fs');
 var dbToImport = require('../app/models-sqlite3/importer.js');
 var assert = require('chai').assert;
 var dbpath = __dirname + '/testdb.sqlite3';
-var basedb = new (modelsSqlite3.basedb)(dbpath);
+var basedb = null;
 var olddbpath = __dirname + '/Requests.sqlite';
-var olddb = new (modelsSqlite3.basedb)(olddbpath);
+var olddb = null;
 var ddl = '\
     CREATE TABLE tblRequests (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, manualId INTEGER NOT NULL, status INTEGER NOT NULL, requestType TEXT);\
     CREATE TABLE tblDiscipline (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, requestId INTEGER NOT NULL, fromUser INTEGER NOT NULL, toUser INTEGER NOT NULL, time INTEGER NOT NULL);\
@@ -21,18 +21,18 @@ describe('do import', function() {
         if (fs.existsSync(dbpath)) {
             fs.unlinkSync(dbpath);
         }
-        basedb.createdb(ddl, function (err) {
+        basedb = new (modelsSqlite3.basedb)(dbpath, ddl, function (err) {
             assert.isNull(err);
             done();
         })
     });
     it('olddb could connect', function (done) {
-        olddb.connect(done);
+        olddb = new (modelsSqlite3.basedb)(olddbpath, null, done);
     });
     it('import old requests', function (done) {
-        basedb.beginTransaction();
+        basedb.exec("BEGIN");
         this.timeout(200000);
-        dbToImport(olddb.db, function (err, oldData) {
+        dbToImport(olddb, function (err, oldData) {
             assert.isNull(err);
             oldData.forEach(function (oldRequest, i, arr) {
                 var tmpData = {
@@ -41,9 +41,9 @@ describe('do import', function() {
                     actionComment: oldRequest.actionComment[0],
                     actionTime: oldRequest.militimes[0]
                 };
-                modelsSqlite3.insertRequest(basedb.db, tmpData).then(function (requestId) {
+                modelsSqlite3.insertRequest(basedb, tmpData).then(function (requestId) {
                     if (requestId === arr.length) {
-                        basedb.commitTransaction();
+                        basedb.exec("COMMIT");
                         done();
                     }
                 });
@@ -51,7 +51,7 @@ describe('do import', function() {
         });
     });
     after(function (done) {
-        basedb.disconnect(function () {
+        basedb.close(function () {
             fs.unlinkSync(dbpath);
             done();
         })

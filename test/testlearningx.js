@@ -110,9 +110,9 @@ describe('do import', function() {
     });
     it('import teachers', function (done) {
         var startCode = 'teau/0000';
-        learnX.importActorsFromCSV(basedb.db, startCode, 'مدرس', __dirname + '/au-500.testcsv', transferActorData)
+        learnX.importActorsFromCSV(basedb, startCode, 'مدرس', __dirname + '/au-500.testcsv', transferActorData)
             .then(function (count) {
-                learnX.getMaxCounter(basedb.db, 'tblActors', 'code', startCode)
+                learnX.getMaxCounter(basedb, 'tblActors', 'code', startCode)
                     .then(function (maxCounter) {
                         assert.equal(maxCounter, 'teau/0' + count);
                         done();
@@ -127,9 +127,9 @@ describe('do import', function() {
     var inserted = 0;
     it('import trainees', function (done) {
         var startCode = 'trus/0000';
-        learnX.importActorsFromCSV(basedb.db, startCode, 'فرآگیر', __dirname + '/us-500.testcsv', transferActorData)
+        learnX.importActorsFromCSV(basedb, startCode, 'فرآگیر', __dirname + '/us-500.testcsv', transferActorData)
             .then(function (count) {
-                learnX.getMaxCounter(basedb.db, 'tblActors', 'code', startCode)
+                learnX.getMaxCounter(basedb, 'tblActors', 'code', startCode)
                     .then(function (maxCounter) {
                         assert.equal(maxCounter, 'trus/0' + count);
                         inserted = count;
@@ -144,9 +144,9 @@ describe('do import', function() {
     });
     it('import trainees append', function (done) {
         var startCode = 'teau/0000';
-        learnX.importAppendActorsFromCSV(basedb.db, startCode, 'فرآگیر', __dirname + '/ca-500.testcsv', transferActorData)
+        learnX.importAppendActorsFromCSV(basedb, startCode, 'فرآگیر', __dirname + '/ca-500.testcsv', transferActorData)
             .then(function (count) {
-                learnX.getMaxCounter(basedb.db, 'tblActors', 'code', startCode)
+                learnX.getMaxCounter(basedb, 'tblActors', 'code', startCode)
                     .then(function (maxCounter) {
                         assert.equal(maxCounter, 'teau/' + (inserted + count));
                         done();
@@ -159,7 +159,7 @@ describe('do import', function() {
             });
     });
     it('import course', function (done) {
-        learnX.importCoursesFromCSV(basedb.db, __dirname + '/allpoly_2017courseslist_20160713.testcsv', transferCourseData)
+        learnX.importCoursesFromCSV(basedb, __dirname + '/allpoly_2017courseslist_20160713.testcsv', transferCourseData)
             .then(function (count) {
                     assert.equal(count, 232);
                     done();
@@ -236,7 +236,7 @@ describe('do import', function() {
     });
 */
     after(function (done) {
-        basedb.disconnect(function (err) {
+        basedb.close(function (err) {
             fs.unlinkSync(dbpath);
             done();
         })

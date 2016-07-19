@@ -38,41 +38,37 @@ class DBExtend extends sqlite3.Database {
                 });
             }
         }
-    };
-    getRecord(tblName, data) {
-        return new Promise((resolve, reject) => {
-            var where = '';
-            var param = [];
-            for (var key of Object.keys(data)) {
-                if (where.length > 0)
-                    where += ' AND ';
-                where += key + ' = ?';
-                param.push(data[key]);
-            }
-            this.db.get(`SELECT * FROM ${tblName} WHERE ${where}`, param, function (err, row) {
-                err ? reject(err) : resolve(row);
+        this.getRecord = function(tblName, data) {
+            return new Promise((resolve, reject) => {
+                var where = '';
+                var param = [];
+                for (var key of Object.keys(data)) {
+                    if (where.length > 0)
+                        where += ' AND ';
+                    where += key + ' = ?';
+                    param.push(data[key]);
+                }
+                this.get(`SELECT * FROM ${tblName} WHERE ${where}`, param, function (err, row) {
+                    err ? reject(err) : resolve(row);
+                });
             });
-        });
-    };
-    matchRecords(tblName, data) {
-        return new Promise((resolve, reject) => {
-            var where = '';
-            for (var key of Object.keys(data)) {
-                if (where.length > 0)
-                    where += ' AND ';
-                where += key + ` LIKE '%${data[key]}%'`;
-            }
-            this.db.all(`SELECT * FROM ${tblName} WHERE ${where}`, [], function (err, rows) {
-                err ? reject(err) : resolve(rows);
+        };
+        this.matchRecords = function(tblName, data) {
+            return new Promise((resolve, reject) => {
+                var where = '';
+                for (var key of Object.keys(data)) {
+                    if (where.length > 0)
+                        where += ' AND ';
+                    where += key + ` LIKE '%${data[key]}%'`;
+                }
+                this.all(`SELECT * FROM ${tblName} WHERE ${where}`, [], function (err, rows) {
+                    err ? reject(err) : resolve(rows);
+                });
             });
-        });
+        };
     };
-};
+}
 
 module.exports = function (dbname, ddl, callback) {
-    this.dbname = dbname;
-    this.db = new DBExtend(this.dbname, ddl, callback);
-    this.disconnect = this.db.close;
-    this.getRecord = this.db.getRecord;
-    this.matchRecords = this.db.matchRecords;
+    return (new DBExtend(dbname, ddl, callback));
 };
