@@ -70,7 +70,7 @@ app.use(function (req, res, next) {
 });
 app.use(favicon(__dirname + '/public/images/favicon.ico'));
 var server = http.createServer(app);
-var io = require('socket.io').listen(httpsServer);
+var io = require('socket.io').listen(server);
 
 //routes
 require('./routes/index')(app, passport, io, sendTeacherNotificationEmail);

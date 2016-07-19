@@ -10,7 +10,9 @@ var xelatexapi = require(path.join(__dirname, '..', 'xelatexapi', 'xelatexapi.js
 module.exports = function (app, dbma) {
     app.post('/mali/sendstatement', function (req, res) {
 		// TODO: remove hardcoded pass, use userpass instead
-        if (((req.connection.remoteAddress === '172.18.1.10') || (req.connection.remoteAddress === '172.18.1.234')) && (req.body.pass === '02122315')) {
+        console.log('mali data recive.....');
+        if (((req.connection.remoteAddress === '::ffff:172.18.1.10') || (req.connection.remoteAddress === '172.18.1.234')) && (req.body.pass === '02122315')) {
+            console.log('you can have enough privilege to send mali data');
             var callback = function (err) {
                 if (err) {
                     console.log('insert statements error=', err);
@@ -21,16 +23,39 @@ module.exports = function (app, dbma) {
                     console.log('delete statements error=', err);
                 }
             };
-            dbma().serialize(function () {
-                for (var id in req.body.datas) {
-                    var d = req.body.datas[id];
-                    if (req.body.overwrite === 'True') {
-                        dbma().run('DELETE FROM statements WHERE (pid=? AND date=?)', [d[0], req.body.date], callbackdelete);
+            if (req.body.newformat) {
+                var date = req.body.date;
+                dbma().serialize(function () {
+                    for (var id in req.body.datas) {
+                        var d = req.body.datas[id];
+                        var header;
+                        if (id === '0') {
+                            header = req.body.datas[id];
+                        } else {
+                            var pid = d['کد پرسنلی'];
+                            d.header = header;
+                            if (typeof pid !== 'undefined' && pid !== null) {
+                                if (req.body.overwrite) {
+                                    dbma().run('DELETE FROM statements WHERE (pid=? AND date=?)', [pid, date], callbackdelete);
+                                }
+                                dbma().run('INSERT INTO statements (pid,date,data) VALUES (?,?,?)', [pid, date, JSON.stringify(d)], callback);
+                            }
+                        }
                     }
-                    dbma().run('INSERT INTO statements (pid,date,data) VALUES (?,?,?)', [d[0], req.body.date, JSON.stringify(d)], callback);
-                }
-            });
-            res.sendStatus(200);
+                });
+                res.sendStatus(200);
+            } else {
+                dbma().serialize(function () {
+                    for (var id in req.body.datas) {
+                        var d = req.body.datas[id];
+                        if (req.body.overwrite === 'True') {
+                            dbma().run('DELETE FROM statements WHERE (pid=? AND date=?)', [d[0], req.body.date], callbackdelete);
+                        }
+                        dbma().run('INSERT INTO statements (pid,date,data) VALUES (?,?,?)', [d[0], req.body.date, JSON.stringify(d)], callback);
+                    }
+                });
+                res.sendStatus(200);
+            }
         } else {
             res.sendStatus(400);
             console.log(req.connection.remoteAddress);
@@ -45,23 +70,33 @@ module.exports = function (app, dbma) {
         }
         var callback = function (err, row) {
             var stmdata = JSON.parse(row.data);
-            var texcommand = '\\def\\ya{' + req.body.date  + '}\n';
-            var j = 98;
-            var achar = 'y';
-            console.log(stmdata.length);
-            for (var i in stmdata) {
-                texcommand = texcommand + '\\def\\' + achar + String.fromCharCode(j) + '{' + stmdata[i]  + '}\n';
-                j += 1;
-                if (j === 123) {
-                    j = 97;
-                    achar = 'z';
+            if (stmdata.newformat) {
+                res.sendStatus(200);
+                for (var i in stmdata.header) {
+                    var val = stmdata[stmdata.header[i]];
+                    if (typeof val !== 'undefined' && val !== null) {
+                        console.log(stmdata.header[i], '&', val);
+                    }
                 }
+            } else {
+                var texcommand = '\\def\\ya{' + req.body.date  + '}\n';
+                var j = 98;
+                var achar = 'y';
+                console.log(stmdata.length);
+                for (var ii in stmdata) {
+                    texcommand = texcommand + '\\def\\' + achar + String.fromCharCode(j) + '{' + stmdata[ii]  + '}\n';
+                    j += 1;
+                    if (j === 123) {
+                        j = 97;
+                        achar = 'z';
+                    }
+                }
+                var statementpath = path.join(__dirname, '..', '..', 'xelatex', 'statement');
+                var statementtemplate = stmdata.length === 47 ? 'statement.tex' : 'statement4.tex';
+                var tempname = path.join(statementpath, pid + '_' + charcodeat(req.body.date) + '.tex');
+                console.log(tempname);
+                xelatexapi.writecommandexectex(tempname, texcommand, statementpath, statementtemplate, function (pathtopdf) {res.sendFile(pathtopdf); });
             }
-            var statementpath = path.join(__dirname, '..', '..', 'xelatex', 'statement');
-            var statementtemplate = stmdata.length === 47 ? 'statement.tex' : 'statement4.tex';
-            var tempname = path.join(statementpath, pid + '_' + charcodeat(req.body.date) + '.tex');
-            console.log(tempname);
-            xelatexapi.writecommandexectex(tempname, texcommand, statementpath, statementtemplate, function (pathtopdf) {res.sendFile(pathtopdf); });
         };
         dbma().get('SELECT data FROM statements WHERE pid=? AND date=?', [pid, req.body.date], callback);
     });
