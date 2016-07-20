@@ -20,4 +20,17 @@ exports.writecommandexectex = function (tempname, texcommand, outputdirectory, t
 			callback(tempname.slice(0, -3) + 'pdf');
 		}
 	);
-}			
+}
+exports.writeNewcommandexectex = function (tempname, texdef, textable, statementpath, header, footer, callback) {
+	fs.writeFileSync(tempname, texdef);
+	fs.appendFileSync(tempname, fs.readFileSync(path.join(statementpath, header)));
+  fs.appendFileSync(tempname, textable);
+	fs.appendFileSync(tempname, fs.readFileSync(path.join(statementpath, footer)));
+	execute('xelatex -interaction=batchmode -output-directory=' + statementpath + ' ' + tempname,
+		function (out) {
+			console.log(out);
+      console.log('send statement path: ', tempname.slice(0, -3) + 'pdf');
+			callback(tempname.slice(0, -3) + 'pdf');
+		}
+	);
+}
