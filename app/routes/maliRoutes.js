@@ -6,6 +6,7 @@
 
 var path = require('path');
 var xelatexapi = require(path.join(__dirname, '..', 'xelatexapi', 'xelatexapi.js'));
+var addhroroof = require('./addadhoroof.js');
 
 module.exports = function (app, dbma) {
     app.post('/mali/sendstatement', function (req, res) {
@@ -74,30 +75,32 @@ module.exports = function (app, dbma) {
                 var clm1 = [];
                 var clm2 = [];
                 var clm3 = [];
-                var clmtotal = [];
-                var clmheader = [];
                 var clms = [clm1, clm2, clm3];
                 var clmno = 2;
                 var j = 0;
-                var jj = 0;
-                var jjj = 0;
                 var texdef = '\\def\\ya{' + req.body.date  + '}\n';
                 for (var i in stmdata.header) {
                     var val = stmdata[stmdata.header[i]];
                     if (typeof val !== 'undefined' && val !== null) {
                         if (stmdata.header[i] === 'جمع مزایا' || stmdata.header[i] === 'جمع کسور' || stmdata.header[i] === 'خالص پرداختی') {
-                            if (stmdata.header[i] === 'جمع مزایا') 
+                            if (stmdata.header[i] === 'جمع مزایا') {
                                 texdef += '\\def\\zz{' + val  + '}\n';
-                            if (stmdata.header[i] === 'جمع کسور') 
+                            }
+                            if (stmdata.header[i] === 'جمع کسور') {
                                 texdef += '\\def\\zg{' + val  + '}\n';
-                            if (stmdata.header[i] === 'خالص پرداختی') 
+                            }
+                            if (stmdata.header[i] === 'خالص پرداختی') {
                                 texdef += '\\def\\zx{' + val  + '}\n';
+                                texdef += '\\def\\zy{' + addhroroof(val.replace(/,/g, ''))  + '}\n';
+                            }
                         } else {
                             if (stmdata.header[i] === 'نام و کد پرسنلی' || stmdata.header[i] === 'کد پرسنلی') {
-                                if (stmdata.header[i] === 'کد پرسنلی')
+                                if (stmdata.header[i] === 'کد پرسنلی') {
                                     texdef += '\\def\\yb{' + val  + '}\n';
-                                if (stmdata.header[i] === 'نام و کد پرسنلی')
+                                }
+                                if (stmdata.header[i] === 'نام و کد پرسنلی') {
                                     texdef += '\\def\\yc{' + val  + '}\n';
+                                }
                             } else {
                                 (clms[clmno])[j++] = stmdata.header[i] + ' & ' + val;
                             }
