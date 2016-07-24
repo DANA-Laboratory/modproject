@@ -206,6 +206,17 @@ describe('do import', function() {
                 done();
             });
     });
+    it('delete records', function (done) {
+        basedb.deleteRecords('tblCourse', [1,3,12])
+            .then(function (res) {
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
+    });
     /*
     it('add class', function (done) {
 

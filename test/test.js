@@ -55,7 +55,7 @@ describe('models-sqlite3', function () {
         })
     });
     it('basedb returns an error if try to recreate existing db', function (done) {
-        basedb = new (modelsSqlite3.basedb)(dbpath, ddl, function (err) {
+        let basedb = new (modelsSqlite3.basedb)(dbpath, ddl, function (err) {
             assert.isNotNull(err);
             done();
         })
