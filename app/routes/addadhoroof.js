@@ -10,11 +10,11 @@ var farsiD = ['', '', 'بيست', 'سي', 'چهل', 'پنجاه', 'شصت', 'ه�
 var farsiE = ['', 'يك', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه'];
 
 function parseArabic(str) {
-    return Number( str.replace(/[٠١٢٣٤٥٦٧٨٩]/g, function(d) {
+    return Number(str.replace(/[٠١٢٣٤٥٦٧٨٩]/g, function (d) {
         return d.charCodeAt(0) - 1632;
-    }).replace(/[۰۱۲۳۴۵۶۷۸۹]/g, function(d) {
+    }).replace(/[۰۱۲۳۴۵۶۷۸۹]/g, function (d) {
         return d.charCodeAt(0) - 1776;
-    }) );
+    }));
 }
 
 function three(num) {
