@@ -104,15 +104,27 @@ module.exports = function (app, db, readAppConfig, initialize) {
                     }
                     if (req.body.isMaliUser == null) {
                         req.body.isMaliUser = 0;
-                    }
+                    } 
                     if (req.body.isItAdmin == null) {
                         req.body.isItAdmin = 0;
+                    } else {
+                        if (!req.user.isSysAdmin) {
+                            req.body.isItUser = 1;
+                        }
                     }
                     if (req.body.isMaliAdmin == null) {
                         req.body.isMaliAdmin = 0;
+                    } else {
+                        if (!req.user.isSysAdmin) {
+                            req.body.isMaliUser = 1;
+                        }
                     }
                     if (req.body.isKarshenas == null) {
                         req.body.isKarshenas = 0;
+                    } else {
+                        if (!req.user.isSysAdmin) {
+                            req.body.isGuest = 1;
+                        }
                     }
                     if (req.body.isTeacher == null) {
                         req.body.isTeacher = 0;
