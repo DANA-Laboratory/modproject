@@ -22,13 +22,13 @@
         .row.form-group
           .col-md-3
             label.control-label(for='in1') نام کاربری
-            input.form-control(name='textinput', type='text', id='in1', ng-model='selectedUser.username', ng-change='updateclass = "";', readonly)
+            input.form-control(name='textinput', type='text', id='in1', ng-model='selectedUser.username', ng-change='updateclass = "";', ng-readonly='selectedUser.id')
           .col-md-3
             label.control-label(for='in2') کد پرسنلی
-            input.form-control(name='textinput', type='text', id='in2', style='text-align: left', ng-model='selectedUser.pid', ng-change='updateclass = "";', readonly)
+            input.form-control(name='textinput', type='text', id='in2', style='text-align: left', ng-model='selectedUser.pid', ng-change='updateclass = "";', ng-readonly='selectedUser.id')
           .col-md-3
             label.control-label(for='in3') کد ملی
-            input.form-control(name='textinput', type='text', id='in3', style='text-align: left', ng-model='selectedUser.melicode', ng-change='updateclass = "";', readonly)
+            input.form-control(name='textinput', type='text', id='in3', style='text-align: left', ng-model='selectedUser.melicode', ng-change='updateclass = "";', ng-readonly='selectedUser.id')
         .row.form-group
           .col-md-3
             label.control-label(for='in4') نام
