@@ -18,3 +18,9 @@ exports.validateForInsert = function (tablename, data) {
         }
     });
 };
+
+exports.validateForDelete = function (tablename, data) {
+    return new Promise((resolve, reject) => {
+        resolve(data);
+    })
+};

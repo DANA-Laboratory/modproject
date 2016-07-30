@@ -27,3 +27,11 @@ exports.getMaxCounter = function(db, table, field, patt) {
         });
     });
 };
+exports.getNextCode = function (lastCode) {
+    var len = -1;
+    while(! isNaN(lastCode.substr(len)))
+        len -= 1;
+    var pre = lastCode.substr(0, Math.abs(lastCode.length + len + 1));
+    var currentCounter =  lastCode.substr(len + 1);
+    return pre + ("0".repeat(currentCounter.length) + (parseInt(currentCounter) + 1)).substr(-1 * currentCounter.length);
+};

@@ -4,6 +4,7 @@
 'use strict';
 
 var validator = require('./dataValidator');
+var util = require('./util');
 
 exports.addActor = function (db, data) {
     return new Promise(function (resolve, reject) {
@@ -43,6 +44,27 @@ exports.addClass = function (db, data) {
                 reject(err)
             })
     });
+};
+exports.appendActor = function (db, data, startCode) {
+    return util.getMaxCounter(db, 'tblActor', 'code', startCode)
+        .then(function (startCode, pre) {
+            data.code = util.getNextCode(startCode);
+            return exports.addActor(db, data);
+        });
+};
+exports.appendCourse = function (db, data, startCode) {
+    return util.getMaxCounter(db, 'tblCourse', 'code', startCode)
+        .then(function (startCode, pre) {
+            data.code = util.getNextCode(startCode);
+            return exports.addCourse(db, data);
+        });
+};
+exports.appendClass = function (db, data, startCode) {
+    return util.getMaxCounter(db, 'tblClass', 'code', startCode)
+        .then(function (startCode, pre) {
+            data.code = util.getNextCode(startCode);
+            return exports.addClass(db, data);
+        });
 };
 exports.addGroup = function (db, data) {
     return new Promise(function (resolve, reject) {
