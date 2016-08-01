@@ -3,6 +3,8 @@
  */
 'use strict';
 
+var validator = require('./dataValidator');
+
 exports.removeActor = function (db, data) {
     return new Promise(function (resolve, reject) {
         validator.validateForDelete('tblActor', data)
@@ -19,7 +21,7 @@ exports.removeCourse = function (db, data) {
     return new Promise(function (resolve, reject) {
         validator.validateForDelete('tblCourse', data)
             .then(function (data) {
-                return db.deleteRecords('tblCourse', data);
+                resolve(db.deleteRecords('tblCourse', data));
             })
             .catch(function (err) {
                 reject(err);

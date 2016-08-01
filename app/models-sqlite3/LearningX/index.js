@@ -4,10 +4,7 @@
 /**
  * Created by AliReza on 5/10/2016.
  */
-var util = require('./util.js');
-var importCSV = require('./importCSV.js');
-var insert = require('./insert.js');
-[require('./insert.js'), require('./importCSV.js'), require('./util.js')].forEach(function(md){
+[require('./insert.js'), require('./delete.js'), require('./statement.js'), require('./importCSV.js'), require('./util.js')].forEach(function(md){
     Object.keys(md).forEach (function(req_f) {
         exports[req_f] = md[req_f];
     });

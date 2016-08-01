@@ -15,7 +15,7 @@ exports.addActor = function (db, data) {
                 });
             })
             .catch(function (err) {
-                reject(err)
+                reject(err);
             })
     });
 };
@@ -70,7 +70,7 @@ exports.addGroup = function (db, data) {
     return new Promise(function (resolve, reject) {
         validator.validateForInsert('tblGroup', data)
             .then(function (data) {
-                db.run('INSERT INTO tblGroup (caption) VALUES(?);', [data.caption], function (err) {
+                db.run('INSERT INTO tblGroup (code) VALUES(?);', [data.code], function (err) {
                     err ? reject(err) : resolve(this.lastID);
                 });
             })

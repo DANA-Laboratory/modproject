@@ -11,8 +11,9 @@ exports.validateForInsert = function (tablename, data) {
                 reject('validateForInsert failed with : ' + err);
             }
         } else {
-            if (['tblActor', 'tblCourse', 'tblClass', 'tblStatement', 'tblObject'].indexOf(tablename) > -1)
+            if (['tblActor', 'tblCourse', 'tblClass', 'tblStatement', 'tblObject'].indexOf(tablename) > -1) {
                 reject('validateForInsert failed, ' + tablename + ' needs attribute');
+            }
             else
                 resolve(data);
         }
@@ -20,6 +21,12 @@ exports.validateForInsert = function (tablename, data) {
 };
 
 exports.validateForDelete = function (tablename, data) {
+    return new Promise((resolve, reject) => {
+        resolve(data);
+    })
+};
+
+exports.validateStatement = function (tablename, data) {
     return new Promise((resolve, reject) => {
         resolve(data);
     })
