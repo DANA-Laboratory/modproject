@@ -28,6 +28,10 @@ exports.validateForDelete = function (tablename, data) {
 
 exports.validateStatement = function (tablename, data) {
     return new Promise((resolve, reject) => {
-        resolve(data);
+        if (data.hasOwnProperty('time') &&  data.hasOwnProperty('object') && data.hasOwnProperty('actor') && data.hasOwnProperty('attribute')) {
+            resolve(data);
+        } else {
+            reject('invalid statement data');
+        }
     })
 };

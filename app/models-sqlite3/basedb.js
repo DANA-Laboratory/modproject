@@ -54,10 +54,10 @@ class DBExtend extends sqlite3.Database {
                 });
             });
         };
-        this.deleteRecords = function (tblName, data) {
+        this.deleteRecords = function (tblName, clm, data) {
             return new Promise((resolve, reject) => {
                 var jdata = JSON.stringify(data);
-                this.run(`DELETE FROM ${tblName} WHERE id IN (?)`, jdata.substr(1, jdata.length - 2), function (err) {
+                this.run(`DELETE FROM ${tblName} WHERE ${clm} IN (${jdata.substr(1, jdata.length - 2)})`, function (err) {
                     err ? reject('deleteRecords failed with : ' + err) : resolve();
                 });
             });
