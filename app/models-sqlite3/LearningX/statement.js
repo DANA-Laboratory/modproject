@@ -7,8 +7,10 @@ var validator = require('./dataValidator');
 var util = require('./util');
 
 //Who did the same statement with same object
-exports.whoSStmSObject = function (db, description, objectCode) {
+exports.whoSStmSObject = function (db, description, objectCode, time) {
     return new Promise(function (resolve, reject) {
+        if (!time)
+            time = null;
         db.get('SELECT tblStatementType.id as id, tblObjectType.tblName as objectTable, tblActorType.tblName as actorTable FROM tblStatementType INNER JOIN tblObjectType ON tblObjectType.id = object_type INNER JOIN tblActorType ON actor_type = tblActorType.id INNER JOIN tblVerb ON verb_id = tblVerb.id WHERE description = ?;', [description], function (err, row) {
             if (err)
                 reject(err);
@@ -16,13 +18,30 @@ exports.whoSStmSObject = function (db, description, objectCode) {
                 if(row === undefined)
                     reject('undefined ' + description + ' statement');
                 else
-                    db.all(`SELECT ${row.actorTable}.code FROM tblStatement INNER JOIN ${row.objectTable} ON ${row.objectTable}.id = object INNER JOIN ${row.actorTable} ON ${row.actorTable}.id = actor WHERE tblStatement.type = ? AND ${row.objectTable}.code = ?`, [row.id, objectCode], function (err, rows) {
-                        err ?  reject(err) : resolve(rows);
+                    db.all(`SELECT ${row.actorTable}.code FROM tblStatement INNER JOIN ${row.objectTable} ON ${row.objectTable}.id = object INNER JOIN ${row.actorTable} ON ${row.actorTable}.id = actor WHERE tblStatement.type = ? AND ${row.objectTable}.code = ?  AND (time <= ? OR ? is Null)`, [row.id, objectCode, time, time], function (err, rows) {
+                        err ?  reject(err) : resolve(rows.map( (x) => x.code));
                     });
         })
     })
 };
-
+exports.whoSStmSObjectsDiff = function (db, didDescription, didntDescription, objectCode, time) {
+    return new Promise(function (resolve, reject) {
+        var didres = [];
+        var didntres = [];
+        exports.whoSStmSObject(db, didDescription, objectCode, time)
+            .then(function (res) {
+                didres = res;
+                return exports.whoSStmSObject(db, didntDescription, objectCode, time)
+            })
+            .then(function (res) {
+                didntres = res;
+                resolve(util.difference(didres, didntres))
+            })
+            .catch(function (err) {
+                reject(err);
+            })
+    })
+};
 exports.addStatement = function (db, description, data) {
     return new Promise(function (resolve, reject) {
         validator.validateStatement(description, data)

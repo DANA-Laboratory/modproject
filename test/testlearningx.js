@@ -315,18 +315,35 @@ describe('do import', function() {
                 done();
             });
     });
-    it('who did the same', function (done) {
+    it('who did', function (done) {
+        var groupIn = {};
+        var groupOut = {};
         learnX.whoSStmSObject(basedb, 'گروه بندی', 'D12')
-            .then(function (res) {
-                //assert.equal(res.length + 2, data.actor.length);
-                console.log(res);
-                done();
-            })
-            .catch(function (err) {
-                console.log(err);
-                assert.isNull(err);
-                done();
-            });
+        .then(function (res) {
+            assert.equal(res.length, 3);
+            groupIn = res;
+            return learnX.whoSStmSObject(basedb, 'خروج از گروه', 'D12')
+        })
+        .then(function (res) {
+            assert.equal(res.length, 1);
+            groupOut = res;
+            //console.log(util.difference(groupIn, groupOut));
+            done();
+        })
+    });
+    it('who did one but did not other', function (done) {
+        var groupIn = {};
+        var groupOut = {};
+        learnX.whoSStmSObjectsDiff(basedb, 'گروه بندی', 'خروج از گروه', 'D12')
+        .then(function (res) {
+            assert.equal(res.length, 2);
+            done();
+        })
+        .catch(function (err) {
+            console.log(err);
+            assert.isNull(err);
+            done();
+        });
     });
     /*
     it('remove trainee', function (done) {

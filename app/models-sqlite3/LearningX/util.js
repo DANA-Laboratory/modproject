@@ -35,3 +35,12 @@ exports.getNextCode = function (lastCode) {
     var currentCounter =  lastCode.substr(len + 1);
     return pre + ("0".repeat(currentCounter.length) + (parseInt(currentCounter) + 1)).substr(-1 * currentCounter.length);
 };
+exports.difference = function(a1, a2) {
+    var a2Set = new Set(a2);
+    return a1.filter(function(x) {
+        return !a2Set.has(x);
+    });
+};
+exports.symmetricDifference = function(a1, a2) {
+    return exports.difference(a1, a2).concat(difference(a2, a1));
+};
