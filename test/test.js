@@ -74,7 +74,6 @@ describe('models-sqlite3', function () {
                 done();
             });
     });
-
     it('finds where is a new request', function (done) {
         modelsSqlite3.whereIs(basedb, {requestId: 1})
             .then(function (userId) {
@@ -82,7 +81,6 @@ describe('models-sqlite3', function () {
                 done();
             });
     });
-
     it('doesn`t send untouchable request', function (done) {
         data.userId = 1;
         modelsSqlite3.sendRequestTo(basedb, data)
@@ -91,7 +89,6 @@ describe('models-sqlite3', function () {
                 done();
             });
     });
-
     it('sends request to someone', function (done) {
         data.toUser = 2;
         modelsSqlite3.sendRequestTo(basedb, data)
@@ -103,7 +100,6 @@ describe('models-sqlite3', function () {
                 done();
             });
     });
-
     describe('working with items', function () {
         it('writes request item', function (done) {
             data.userId = data.toUser;

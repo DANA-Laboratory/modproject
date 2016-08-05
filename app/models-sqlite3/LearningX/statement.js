@@ -24,18 +24,30 @@ exports.whoSStmSObject = function (db, description, objectCode, time) {
         })
     })
 };
-exports.whoSStmSObjectsDiff = function (db, didDescription, didntDescription, objectCode, time) {
+exports.statementOperation = function (db, description1, operation, description2, objectCode, time) {
     return new Promise(function (resolve, reject) {
-        var didres = [];
-        var didntres = [];
-        exports.whoSStmSObject(db, didDescription, objectCode, time)
+        var res1 = [];
+        var res2 = [];
+        exports.whoSStmSObject(db, description1, objectCode, time)
             .then(function (res) {
-                didres = res;
-                return exports.whoSStmSObject(db, didntDescription, objectCode, time)
+                res1 = res;
+                return exports.whoSStmSObject(db, description2, objectCode, time)
             })
             .then(function (res) {
-                didntres = res;
-                resolve(util.difference(didres, didntres))
+                res2 = res;
+                switch (operation) {
+                    case 'but':
+                        resolve(util.but(res1, res2));
+                    case 'or':
+                        resolve(util.or(res1, res2));
+                    case 'and' :
+                        resolve(util.and(res1, res2));
+                    case 'sBut':
+                        resolve(util.symmetricBut(res1, res2));
+                    default:
+                        reject('undefined operator: ' + operation);
+
+                }
             })
             .catch(function (err) {
                 reject(err);
