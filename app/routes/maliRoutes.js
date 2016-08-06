@@ -12,20 +12,23 @@ module.exports = function (app, dbma) {
     app.post('/mali/sendstatement', function (req, res) {
 		// TODO: remove hardcoded pass, use userpass instead
         console.log('mali data recive.....');
-        if (((req.connection.remoteAddress === '::ffff:172.18.1.10') || (req.connection.remoteAddress === '172.18.1.234')) && (req.body.pass === '02122315')) {
+        if (((req.connection.remoteAddress === '172.18.1.10') || (req.connection.remoteAddress === '172.18.1.234')) && (req.body.pass === '02122315')) {
             console.log('you can have enough privilege to send mali data');
             var callback = function (err) {
                 if (err) {
                     console.log('insert statements error=', err);
                 }
+                console.log('insert done');
             };
             var callbackdelete = function (err) {
                 if (err) {
                     console.log('delete statements error=', err);
                 }
+                console.log('delete done');
             };
             if (req.body.newformat) {
                 var date = req.body.date;
+                console.log(req.body);
                 dbma().serialize(function () {
                     for (var id in req.body.datas) {
                         var d = req.body.datas[id];
@@ -35,6 +38,7 @@ module.exports = function (app, dbma) {
                         } else {
                             var pid = d['کد پرسنلی'];
                             d.header = header;
+                            console.log('pid=', pid);
                             if (typeof pid !== 'undefined' && pid !== null) {
                                 if (req.body.overwrite) {
                                     dbma().run('DELETE FROM statements WHERE (pid=? AND date=?)', [pid, date], callbackdelete);
@@ -102,7 +106,7 @@ module.exports = function (app, dbma) {
                                     texdef += '\\def\\yc{' + val  + '}\n';
                                 }
                             } else {
-                                (clms[clmno])[j++] = stmdata.header[i] + ' & ' + val;
+                                (clms[clmno])[j++] = (stmdata.header[i]).replace('%','\\pct') + ' & ' + val;
                             }
                         }
                         if (stmdata.header[i] === 'جمع مزایا') {
