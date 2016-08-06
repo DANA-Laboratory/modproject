@@ -170,6 +170,25 @@ describe('learnX', function() {
                 });
         });
     });
+    describe('....fuzzy....', function() {
+        it('fuzzy actors', function (done) {
+            learnX.fuzzyBuild(basedb, 'tblActor')
+                .then(function (res) {
+                    let actorsDB = res;
+                    assert.isNotNull(actorsDB);
+                    return (learnX.fuzzysearch('tblActor', 'company_name', 'my'));
+                })
+                .then(function (res) {
+                    console.log(res);
+                    done();
+                })
+                .catch(function (err) {
+                    console.log(err);
+                    assert.isNull(err);
+                    done();
+                });
+        })
+    });
     describe('....search....', function () {
         it('get record by value', function (done) {
             basedb.getRecord('tblCourse', {id: 1})

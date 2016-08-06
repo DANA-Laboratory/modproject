@@ -36,7 +36,7 @@ exports.importActorsFromCSV = function (/*basedb*/ db, startCode, actorType, pat
         csvParser.read(path);
     });
 };
-exports.importCoursesFromCSV = function (db, startCode, path, transformFunction) {
+exports.importCoursesFromCSV = function (/*basedb*/ db, startCode, path, transformFunction) {
     return new Promise(function (resolve, reject) {
         var counter = 0;
         var lastCode = null;
@@ -64,7 +64,7 @@ exports.importCoursesFromCSV = function (db, startCode, path, transformFunction)
         csvParser.read(path);
     });
 };
-exports.importAppendActorsFromCSV = function (db, startCode, actorType, path, transformFunction) {
+exports.importAppendActorsFromCSV = function (/*basedb*/ db, startCode, actorType, path, transformFunction) {
     return new Promise(function (resolve, reject) {
         util.getMaxCounter(db, 'tblActor', 'code', startCode)
             .then(function (startCode, pre) {
