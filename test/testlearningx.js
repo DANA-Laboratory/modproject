@@ -32,14 +32,14 @@ var ddl = `
     INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (2, 2, 2, 1, 'زمان خروج', 'خروج کارآموز از محل کارآموزی یا کارورزی به دلیل ترخیص، اتمام دوره یا اخراج', '{status:["ترخیص","اخراج"]}');
     INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (3, 1, 2, 2, 'زمان قرار گرفتن', 'گروه بندی', NULL);
     INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (4, 2, 2, 2, 'زمان خروج از گروه', 'خروج از گروه', NULL);
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (5, 4, 2, 3, 'زمان شروع', 'شرکت در کلاس آموزشی', NULL);
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (6, 5, 2, 3, 'زمان اتمام', 'اتمام کلاس آموزشی', '{result:0, status:["قبول","رد"]}');
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (7, 6, 2, 3, 'تاریخ غیبت', 'غیبت در کلاس آموزشی', NULL);
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (8, 7, 2, 3, 'زمان تنظیم', 'تنظیم روکش حق التدریس', NULL);
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (9, 8, 1, 3, 'زمان شروع', 'تدریس کلاس آموزشی', NULL);
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (10, 9, 1, 4, 'زمان ارزیابی', 'تکیل فرم ارزیابی کارآموزی', '{result:{}}');
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (11, 10, 2, 5, 'زمان آزمون ', 'طی کردن آزمون', '{result:{}}');
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (12, 6, 2, 1, 'تاریخ غیبت', 'غیبت در محل', NULL);
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (5, 3, 2, 3, 'زمان شروع', 'شرکت در کلاس آموزشی', NULL);
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (6, 4, 2, 3, 'زمان اتمام', 'اتمام کلاس آموزشی', '{result:0, status:["قبول","رد"]}');
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (7, 5, 2, 3, 'تاریخ غیبت', 'غیبت در کلاس آموزشی', NULL);
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (8, 6, 2, 3, 'زمان تنظیم', 'تنظیم روکش حق التدریس', NULL);
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (9, 7, 1, 3, 'زمان شروع', 'تدریس کلاس آموزشی', NULL);
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (10, 8, 1, 4, 'زمان ارزیابی', 'تکیل فرم ارزیابی کارآموزی', '{result:{}}');
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (11, 9, 2, 5, 'زمان آزمون ', 'طی آزمون', '{result:{}}');
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_type) VALUES (12, 5, 2, 1, 'تاریخ غیبت', 'غیبت در محل', NULL);
     
     -- Table: tblActorType
     CREATE TABLE tblActorType (id INTEGER PRIMARY KEY AUTOINCREMENT, caption TEXT NOT NULL UNIQUE, tblName TEXT NOT NULL);
@@ -56,14 +56,13 @@ var ddl = `
     CREATE TABLE tblVerb (id INTEGER PRIMARY KEY AUTOINCREMENT, caption TEXT NOT NULL UNIQUE);
     INSERT INTO tblVerb (id, caption) VALUES (1, 'وارد شد به');
     INSERT INTO tblVerb (id, caption) VALUES (2, 'خارج شد از');
-    INSERT INTO tblVerb (id, caption) VALUES (3, '*** ***');
-    INSERT INTO tblVerb (id, caption) VALUES (4, 'شرکت کرد');
-    INSERT INTO tblVerb (id, caption) VALUES (5, 'تمام کرد');
-    INSERT INTO tblVerb (id, caption) VALUES (6, 'غیبت کرد');
-    INSERT INTO tblVerb (id, caption) VALUES (7, 'روکش تنظیم شد');
-    INSERT INTO tblVerb (id, caption) VALUES (8, 'تدریس کرد');
-    INSERT INTO tblVerb (id, caption) VALUES (9, 'ارزیابی شد');
-    INSERT INTO tblVerb (id, caption) VALUES (10, 'آزمون داد');
+    INSERT INTO tblVerb (id, caption) VALUES (3, 'شرکت کرد');
+    INSERT INTO tblVerb (id, caption) VALUES (4, 'تمام کرد');
+    INSERT INTO tblVerb (id, caption) VALUES (5, 'غیبت کرد');
+    INSERT INTO tblVerb (id, caption) VALUES (6, 'روکش تنظیم شد');
+    INSERT INTO tblVerb (id, caption) VALUES (7, 'تدریس کرد');
+    INSERT INTO tblVerb (id, caption) VALUES (8, 'ارزیابی شد');
+    INSERT INTO tblVerb (id, caption) VALUES (9, 'آزمون داد');
 
     -- Table: tblObjectType
     CREATE TABLE tblObjectType (id INTEGER PRIMARY KEY AUTOINCREMENT, caption TEXT NOT NULL, tblName TEXT NOT NULL);
@@ -105,6 +104,7 @@ describe('learnX', function() {
             done();
         });
     });
+
     describe('....import....', function () {
         it('import teachers', function (done) {
             var startCode = 'teau/0000';
@@ -170,16 +170,21 @@ describe('learnX', function() {
                 });
         });
     });
+
     describe('....fuzzy....', function() {
         it('fuzzy actors', function (done) {
+            learnX.fuzzyBuild(basedb, 'tblClass');
+            learnX.fuzzyBuild(basedb, 'tblCourse');
+            learnX.fuzzyBuild(basedb, 'tblStatement');
+            learnX.fuzzyBuild(basedb, 'tblObject');
             learnX.fuzzyBuild(basedb, 'tblActor')
                 .then(function (res) {
                     let actorsDB = res;
                     assert.isNotNull(actorsDB);
-                    return (learnX.fuzzysearch('tblActor', 'company_name', 'my'));
+                    return (learnX.fuzzysearch('tblActor', 'company_name', 'm r y'));
                 })
                 .then(function (res) {
-                    console.log(res);
+                    assert.equal(res.length, 7);
                     done();
                 })
                 .catch(function (err) {
@@ -189,6 +194,7 @@ describe('learnX', function() {
                 });
         })
     });
+
     describe('....search....', function () {
         it('get record by value', function (done) {
             basedb.getRecord('tblCourse', {id: 1})
@@ -227,6 +233,7 @@ describe('learnX', function() {
                 });
         });
     });
+
     describe('....remove record actors....', function () {
         it('delete records', function (done) {
             basedb.deleteRecords('tblCourse', 'id', [1, 3, 12])
@@ -251,6 +258,7 @@ describe('learnX', function() {
                 });
         });
     });
+
     describe('....add actor class course....', function () {
         it('add actor', function (done) {
             let data = {name: 'name', family: 'family', code: 'trn001', attribute: '{}', type: 'فرآگیر'};
@@ -311,6 +319,201 @@ describe('learnX', function() {
                 });
         });
     });
+
+    describe('....addStatement....', function () {
+        let data = {
+            object: 'D12',
+            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
+            time: Date.now(),
+            attribute: {}
+        };
+        learnX.addStatement(basedb, 'ورود کارآموز به محل کارآموزی یا کارورزی', data)
+            .then(function (res) {
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
+
+        data = {
+            object: 'D12',
+            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
+            time: Date.now(),
+            attribute: {}
+        };
+        learnX.addStatement(basedb, 'خروج کارآموز از محل کارآموزی یا کارورزی به دلیل ترخیص یا اتمام دوره', data)
+            .then(function (res) {
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
+
+        data = {
+            object: 'D12',
+            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
+            time: Date.now(),
+            attribute: {}
+        };
+        learnX.addStatement(basedb, 'گروه بندی', data)
+            .then(function (res) {
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
+
+        data = {
+            object: 'D12',
+            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
+            time: Date.now(),
+            attribute: {}
+        };
+        learnX.addStatement(basedb, 'خروج از گروه', data)
+            .then(function (res) {
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
+
+        data = {
+            object: 'D12',
+            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
+            time: Date.now(),
+            attribute: {}
+        };
+        learnX.addStatement(basedb, 'شرکت در کلاس آموزشی', data)
+            .then(function (res) {
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
+
+        data = {
+            object: 'D12',
+            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
+            time: Date.now(),
+            attribute: {}
+        };
+        learnX.addStatement(basedb, 'خاتمه کلاس آموزشی', data)
+            .then(function (res) {
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
+
+        data = {
+            object: 'D12',
+            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
+            time: Date.now(),
+            attribute: {}
+        };
+        learnX.addStatement(basedb, 'غیبت در کلاس آموزشی', data)
+            .then(function (res) {
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
+
+        data = {
+            object: 'D12',
+            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
+            time: Date.now(),
+            attribute: {}
+        };
+        learnX.addStatement(basedb, 'تنظیم روکش حق التدریس', data)
+            .then(function (res) {
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
+
+        data = {
+            object: 'D12',
+            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
+            time: Date.now(),
+            attribute: {}
+        };
+        learnX.addStatement(basedb, 'تدریس کلاس آموزشی', data)
+            .then(function (res) {
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
+
+        data = {
+            object: 'D12',
+            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
+            time: Date.now(),
+            attribute: {}
+        };
+        learnX.addStatement(basedb, 'تکیل فرم ارزیابی کارآموزی', data)
+            .then(function (res) {
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
+
+        data = {
+            object: 'D12',
+            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
+            time: Date.now(),
+            attribute: {}
+        };
+        learnX.addStatement(basedb, 'طی آزمون', data)
+            .then(function (res) {
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
+
+        data = {
+            object: 'D12',
+            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
+            time: Date.now(),
+            attribute: {}
+        };
+        learnX.addStatement(basedb, 'غیبت در محل', data)
+            .then(function (res) {
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
+    });
+
     describe('....grouping....', function () {
         it('add group', function (done) {
             learnX.addGroup(basedb, {code: 'D12'})
@@ -351,6 +554,7 @@ describe('learnX', function() {
                 });
         });
     });
+
     describe('....working with statements....', function () {
         it('reject undefined statement description', function (done) {
             learnX.addStatement(basedb, 'undef', {})

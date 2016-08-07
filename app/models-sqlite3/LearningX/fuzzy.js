@@ -3,6 +3,8 @@
  */
 var fuzzysearch = require('fuzzysearch');
 var fuzzyDB = {};
+const maxCountOfFuzzyItems = 10;
+const maxReachTxt = 'پاسخ های بیشتر ...';
 exports.fuzzyBuild = function (/*basedb*/ db, tblName) {
     return new Promise(function (resolve, reject) {
         db.all(`SELECT attribute FROM ${tblName}`, function (err, rows) {
@@ -31,14 +33,26 @@ exports.fuzzysearch = function (tblName, key, needle) {
     return new Promise(function (resolve, reject) {
         if (fuzzyDB.hasOwnProperty(tblName) && (fuzzyDB[tblName]).hasOwnProperty(key)) {
             var res = [];
-
-            fuzzyDB[tblName][key].forEach(function (val) {
-                if (fuzzysearch(needle, val))
-                    res.push(val);
-            });
+            var setIter = (fuzzyDB[tblName][key])[Symbol.iterator]();
+            var cnt = 0;
+            while (true) {
+                let current = setIter.next();
+                if (current.done)
+                    break;
+                else {
+                    if (fuzzysearch(needle, current.value)) {
+                        res.push(current.value);
+                        cnt++;
+                        if (cnt >= maxCountOfFuzzyItems) {
+                            res.push(maxReachTxt);
+                            break;
+                        }
+                    }
+                }
+            }
             resolve(res);
         } else {
-            reject('table of key not found');
+            reject('table or keys not found');
         }
     })
 };
