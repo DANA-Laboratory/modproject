@@ -32,6 +32,19 @@ exports.addCourse = function (db, data) {
             })
     });
 };
+exports.addObject = function (db, data) {
+    return new Promise(function (resolve, reject) {
+        validator.validateForInsert('tblCourse', data)
+            .then(function (data) {
+                db.run('INSERT INTO tblObject (type, code, attribute) SELECT ID, ?, ? FROM tblObjectType WHERE Caption=? AND tblName="tblObject";', [data.code, data.attribute, data.type], function (err) {
+                    err ? reject(err) : resolve(this.lastID);
+                });
+            })
+            .catch(function (err) {
+                reject(err)
+            })
+    });
+};
 exports.addClass = function (db, data) {
     return new Promise(function (resolve, reject) {
         validator.validateForInsert('tblClass', data)
