@@ -36,9 +36,14 @@ class DBExtend extends sqlite3.Database {
                     where += key + ' = ?';
                     param.push(data[key]);
                 }
-                this.get(`SELECT * FROM ${tblName} WHERE ${where}`, param, function (err, row) {
-                    err ? reject('getRecord failed with : ' + err) : resolve(row);
-                });
+                if (where.length > 0 )
+                    this.get(`SELECT * FROM ${tblName} WHERE ${where}`, param, function (err, row) {
+                        err ? reject('getRecord failed with : ' + err) : resolve(row);
+                    });
+                else
+                    this.get(`SELECT * FROM ${tblName}`, param, function (err, row) {
+                        err ? reject('getRecord failed with : ' + err) : resolve(row);
+                    });
             });
         };
         this.matchRecords = function (tblName, data) {

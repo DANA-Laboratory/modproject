@@ -194,46 +194,6 @@ describe('learnX', function() {
                 });
         })
     });
-
-    describe('....search....', function () {
-        it('get record by value', function (done) {
-            basedb.getRecord('tblCourse', {id: 1})
-                .then(function (res) {
-                    assert.equal(res.id, 1);
-                    return basedb.getRecord('tblActor', {name: 'Rebbecca', family: 'Didio'});
-                })
-                .then(function (res) {
-                    assert.equal(res.name, 'Rebbecca');
-                    done();
-                })
-                .catch(function (err) {
-                    console.log(err);
-                    assert.isNull(err);
-                    done();
-                });
-        });
-        it('find records', function (done) {
-            basedb.matchRecords('tblCourse', {attribute: 'NYP'})
-                .then(function (res) {
-                    assert.equal(res.length, 49);
-                    return basedb.matchRecords('tblActor', {attribute: '"phone1":"07-9997-3366"'});
-                })
-                .then(function (res) {
-                    assert.equal(res.length, 1);
-                    return basedb.matchRecords('tblActor', {attribute: learnX.getSearchStrForAttribute({phone1: "07-9997-3366"})});
-                })
-                .then(function (res) {
-                    assert.equal(res.length, 1);
-                    done();
-                })
-                .catch(function (err) {
-                    console.log(err);
-                    assert.isNull(err);
-                    done();
-                });
-        });
-    });
-
     describe('....remove record actors....', function () {
         it('delete records', function (done) {
             basedb.deleteRecords('tblCourse', 'id', [1, 3, 12])
@@ -259,7 +219,14 @@ describe('learnX', function() {
         });
     });
 
-    describe('....add actor class course object....', function () {
+    describe('....add actor group class course object....', function () {
+        it('add group', function (done) {
+            learnX.addGroup(basedb, {code: 'D12'})
+                .then(function (res) {
+                    assert.equal(res, 1);
+                    done();
+                })
+        });
         it('add actor', function (done) {
             let data = {name: 'name', family: 'family', code: 'trn001', attribute: '{}', type: 'فرآگیر'};
             learnX.addActor(basedb, data)
@@ -286,23 +253,18 @@ describe('learnX', function() {
                     done();
                 });
         });
-        it('append class', function (done) {
-            learnX.appendClass(basedb, {
-                    timeStart: Date.now(),
-                    timeEnd: Date.now() + 10000,
-                    courseId: 99,
-                    attribute: JSON.stringify({})
-                }, 'cls001')
+        it('add course', function (done) {
+            learnX.addCourse(basedb, {caption: 'test course', code: 'crs001', attribute: JSON.stringify({})})
                 .then(function (res) {
                     assert.isAbove(res, 0);
                     done();
-                })
+                });
         });
         it('add class', function (done) {
             learnX.addClass(basedb, {
                     timeStart: Date.now(),
                     timeEnd: Date.now() + 10000,
-                    courseId: 99,
+                    courseCode: 'crs001',
                     code: 'cls002',
                     attribute: JSON.stringify({})
                 })
@@ -311,12 +273,17 @@ describe('learnX', function() {
                     done();
                 })
         });
-        it('add course', function (done) {
-            learnX.addCourse(basedb, {caption: 'test course', code: 'crs001', attribute: JSON.stringify({})})
-            .then(function (res) {
-                assert.isAbove(res, 0);
-                done();
-            });
+        it('append class', function (done) {
+            learnX.appendClass(basedb, {
+                    timeStart: Date.now(),
+                    timeEnd: Date.now() + 10000,
+                    courseCode: 'crs001',
+                    attribute: JSON.stringify({})
+                }, 'cls001')
+                .then(function (res) {
+                    assert.isAbove(res, 0);
+                    done();
+                })
         });
         it('add object', function (done) {
             learnX.addObject(basedb, {code: 'mhl001', attribute: JSON.stringify({name: "شرکت ره آوران فنون پتروشیمی"}), type: 'محل'})
@@ -333,7 +300,7 @@ describe('learnX', function() {
         });
     });
     describe('....addStatement....', function () {
-        it('of type 1', function (done) {
+        it('type 1: come in', function (done) {
             let data = {
                 object: 'mhl001',
                 actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
@@ -342,7 +309,7 @@ describe('learnX', function() {
             };
             learnX.addStatement(basedb, 'ورود کارآموز به محل کارآموزی یا کارورزی', data)
             .then(function (res) {
-                assert.equal(res, "فرآگیر  teau/0005 teau/0006 teau/0007 وارد شد به محل mhl001");
+                assert.equal(res.length, "فرآگیر  teau/0005 teau/0006 teau/0007 وارد شد به محل mhl001".length);
                 done();
             })
             .catch(function (err) {
@@ -351,7 +318,7 @@ describe('learnX', function() {
                 done();
             });
         });
-        it('of type 2', function (done) {
+        it('type 2: move out', function (done) {
             let data = {
                 object: 'mhl001',
                 actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
@@ -360,7 +327,51 @@ describe('learnX', function() {
             };
             learnX.addStatement(basedb, 'خروج کارآموز از محل کارآموزی یا کارورزی به دلیل ترخیص، اتمام دوره یا اخراج', data)
                 .then(function (res) {
-                    assert.equal(res, "فرآگیر  teau/0005 teau/0006 teau/0007 خارج شد از محل mhl001");
+                    assert.equal(res.length, "فرآگیر  teau/0005 teau/0006 teau/0007 خارج شد از محل mhl001".length);
+                    done();
+                })
+                .catch(function (err) {
+                    console.log(err);
+                    assert.isNull(err);
+                    done();
+                });
+        });
+        it('type 3: add actor to group', function (done) {
+            let data = {
+                object: 'D12',
+                actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
+                time: Date.now(),
+                attribute: {}
+            };
+            learnX.addStatement(basedb, 'گروه بندی', data)
+                .then(function (res) {
+                    assert.equal(res.length, 'فرآگیر  teau/0005 teau/0006 teau/0007 وارد شد به گروه D12'.length);
+                    done();
+                })
+                .catch(function (err) {
+                    console.log(err);
+                    assert.isNull(err);
+                    done();
+                });
+        });
+        it('type 4: remove actor from group', function (done) {
+            let data = {object: 'D12', actor: ['teau/0001', 'teau/0006'], time: Date.now(), attribute: {}};
+            learnX.addStatement(basedb, 'خروج از گروه', data)
+                .then(function (res) {
+                    assert.equal(res.length, 'فرآگیر  teau/0006 خارج شد از گروه D12'.length);
+                    done();
+                })
+                .catch(function (err) {
+                    console.log(err);
+                    assert.isNull(err);
+                    done();
+                });
+        });
+        it('type 5 participate in class', function (done) {
+            let data = {object: 'cls003', actor: ['teau/0007', 'teau/0006'], time: Date.now(), attribute: {}};
+            learnX.addStatement(basedb, 'شرکت در کلاس آموزشی', data)
+                .then(function (res) {
+                    assert.equal(res.length, 'فرآگیر  teau/0006 teau/0007 شرکت کرد کلاس cls003'.length);
                     done();
                 })
                 .catch(function (err) {
@@ -371,54 +382,6 @@ describe('learnX', function() {
         });
 
         /*
-
-         data = {
-            object: 'D12',
-            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
-            time: Date.now(),
-            attribute: {}
-        };
-        learnX.addStatement(basedb, 'گروه بندی', data)
-            .then(function (res) {
-                done();
-            })
-            .catch(function (err) {
-                console.log(err);
-                assert.isNull(err);
-                done();
-            });
-
-        data = {
-            object: 'D12',
-            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
-            time: Date.now(),
-            attribute: {}
-        };
-        learnX.addStatement(basedb, 'خروج از گروه', data)
-            .then(function (res) {
-                done();
-            })
-            .catch(function (err) {
-                console.log(err);
-                assert.isNull(err);
-                done();
-            });
-
-        data = {
-            object: 'D12',
-            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
-            time: Date.now(),
-            attribute: {}
-        };
-        learnX.addStatement(basedb, 'شرکت در کلاس آموزشی', data)
-            .then(function (res) {
-                done();
-            })
-            .catch(function (err) {
-                console.log(err);
-                assert.isNull(err);
-                done();
-            });
 
         data = {
             object: 'D12',
@@ -533,48 +496,6 @@ describe('learnX', function() {
             });
   */
     });
-
-    describe('....grouping....', function () {
-        it('add group', function (done) {
-            learnX.addGroup(basedb, {code: 'D12'})
-                .then(function (res) {
-                    assert.equal(res, 1);
-                    done();
-                })
-        });
-        it('add actor to group', function (done) {
-            let data = {
-                object: 'D12',
-                actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
-                time: Date.now(),
-                attribute: {}
-            };
-            learnX.addStatement(basedb, 'گروه بندی', data)
-                .then(function (res) {
-                    assert.equal(res, 'فرآگیر  teau/0005 teau/0006 teau/0007 وارد شد به گروه D12');
-                    done();
-                })
-                .catch(function (err) {
-                    console.log(err);
-                    assert.isNull(err);
-                    done();
-                });
-        });
-        it('remove actor from group', function (done) {
-            let data = {object: 'D12', actor: ['teau/0001', 'teau/0006'], time: Date.now(), attribute: {}};
-            learnX.addStatement(basedb, 'خروج از گروه', data)
-                .then(function (res) {
-                    assert.equal(res, 'فرآگیر  teau/0006 خارج شد از گروه D12');
-                    done();
-                })
-                .catch(function (err) {
-                    console.log(err);
-                    assert.isNull(err);
-                    done();
-                });
-        });
-    });
-
     describe('....working with statements....', function () {
         it('reject undefined statement description', function (done) {
             learnX.addStatement(basedb, 'undef', {})
@@ -645,6 +566,53 @@ describe('learnX', function() {
 
     });
 */
+    describe('....search....', function () {
+        it('get record by value', function (done) {
+            basedb.getRecord('tblCourse', {id: 2})
+                .then(function (res) {
+                    assert.equal(res.id, 2);
+                    return basedb.getRecord('tblActor', {name: 'Gianna', family: 'Branin'});
+                })
+                .then(function (res) {
+                    assert.equal(res.name, 'Gianna');
+                    return basedb.getRecord('tblClass', {});
+                })
+                .then(function (res) {
+                    assert.equal(res.id, 1);
+                    return basedb.getRecord('tblCourse', {code: 'cur/0002'});
+                })
+                .then(function (res) {
+                    assert.equal(res.code, 'cur/0002');
+                    done();
+                })
+                .catch(function (err) {
+                    console.log(err);
+                    assert.isNull(err);
+                    done();
+                });
+        });
+        it('find records', function (done) {
+            basedb.matchRecords('tblCourse', {attribute: 'NYP'})
+                .then(function (res) {
+                    assert.equal(res.length, 49-1);
+                    return basedb.matchRecords('tblActor', {attribute: '"phone1":"07-9997-3366"'});
+                })
+                .then(function (res) {
+                    assert.equal(res.length, 1);
+                    return basedb.matchRecords('tblActor', {attribute: learnX.getSearchStrForAttribute({phone1: "07-9997-3366"})});
+                })
+                .then(function (res) {
+                    assert.equal(res.length, 1);
+                    done();
+                })
+                .catch(function (err) {
+                    console.log(err);
+                    assert.isNull(err);
+                    done();
+                });
+        });
+    });
+
     after(function (done) {
         basedb.close(function (err) {
             fs.unlinkSync(dbpath);

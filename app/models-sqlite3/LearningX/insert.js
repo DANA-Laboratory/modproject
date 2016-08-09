@@ -49,7 +49,7 @@ exports.addClass = function (db, data) {
     return new Promise(function (resolve, reject) {
         validator.validateForInsert('tblClass', data)
             .then(function (data) {
-                db.run('INSERT INTO tblClass (timeStart, timeEnd, courseId, code, attribute) VALUES(?, ?, ?, ?, ?);', [data.timeStart, data.timeEnd, data.courseId, data.code, data.attribute], function (err) {
+                db.run('INSERT INTO tblClass (timeStart, timeEnd, courseId, code, attribute) SELECT ?, ?, id, ?, ? FROM tblCourse WHERE code=?;', [data.timeStart, data.timeEnd, data.code, data.attribute ,data.courseCode], function (err) {
                     err ? reject(err) : resolve(this.lastID);
                 });
             })
