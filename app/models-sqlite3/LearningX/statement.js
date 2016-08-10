@@ -7,6 +7,7 @@ var validator = require('./dataValidator');
 var util = require('./util');
 
 //Who did the same statement with same object
+/*
 exports.whoSStmSObject = function (db, description, objectCode, time) {
     return new Promise(function (resolve, reject) {
         if (!time)
@@ -23,6 +24,21 @@ exports.whoSStmSObject = function (db, description, objectCode, time) {
                     });
         })
     })
+};
+*/
+exports.whoSStmSObject = function (db, description, objectCode, time) {
+        if (!time)
+            time = null;
+        return db.pGet('SELECT tblStatementType.id as id, tblObjectType.tblName as objectTable, tblActorType.tblName as actorTable FROM tblStatementType INNER JOIN tblObjectType ON tblObjectType.id = object_type INNER JOIN tblActorType ON actor_type = tblActorType.id INNER JOIN tblVerb ON verb_id = tblVerb.id WHERE description = ?;', [description])
+            .then(function(row) {
+                if(row === undefined)
+                    throw('undefined ' + description + ' statement');
+                else
+                    return db.pAll(`SELECT ${row.actorTable}.code FROM tblStatement INNER JOIN ${row.objectTable} ON ${row.objectTable}.id = object INNER JOIN ${row.actorTable} ON ${row.actorTable}.id = actor WHERE tblStatement.type = ? AND ${row.objectTable}.code = ?  AND (time <= ? OR ? is Null)`, [row.id, objectCode, time, time])
+                    .then(function(rows){
+                        return rows.map( (x) => x.code);
+                    })
+            });
 };
 exports.statementOperation = function (db, description1, operation, description2, objectCode, time) {
     return new Promise(function (resolve, reject) {
@@ -55,73 +71,72 @@ exports.statementOperation = function (db, description1, operation, description2
     })
 };
 exports.addStatement = function (db, description, data) {
-    return new Promise(function (resolve, reject) {
-        return validator.validateStatement(description, data)
-        .then(function (data) {
-            db.get('SELECT tblStatementType.attribute_meta, tblStatementType.id as id, verb_id, tblVerb.caption as verb, tblActorType.caption as actor, tblActorType.id as actTypeID, tblObjectType.id as objTypeID, tblObjectType.caption as object, tblObjectType.tblName as objectTable, tblActorType.tblName as actorTable FROM tblStatementType INNER JOIN tblObjectType ON tblObjectType.id = object_type INNER JOIN tblActorType ON actor_type = tblActorType.id INNER JOIN tblVerb ON verb_id = tblVerb.id WHERE description = ?;', [description], function (err, row) {
-                if(err)
-                    return reject('addStatement failed with : ' + err);
+    return validator.validateStatement(description, data)
+    .then(function (data) {
+        return db.pGet('SELECT tblStatementType.attribute_meta, tblStatementType.id as id, verb_id, tblVerb.caption as verb, tblActorType.caption as actor, tblActorType.id as actTypeID, tblObjectType.id as objTypeID, tblObjectType.caption as object, tblObjectType.tblName as objectTable, tblActorType.tblName as actorTable FROM tblStatementType INNER JOIN tblObjectType ON tblObjectType.id = object_type INNER JOIN tblActorType ON actor_type = tblActorType.id INNER JOIN tblVerb ON verb_id = tblVerb.id WHERE description = ?;', [description])
+            .catch(function (err) {
+                throw('addStatement failed with : ' + err)
+            })
+            .then(function (row) {
+                if (row === undefined)
+                    throw('undefined ' + description + ' statement');
                 else {
-                    if (row === undefined)
-                        return reject('undefined ' + description + ' statement');
-                    else {
-                        if(row.attribute_meta)
-                            if (data.hasOwnProperty('attribute')) {
-                                let attribute_meta = JSON.parse(row.attribute_meta);
-                                Object.keys(attribute_meta).forEach(function(key){
-                                    if (data.attribute.hasOwnProperty(key)) {
-                                        if(Array.isArray(attribute_meta[key])) {
-                                            if (!attribute_meta[key].includes(data.attribute[key]))
-                                                return reject(`invalid ${data.attribute[key]} value for attribute.${key}`);
+                    if (row.attribute_meta)
+                        if (data.hasOwnProperty('attribute')) {
+                            let attribute_meta = JSON.parse(row.attribute_meta);
+                            Object.keys(attribute_meta).forEach(function (key) {
+                                if (data.attribute.hasOwnProperty(key)) {
+                                    if (Array.isArray(attribute_meta[key])) {
+                                        if (!attribute_meta[key].includes(data.attribute[key]))
+                                            throw(`invalid ${data.attribute[key]} value for attribute.${key}`);
+                                    }
+                                } else {
+                                    throw(`attribute ${key} not found`);
+                                }
+                            });
+                        } else {
+                            throw('attribute not found');
+                        }
+                    return db.pGet(`SELECT * FROM ${row.objectTable} WHERE code = ?`, data.object)
+                        .catch(function (err) {
+                            throw ('addStatement failed with : ' + err);
+                        })
+                        .then(function (obj) {
+                            if (obj === undefined)
+                                throw('undefined ' + data.object + ' object');
+                            else if (obj.hasOwnProperty('type') && obj.type !== row.objTypeID)
+                                throw('invalid object type for id=' + obj.id + ' type=' + row.object);
+                            else {
+                                var jdata = JSON.stringify(data.actor);
+                                return db.pAll(`SELECT id, code FROM ${row.actorTable} WHERE code IN (${jdata.substr(1, jdata.length - 2)})`)
+                                    .catch(function (err) {
+                                        throw (`SELECT FROM ${row.actorTable} failed with : ` + err);
+                                    })
+                                    .then(function (acts) {
+                                        if (acts.length === 0)
+                                            throw('no actor');
+                                        let actCodes = '';
+                                        let pInserts = [];
+                                        for (let act of acts) {
+                                            pInserts.push(db.pRun('INSERT INTO tblStatement(actor, object, verb, time, attribute, logtime, type) VALUES (?, ?, ?, ?, ?, ?, ?)', [act.id, obj.id, row.verb_id, Date.now(), JSON.stringify(data.attribute), Date.now(), row.id])
+                                                .catch(function(err){
+                                                   throw('INSERT INTO tblStatement failed with : ' + err);
+                                                })
+                                                .then(function(lastId){
+                                                    if (lastId > 0)
+                                                        actCodes += ' ' + act.code;
+                                                    return lastId;
+                                                })
+                                            )
                                         }
-                                    } else {
-                                        return reject(`attribute ${key} not found`);
-                                    }
-                                });
-                            } else {
-                                return reject('attribute not found');
+                                        return Promise.all(pInserts)
+                                            .then(function(resultArr){
+                                                return (row.actor + ' ' + actCodes + ' ' + row.verb + ' ' + row.object + ' ' + obj.code);
+                                            })
+                                    });
                             }
-                        db.get(`SELECT * FROM ${row.objectTable} WHERE code = ?`, data.object, function (err, obj) {
-                            if(err)
-                                return reject('addStatement failed with : ' + err);
-                            else
-                                if (obj === undefined)
-                                    return reject('undefined ' + data.object + ' object');
-                                else
-                                    if (obj.hasOwnProperty('type') && obj.type !== row.objTypeID)
-                                        return reject('invalid object type for id=' + obj.id + ' type=' + row.object);
-                                    else {
-                                        var jdata = JSON.stringify(data.actor);
-                                        db.all(`SELECT id, code FROM ${row.actorTable} WHERE code IN (${jdata.substr(1, jdata.length - 2)})`, function (err, acts) {
-                                            if(err)
-                                                return reject(`SELECT FROM ${row.actorTable} failed with : ` + err);
-                                            else {
-                                                if (acts.length === 0)
-                                                    return reject('no actor');
-                                                let cnt = 0;
-                                                let actCodes = '';
-                                                for (let act of acts) {
-                                                    db.run('INSERT INTO tblStatement(actor, object, verb, time, attribute, logtime, type) VALUES (?, ?, ?, ?, ?, ?, ?)', [act.id, obj.id, row.verb_id, Date.now(), JSON.stringify(data.attribute), Date.now(), row.id], function (err) {
-                                                        if(err)
-                                                            return reject('INSERT INTO tblStatement failed with : ' + err);
-                                                        else {
-                                                            cnt++;
-                                                            actCodes += ' ' + act.code;
-                                                            if (cnt === acts.length)
-                                                                return resolve(row.actor + ' ' + actCodes + ' ' + row.verb + ' ' + row.object + ' ' + obj.code);
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        })
-                                    }
                         });
-                    }
                 }
-            });
-        })
-        .catch(function (err) {
-            return reject(err);
-        })
+            })
     })
 };

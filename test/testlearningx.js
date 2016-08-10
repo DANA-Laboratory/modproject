@@ -18,7 +18,7 @@ var ddl = `
     BEGIN TRANSACTION;
       
     -- Table: tblClass
-    CREATE TABLE tblClass (id INTEGER PRIMARY KEY AUTOINCREMENT, timeStart BIGINT NOT NULL, timeEnd BIGINT NOT NULL, courseId INTEGER REFERENCES tblCourse (id), code TEXT NOT NULL UNIQUE, attribute STRING);
+    CREATE TABLE tblClass (id INTEGER PRIMARY KEY AUTOINCREMENT, timeStart BIGINT NOT NULL, timeEnd BIGINT NOT NULL, courseId INTEGER REFERENCES tblCourse (id), code TEXT NOT NULL UNIQUE, duration INTEGER NOT NULL, status TEXT NOT NULL, attribute STRING);
     
     -- Table: tblCourse
     CREATE TABLE tblCourse (id INTEGER PRIMARY KEY AUTOINCREMENT, caption TEXT NOT NULL, code TEXT NOT NULL UNIQUE, attribute STRING);
@@ -30,25 +30,24 @@ var ddl = `
     CREATE TABLE tblStatementType (id INTEGER PRIMARY KEY AUTOINCREMENT, verb_id INTEGER REFERENCES tblVerb (id) NOT NULL, actor_type INTEGER REFERENCES tblActorType (id) NOT NULL, object_type INTEGER REFERENCES tblObjectType (id) NOT NULL, date_caption STRING, description TEXT NOT NULL UNIQUE, attribute_meta STRING);
     INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (1, 1, 2, 1, 'زمان ورود', 'ورود کارآموز به محل کارآموزی یا کارورزی', NULL);
     INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (2, 2, 2, 1, 'زمان خروج', 'خروج کارآموز از محل کارآموزی یا کارورزی به دلیل ترخیص، اتمام دوره یا اخراج', '{"status": ["ترخیص","اخراج","خاتمه دوره"]}');
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (3, 1, 2, 2, 'زمان قرار گرفتن', 'گروه بندی', NULL);
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (3, 1, 2, 2, 'زمان ورود به گروه', 'گروه بندی', NULL);
     INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (4, 2, 2, 2, 'زمان خروج از گروه', 'خروج از گروه', NULL);
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (5, 3, 2, 3, 'زمان شروع', 'شرکت در کلاس آموزشی', NULL);
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (6, 4, 2, 3, 'زمان اتمام', 'اتمام کلاس آموزشی', '{"result": 0, "status": ["قبول","رد"]}');
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (7, 5, 2, 3, 'تاریخ غیبت', 'غیبت در کلاس آموزشی', NULL);
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (8, 6, 2, 3, 'زمان تنظیم', 'تنظیم روکش حق التدریس', NULL);
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (9, 7, 1, 3, 'زمان شروع', 'تدریس کلاس آموزشی', NULL);
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (10, 8, 1, 4, 'زمان ارزیابی', 'تکیل فرم ارزیابی کارآموزی', '{"result": {}}');
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (11, 9, 2, 5, 'زمان آزمون ', 'طی آزمون', '{"result":{}}');
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (12, 5, 2, 1, 'تاریخ غیبت', 'غیبت در محل', NULL);
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (5, 3, 2, 3, 'زمان ثبت نام', 'شرکت در کلاس آموزشی', '{"result": 0, "status": ["قبول" ,"رد", "ناتمام"]}');
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (6, 4, 2, 3, 'تاریخ غیبت', 'غیبت در کلاس آموزشی', NULL);
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (7, 5, 2, 3, 'زمان تنظیم', 'تنظیم روکش حق التدریس', NULL);
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (8, 6, 1, 3, 'زمان شروع', 'تدریس کلاس آموزشی', NULL);
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (9, 7, 1, 4, 'زمان ارزیابی', 'تکیل فرم ارزیابی کارآموزی', '{"result": {}}');
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (10, 8, 2, 5, 'زمان آزمون ', 'طی آزمون', '{"result":{}}');
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (11, 4, 2, 1, 'تاریخ غیبت', 'غیبت در محل', NULL);
     
+    -- Table: tblActor
+    CREATE TABLE tblActor (id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER NOT NULL REFERENCES tblActorType (id), name TEXT NOT NULL, family STRING NOT NULL, code TEXT NOT NULL UNIQUE, attribute STRING);
+
     -- Table: tblActorType
     CREATE TABLE tblActorType (id INTEGER PRIMARY KEY AUTOINCREMENT, caption TEXT NOT NULL UNIQUE, tblName TEXT NOT NULL);
     INSERT INTO tblActorType (id, caption, tblName) VALUES (1, 'مدرس', 'tblActor');
     INSERT INTO tblActorType (id, caption, tblName) VALUES (2, 'فرآگیر', 'tblActor');
-    
-    -- Table: tblActor
-    CREATE TABLE tblActor (id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER NOT NULL REFERENCES tblActorType (id), name TEXT NOT NULL, family STRING NOT NULL, code TEXT NOT NULL UNIQUE, attribute STRING);
-    
+        
     -- Table: tblGroup
     CREATE TABLE tblGroup (id INTEGER PRIMARY KEY AUTOINCREMENT, code TEXT NOT NULL UNIQUE);
             
@@ -57,12 +56,11 @@ var ddl = `
     INSERT INTO tblVerb (id, caption) VALUES (1, 'وارد شد به');
     INSERT INTO tblVerb (id, caption) VALUES (2, 'خارج شد از');
     INSERT INTO tblVerb (id, caption) VALUES (3, 'شرکت کرد');
-    INSERT INTO tblVerb (id, caption) VALUES (4, 'تمام کرد');
-    INSERT INTO tblVerb (id, caption) VALUES (5, 'غیبت کرد');
-    INSERT INTO tblVerb (id, caption) VALUES (6, 'روکش تنظیم شد');
-    INSERT INTO tblVerb (id, caption) VALUES (7, 'تدریس کرد');
-    INSERT INTO tblVerb (id, caption) VALUES (8, 'ارزیابی شد');
-    INSERT INTO tblVerb (id, caption) VALUES (9, 'آزمون داد');
+    INSERT INTO tblVerb (id, caption) VALUES (4, 'غیبت کرد');
+    INSERT INTO tblVerb (id, caption) VALUES (5, 'روکش تنظیم شد');
+    INSERT INTO tblVerb (id, caption) VALUES (6, 'تدریس کرد');
+    INSERT INTO tblVerb (id, caption) VALUES (7, 'ارزیابی شد');
+    INSERT INTO tblVerb (id, caption) VALUES (8, 'آزمون داد');
 
     -- Table: tblObjectType
     CREATE TABLE tblObjectType (id INTEGER PRIMARY KEY AUTOINCREMENT, caption TEXT NOT NULL, tblName TEXT NOT NULL);
@@ -104,7 +102,6 @@ describe('learnX', function() {
             done();
         });
     });
-
     describe('....import....', function () {
         it('import teachers', function (done) {
             var startCode = 'teau/0000';
@@ -170,7 +167,6 @@ describe('learnX', function() {
                 });
         });
     });
-
     describe('....fuzzy....', function() {
         it('fuzzy actors', function (done) {
             learnX.fuzzyBuild(basedb, 'tblClass');
@@ -218,7 +214,6 @@ describe('learnX', function() {
                 });
         });
     });
-
     describe('....add actor group class course object....', function () {
         it('add group', function (done) {
             learnX.addGroup(basedb, {code: 'D12'})
@@ -266,6 +261,8 @@ describe('learnX', function() {
                     timeEnd: Date.now() + 10000,
                     courseCode: 'crs001',
                     code: 'cls002',
+                    status: 'برنامه ریزی',
+                    duration: 30,
                     attribute: JSON.stringify({})
                 })
                 .then(function (res) {
@@ -278,6 +275,8 @@ describe('learnX', function() {
                     timeStart: Date.now(),
                     timeEnd: Date.now() + 10000,
                     courseCode: 'crs001',
+                    status: 'برنامه ریزی',
+                    duration: 30,
                     attribute: JSON.stringify({})
                 }, 'cls001')
                 .then(function (res) {
@@ -302,21 +301,38 @@ describe('learnX', function() {
     describe('....addStatement....', function () {
         it('type 1: come in', function (done) {
             let data = {
-                object: 'mhl001',
-                actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
+                object: 'mhl0010',
+                actor: [],
+                //actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
                 time: Date.now(),
                 attribute: {}
             };
-            learnX.addStatement(basedb, 'ورود کارآموز به محل کارآموزی یا کارورزی', data)
-            .then(function (res) {
-                assert.equal(res.length, "فرآگیر  teau/0005 teau/0006 teau/0007 وارد شد به محل mhl001".length);
-                done();
-            })
+            learnX.addStatement(basedb, 'ورودکارآموز به محل کارآموزی یا کارورزی', data)
             .catch(function (err) {
-                console.log(err);
-                assert.isNull(err);
-                done();
+                assert.equal(err, 'undefined ورودکارآموز به محل کارآموزی یا کارورزی statement');
+                learnX.addStatement(basedb, 'ورود کارآموز به محل کارآموزی یا کارورزی', data)
+                    .catch(function (err) {
+                        assert.equal(err, 'undefined mhl0010 object');
+                        data.object = 'mhl001';
+                        learnX.addStatement(basedb, 'ورود کارآموز به محل کارآموزی یا کارورزی', data)
+                            .catch(function (err) {
+                                assert.equal(err, 'no actor');
+                                data.actor = ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'];
+                                learnX.addStatement(basedb, 'ورود کارآموز به محل کارآموزی یا کارورزی', data)
+                                    .then(function (res) {
+                                        assert.equal(res.length, "فرآگیر  teau/0005 teau/0006 teau/0007 وارد شد به محل mhl001".length);
+                                        done();
+                                    })
+                                    .catch(function (err) {
+                                        console.log(err);
+                                        assert.isNull(err);
+                                        done();
+                                    });
+                            });
+
+                    });
             });
+
         });
         it('type 2: move out', function (done) {
             let data = {
@@ -367,8 +383,8 @@ describe('learnX', function() {
                     done();
                 });
         });
-        it('type 5 participate in class', function (done) {
-            let data = {object: 'cls003', actor: ['teau/0007', 'teau/0006'], time: Date.now(), attribute: {}};
+        it('type 5: participate in class', function (done) {
+            let data = {object: 'cls003', actor: ['teau/0007', 'teau/0006'], time: Date.now(), attribute: {result: null, status: 'ناتمام'}};
             learnX.addStatement(basedb, 'شرکت در کلاس آموزشی', data)
                 .then(function (res) {
                     assert.equal(res.length, 'فرآگیر  teau/0006 teau/0007 شرکت کرد کلاس cls003'.length);
@@ -507,17 +523,25 @@ describe('learnX', function() {
         it('who did', function (done) {
             var groupIn = {};
             var groupOut = {};
-            learnX.whoSStmSObject(basedb, 'گروه بندی', 'D12')
-                .then(function (res) {
-                    assert.equal(res.length, 3);
-                    groupIn = res;
-                    return learnX.whoSStmSObject(basedb, 'خروج از گروه', 'D12')
-                })
-                .then(function (res) {
-                    assert.equal(res.length, 1);
-                    groupOut = res;
-                    done();
-                })
+            learnX.whoSStmSObject(basedb, 'گروهبندی', 'D12')
+                .catch(function (err) {
+                    assert.equal('undefined گروهبندی statement', err);
+                    learnX.whoSStmSObject(basedb, 'گروه بندی', 'D112')
+                    .then(function (res) {
+                        assert.equal(res.length, 0);
+                        learnX.whoSStmSObject(basedb, 'گروه بندی', 'D12')
+                            .then(function (res) {
+                                assert.equal(res.length, 3);
+                                groupIn = res;
+                                return learnX.whoSStmSObject(basedb, 'خروج از گروه', 'D12')
+                            })
+                            .then(function (res) {
+                                assert.equal(res.length, 1);
+                                groupOut = res;
+                                done();
+                            })
+                    })
+                });
         });
         it('but, and, or, sBut', function (done) {
             var groupIn = {};
@@ -612,7 +636,6 @@ describe('learnX', function() {
                 });
         });
     });
-
     after(function (done) {
         basedb.close(function (err) {
             fs.unlinkSync(dbpath);

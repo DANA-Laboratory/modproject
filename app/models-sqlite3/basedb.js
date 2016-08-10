@@ -25,7 +25,33 @@ class DBExtend extends sqlite3.Database {
                 }
             }
         );
-
+        this.pRun = function (sql, param) {
+            return new Promise((resolve, reject) => {
+                this.run(sql, param, function(err){
+                    if (err)
+                        reject(err);
+                    else
+                        if(this.changes === 0)
+                            resolve(-1);
+                        else
+                            resolve(this.lastID);
+                });
+            })
+        };
+        this.pGet = function (sql, param) {
+            return new Promise((resolve, reject) => {
+                this.get(sql, param, function(err, row){
+                    err ? reject(err) : resolve(row);
+                });
+            })
+        };
+        this.pAll = function (sql, param) {
+            return new Promise((resolve, reject) => {
+                this.all(sql, param, function(err, rows){
+                    err ? reject(err) : resolve(rows);
+                });
+            })
+        };
         this.getRecord = function (tblName, data) {
             return new Promise((resolve, reject) => {
                 var where = '';

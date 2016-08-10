@@ -7,56 +7,34 @@ var validator = require('./dataValidator');
 var util = require('./util');
 
 exports.addActor = function (db, data) {
-    return new Promise(function (resolve, reject) {
-        validator.validateForInsert('tblActor', data)
-            .then(function (data) {
-                db.run('INSERT INTO tblActor (type, name, family, code, attribute) SELECT ID, ?, ?, ?, ? FROM tblActorType WHERE Caption=?;', [data.name, data.family, data.code, data.attribute, data.type], function (err) {
-                    err ? reject(err) : resolve(this.lastID);
-                });
-            })
-            .catch(function (err) {
-                reject(err);
-            })
-    });
+    return validator.validateForInsert('tblActor', data)
+        .then(function (data) {
+            return db.pRun('INSERT INTO tblActor (type, name, family, code, attribute) SELECT ID, ?, ?, ?, ? FROM tblActorType WHERE Caption=?;', [data.name, data.family, data.code, data.attribute, data.type]);
+        })
 };
 exports.addCourse = function (db, data) {
-    return new Promise(function (resolve, reject) {
-        validator.validateForInsert('tblCourse', data)
-            .then(function (data) {
-                db.run('INSERT INTO tblCourse (caption, code, attribute) VALUES(?, ?, ?);', [data.caption, data.code, data.attribute], function (err) {
-                    err ? reject(err) : resolve(this.lastID);
-                });
-            })
-            .catch(function (err) {
-                reject(err)
-            })
-    });
+    return validator.validateForInsert('tblCourse', data)
+        .then(function (data) {
+            return db.pRun('INSERT INTO tblCourse (caption, code, attribute) VALUES(?, ?, ?);', [data.caption, data.code, data.attribute]);
+        })
 };
 exports.addObject = function (db, data) {
-    return new Promise(function (resolve, reject) {
-        validator.validateForInsert('tblCourse', data)
-            .then(function (data) {
-                db.run('INSERT INTO tblObject (type, code, attribute) SELECT ID, ?, ? FROM tblObjectType WHERE Caption=? AND tblName="tblObject";', [data.code, data.attribute, data.type], function (err) {
-                    err ? reject(err) : resolve(this.lastID);
-                });
-            })
-            .catch(function (err) {
-                reject(err)
-            })
-    });
+    return new validator.validateForInsert('tblCourse', data)
+        .then(function (data) {
+            return db.pRun('INSERT INTO tblObject (type, code, attribute) SELECT ID, ?, ? FROM tblObjectType WHERE Caption=? AND tblName="tblObject";', [data.code, data.attribute, data.type]);
+        })
 };
 exports.addClass = function (db, data) {
-    return new Promise(function (resolve, reject) {
-        validator.validateForInsert('tblClass', data)
-            .then(function (data) {
-                db.run('INSERT INTO tblClass (timeStart, timeEnd, courseId, code, attribute) SELECT ?, ?, id, ?, ? FROM tblCourse WHERE code=?;', [data.timeStart, data.timeEnd, data.code, data.attribute ,data.courseCode], function (err) {
-                    err ? reject(err) : resolve(this.lastID);
-                });
-            })
-            .catch(function (err) {
-                reject(err)
-            })
-    });
+    return validator.validateForInsert('tblClass', data)
+        .then(function (data) {
+            return db.pRun('INSERT INTO tblClass (timeStart, timeEnd, courseId, code, duration, status, attribute) SELECT ?, ?, id, ?, ?, ?, ? FROM tblCourse WHERE code=?;', [data.timeStart, data.timeEnd, data.code, data.duration, data.status, data.attribute ,data.courseCode]);
+        })
+};
+exports.addGroup = function (db, data) {
+    return validator.validateForInsert('tblGroup', data)
+        .then(function (data) {
+            return db.pRun('INSERT INTO tblGroup (code) VALUES(?);', [data.code]);
+        })
 };
 exports.appendActor = function (db, data, startCode) {
     return util.getMaxCounter(db, 'tblActor', 'code', startCode)
@@ -78,17 +56,4 @@ exports.appendClass = function (db, data, startCode) {
             data.code = util.getNextCode(startCode);
             return exports.addClass(db, data);
         });
-};
-exports.addGroup = function (db, data) {
-    return new Promise(function (resolve, reject) {
-        validator.validateForInsert('tblGroup', data)
-            .then(function (data) {
-                db.run('INSERT INTO tblGroup (code) VALUES(?);', [data.code], function (err) {
-                    err ? reject(err) : resolve(this.lastID);
-                });
-            })
-            .catch(function (err) {
-                reject(err)
-            })
-    });
 };

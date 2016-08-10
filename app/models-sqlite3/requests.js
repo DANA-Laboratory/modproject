@@ -24,41 +24,26 @@ var addRequestAction = function (/*sqlite3.Database*/ db, /*RequestData*/ data, 
 };
 
 exports.addItem = function (/*sqlite3.Database*/ db, /*RequestData*/ data) {
-    return new Promise(function (resolve, reject) {
-        db.get('SELECT COUNT(id) as itemCount FROM tblRequestItems WHERE requestId=? AND description=?', [data.requestId, data.itemDescription], function (err, row) {
-            if (err) {
-                reject(err);
-            } else {
-                if (row.itemCount > 0) {
-                    reject('item exists');
-                } else {
-                    db.run('INSERT INTO tblRequestItems (requestId, item, privilege, description, ownerUser, createTime) VALUES (?, ?, ?, ?, ?, ?);', [data.requestId, data.requestItem, data.itemPrivilege, data.itemDescription, data.ownerUser, Date.now()], function (err) {
-                        err ? reject(err) : resolve();
-                    });
-                }
-            }
-        });
-    });
+    return db.pGet('SELECT COUNT(id) as itemCount FROM tblRequestItems WHERE requestId=? AND description=?', [data.requestId, data.itemDescription])
+        .then(function(row){
+            if (row.itemCount > 0)
+                throw('item exists');
+            else
+                return db.pRun('INSERT INTO tblRequestItems (requestId, item, privilege, description, ownerUser, createTime) VALUES (?, ?, ?, ?, ?, ?);', [data.requestId, data.requestItem, data.itemPrivilege, data.itemDescription, data.ownerUser, Date.now()]);
+        })
 };
 
 exports.updateItem = function (/*sqlite3.Database*/ db, /*RequestData*/ data) {
-    return new Promise(function (resolve, reject) {
-        db.run('UPDATE tblRequestItems SET item=? WHERE requestId=? AND description=?', [data.requestItem, data.requestId, data.itemDescription], function (err) {
-            err ? reject(err) : resolve();
-        });
-    });
+    return db.pRun('UPDATE tblRequestItems SET item=? WHERE requestId=? AND description=?', [data.requestItem, data.requestId, data.itemDescription]);
 };
 
 exports.getItems = function (/*sqlite3.Database*/ db, data, can) {
-    return new Promise(function (resolve, reject) {
         var inList = '';
         for (var i in can) {
             inList += can[i] + ',';
         }
-        db.all('SELECT item, privilege, ownerUser FROM tblRequestItems WHERE Id in (' + inList.substr(0, inList.length - 1) + ')', [can], function (err, rows) {
-            if (err) {
-                reject(err);
-            } else {
+        return db.pAll('SELECT item, privilege, ownerUser FROM tblRequestItems WHERE Id in (' + inList.substr(0, inList.length - 1) + ')', [can])
+            .then(function(rows){
                 var items = [];
                 var privileges = [];
                 var ownerUsers = [];
@@ -67,10 +52,8 @@ exports.getItems = function (/*sqlite3.Database*/ db, data, can) {
                     privileges.push(rows[row].privilege);
                     ownerUsers.push(rows[row].ownerUser);
                 }
-                resolve(items);
-            }
-        })
-    })
+                return (items);
+            })
 };
 //requestType, userId = actionUser, actionComment, actionTime?
 exports.insertRequest = function (/*sqlite3.Database*/ db, /*RequestData*/ data) {
@@ -124,17 +107,10 @@ exports.updateStatus = function (/*sqlite3.Database*/ db, /*RequestData*/ data) 
 };
 
 exports.sendRequestTo = function (/*sqlite3.Database*/ db, /*RequestData*/ data) {
-    return new Promise(function (resolve, reject) {
-        exports.whereIs(db, {requestId: data.requestId})
-            .then(function (fromUser) {
-                db.run('INSERT INTO tblDiscipline(requestId, fromUser, toUser, time) VALUES(?, ?, ?, ?)', [data.requestId, fromUser, data.toUser, Date.now()], function (err) {
-                    err ? reject(err) : resolve();
-                });
-            })
-            .catch(function (err) {
-                reject(err);
-            });
-    })
+    return exports.whereIs(db, {requestId: data.requestId})
+        .then(function (fromUser) {
+            return db.pRun('INSERT INTO tblDiscipline(requestId, fromUser, toUser, time) VALUES(?, ?, ?, ?)', [data.requestId, fromUser, data.toUser, Date.now()])
+        })
 };
 
 exports.getDashboard = function (/*sqlite3.Database*/ db, /*RequestData*/ data) {
