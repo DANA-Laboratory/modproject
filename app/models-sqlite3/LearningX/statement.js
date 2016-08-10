@@ -7,25 +7,6 @@ var validator = require('./dataValidator');
 var util = require('./util');
 
 //Who did the same statement with same object
-/*
-exports.whoSStmSObject = function (db, description, objectCode, time) {
-    return new Promise(function (resolve, reject) {
-        if (!time)
-            time = null;
-        db.get('SELECT tblStatementType.id as id, tblObjectType.tblName as objectTable, tblActorType.tblName as actorTable FROM tblStatementType INNER JOIN tblObjectType ON tblObjectType.id = object_type INNER JOIN tblActorType ON actor_type = tblActorType.id INNER JOIN tblVerb ON verb_id = tblVerb.id WHERE description = ?;', [description], function (err, row) {
-            if (err)
-                reject(err);
-            else
-                if(row === undefined)
-                    reject('undefined ' + description + ' statement');
-                else
-                    db.all(`SELECT ${row.actorTable}.code FROM tblStatement INNER JOIN ${row.objectTable} ON ${row.objectTable}.id = object INNER JOIN ${row.actorTable} ON ${row.actorTable}.id = actor WHERE tblStatement.type = ? AND ${row.objectTable}.code = ?  AND (time <= ? OR ? is Null)`, [row.id, objectCode, time, time], function (err, rows) {
-                        err ?  reject(err) : resolve(rows.map( (x) => x.code));
-                    });
-        })
-    })
-};
-*/
 exports.whoSStmSObject = function (db, description, objectCode, time) {
         if (!time)
             time = null;
@@ -108,7 +89,7 @@ exports.addStatement = function (db, description, data) {
                                 throw('invalid object type for id=' + obj.id + ' type=' + row.object);
                             else {
                                 var jdata = JSON.stringify(data.actor);
-                                return db.pAll(`SELECT id, code FROM ${row.actorTable} WHERE code IN (${jdata.substr(1, jdata.length - 2)})`)
+                                return db.pAll(`SELECT id, code, type FROM ${row.actorTable} WHERE code IN (${jdata.substr(1, jdata.length - 2)})`)
                                     .catch(function (err) {
                                         throw (`SELECT FROM ${row.actorTable} failed with : ` + err);
                                     })
@@ -118,16 +99,19 @@ exports.addStatement = function (db, description, data) {
                                         let actCodes = '';
                                         let pInserts = [];
                                         for (let act of acts) {
-                                            pInserts.push(db.pRun('INSERT INTO tblStatement(actor, object, verb, time, attribute, logtime, type) VALUES (?, ?, ?, ?, ?, ?, ?)', [act.id, obj.id, row.verb_id, Date.now(), JSON.stringify(data.attribute), Date.now(), row.id])
-                                                .catch(function(err){
-                                                   throw('INSERT INTO tblStatement failed with : ' + err);
-                                                })
-                                                .then(function(lastId){
-                                                    if (lastId > 0)
-                                                        actCodes += ' ' + act.code;
-                                                    return lastId;
-                                                })
-                                            )
+                                            if (act.type === row.actTypeID)
+                                                pInserts.push(db.pRun('INSERT INTO tblStatement(actor, object, verb, time, attribute, logtime, type) VALUES (?, ?, ?, ?, ?, ?, ?)', [act.id, obj.id, row.verb_id, Date.now(), JSON.stringify(data.attribute), Date.now(), row.id])
+                                                    .catch(function(err){
+                                                       throw('INSERT INTO tblStatement failed with : ' + err);
+                                                    })
+                                                    .then(function(lastId){
+                                                        if (lastId > 0)
+                                                            actCodes += ' ' + act.code;
+                                                        return lastId;
+                                                    })
+                                                );
+                                            else
+                                                console.log(`expected  actor type of ${row.actTypeID} but see ${act.type}`);
                                         }
                                         return Promise.all(pInserts)
                                             .then(function(resultArr){

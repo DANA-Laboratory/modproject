@@ -33,11 +33,11 @@ var ddl = `
     INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (3, 1, 2, 2, 'زمان ورود به گروه', 'گروه بندی', NULL);
     INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (4, 2, 2, 2, 'زمان خروج از گروه', 'خروج از گروه', NULL);
     INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (5, 3, 2, 3, 'زمان ثبت نام', 'شرکت در کلاس آموزشی', '{"result": 0, "status": ["قبول" ,"رد", "ناتمام"]}');
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (6, 4, 2, 3, 'تاریخ غیبت', 'غیبت در کلاس آموزشی', NULL);
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (7, 5, 2, 3, 'زمان تنظیم', 'تنظیم روکش حق التدریس', NULL);
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (8, 6, 1, 3, 'زمان شروع', 'تدریس کلاس آموزشی', NULL);
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (6, 4, 2, 3, 'زمان شروع غیبت', 'غیبت در کلاس آموزشی', '{"parameter_type": ["زمان پایان غیبت", "شماره جلسه"], "parameter_value" : 0}');
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (7, 6, 1, 3, 'زمان شروع', 'تدریس کلاس آموزشی', NULL);
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (8, 5, 1, 6, 'زمان تنظیم', 'تنظیم صورتحساب تدریس', NULL);
     INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (9, 7, 1, 4, 'زمان ارزیابی', 'تکیل فرم ارزیابی کارآموزی', '{"result": {}}');
-    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (10, 8, 2, 5, 'زمان آزمون ', 'طی آزمون', '{"result":{}}');
+    INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (10, 8, 2, 5, 'زمان آزمون ', 'طی آزمون', '{"result": {}}');
     INSERT INTO tblStatementType (id, verb_id, actor_type, object_type, date_caption, description, attribute_meta) VALUES (11, 4, 2, 1, 'تاریخ غیبت', 'غیبت در محل', NULL);
     
     -- Table: tblActor
@@ -69,6 +69,7 @@ var ddl = `
     INSERT INTO tblObjectType (id, caption, tblName) VALUES (3, 'کلاس', 'tblClass');
     INSERT INTO tblObjectType (id, caption, tblName) VALUES (4, 'فرم ارزیابی', 'tblObject');
     INSERT INTO tblObjectType (id, caption, tblName) VALUES (5, 'فرم آزمون', 'tblObject');
+    INSERT INTO tblObjectType (id, caption, tblName) VALUES (6, 'صورتحساب تدریس', 'tblObject');
 
     -- Table: tblObject
     CREATE TABLE tblObject (id INTEGER PRIMARY KEY AUTOINCREMENT, code TEXT NOT NULL UNIQUE, type INTEGER NOT NULL REFERENCES tblObjectType (id), attribute STRING);
@@ -138,12 +139,12 @@ describe('learnX', function() {
                 });
         });
         it('import trainees append', function (done) {
-            var startCode = 'teau/0000';
+            var startCode = 'trus/0000';
             learnX.importAppendActorsFromCSV(basedb, startCode, 'فرآگیر', __dirname + '/ca-500.testcsv', transferActorData)
                 .then(function (count) {
                     learnX.getMaxCounter(basedb, 'tblActor', 'code', startCode)
                         .then(function (maxCounter) {
-                            assert.equal(maxCounter, 'teau/' + (inserted + count));
+                            assert.equal(maxCounter, 'trus/' + (inserted + count));
                             done();
                         })
                 })
@@ -203,7 +204,7 @@ describe('learnX', function() {
                 });
         });
         it('remove actors', function (done) {
-            learnX.removeActor(basedb, ['teau/0001', 'teau/0004'])
+            learnX.removeActor(basedb, ['trus/0001', 'trus/0004'])
                 .then(function (res) {
                     done();
                 })
@@ -284,7 +285,7 @@ describe('learnX', function() {
                     done();
                 })
         });
-        it('add object', function (done) {
+        it('add محل object', function (done) {
             learnX.addObject(basedb, {code: 'mhl001', attribute: JSON.stringify({name: "شرکت ره آوران فنون پتروشیمی"}), type: 'محل'})
             .then(function (res) {
                 assert.isAbove(res, 0);
@@ -295,7 +296,18 @@ describe('learnX', function() {
                 assert.isNull(err);
                 done();
             });
-
+        });
+        it('add صورتحساب تدریس object', function (done) {
+            learnX.addObject(basedb, {code: 'shl001', attribute: JSON.stringify({class_code: "cls002"}), type: 'صورتحساب تدریس'})
+            .then(function (res) {
+                assert.isAbove(res, 0);
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                assert.isNull(err);
+                done();
+            });
         });
     });
     describe('....addStatement....', function () {
@@ -317,10 +329,10 @@ describe('learnX', function() {
                         learnX.addStatement(basedb, 'ورود کارآموز به محل کارآموزی یا کارورزی', data)
                             .catch(function (err) {
                                 assert.equal(err, 'no actor');
-                                data.actor = ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'];
+                                data.actor = ['trus/0001', 'trus/0004', 'trus/0005', 'trus/0006', 'trus/0007'];
                                 learnX.addStatement(basedb, 'ورود کارآموز به محل کارآموزی یا کارورزی', data)
                                     .then(function (res) {
-                                        assert.equal(res.length, "فرآگیر  teau/0005 teau/0006 teau/0007 وارد شد به محل mhl001".length);
+                                        assert.equal(res.length, "فرآگیر  trus/0005 trus/0006 trus/0007 وارد شد به محل mhl001".length);
                                         done();
                                     })
                                     .catch(function (err) {
@@ -337,13 +349,13 @@ describe('learnX', function() {
         it('type 2: move out', function (done) {
             let data = {
                 object: 'mhl001',
-                actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
+                actor: ['trus/0001', 'trus/0004', 'trus/0005', 'trus/0006', 'trus/0007'],
                 time: Date.now(),
                 attribute: {status: 'ترخیص'}
             };
             learnX.addStatement(basedb, 'خروج کارآموز از محل کارآموزی یا کارورزی به دلیل ترخیص، اتمام دوره یا اخراج', data)
                 .then(function (res) {
-                    assert.equal(res.length, "فرآگیر  teau/0005 teau/0006 teau/0007 خارج شد از محل mhl001".length);
+                    assert.equal(res.length, "فرآگیر  trus/0005 trus/0006 trus/0007 خارج شد از محل mhl001".length);
                     done();
                 })
                 .catch(function (err) {
@@ -355,13 +367,13 @@ describe('learnX', function() {
         it('type 3: add actor to group', function (done) {
             let data = {
                 object: 'D12',
-                actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
+                actor: ['trus/0001', 'trus/0004', 'trus/0005', 'trus/0006', 'trus/0007'],
                 time: Date.now(),
                 attribute: {}
             };
             learnX.addStatement(basedb, 'گروه بندی', data)
                 .then(function (res) {
-                    assert.equal(res.length, 'فرآگیر  teau/0005 teau/0006 teau/0007 وارد شد به گروه D12'.length);
+                    assert.equal(res.length, 'فرآگیر  trus/0005 trus/0006 trus/0007 وارد شد به گروه D12'.length);
                     done();
                 })
                 .catch(function (err) {
@@ -371,10 +383,10 @@ describe('learnX', function() {
                 });
         });
         it('type 4: remove actor from group', function (done) {
-            let data = {object: 'D12', actor: ['teau/0001', 'teau/0006'], time: Date.now(), attribute: {}};
+            let data = {object: 'D12', actor: ['trus/0001', 'trus/0006'], time: Date.now(), attribute: {}};
             learnX.addStatement(basedb, 'خروج از گروه', data)
                 .then(function (res) {
-                    assert.equal(res.length, 'فرآگیر  teau/0006 خارج شد از گروه D12'.length);
+                    assert.equal(res.length, 'فرآگیر  trus/0006 خارج شد از گروه D12'.length);
                     done();
                 })
                 .catch(function (err) {
@@ -384,10 +396,36 @@ describe('learnX', function() {
                 });
         });
         it('type 5: participate in class', function (done) {
-            let data = {object: 'cls003', actor: ['teau/0007', 'teau/0006'], time: Date.now(), attribute: {result: null, status: 'ناتمام'}};
+            let data = {object: 'cls003', actor: ['trus/0007', 'trus/0006'], time: Date.now(), attribute: {result: null, status: 'ناتمام'}};
             learnX.addStatement(basedb, 'شرکت در کلاس آموزشی', data)
                 .then(function (res) {
-                    assert.equal(res.length, 'فرآگیر  teau/0006 teau/0007 شرکت کرد کلاس cls003'.length);
+                    assert.equal(res.length, 'فرآگیر  trus/0006 trus/0007 شرکت کرد کلاس cls003'.length);
+                    done();
+                })
+                .catch(function (err) {
+                    console.log(err);
+                    assert.isNull(err);
+                    done();
+                });
+        });
+        it('type 6: absent in class', function (done) {
+            let data = {object: 'cls003', actor: ['trus/0007'], time: Date.now(), attribute: {parameter_type : 'شماره جلسه', parameter_value : 2}};
+            learnX.addStatement(basedb, 'غیبت در کلاس آموزشی', data)
+                .then(function (res) {
+                    assert.equal(res.length, 'فرآگیر  trus/0007 غیبت کرد کلاس cls003'.length);
+                    done();
+                })
+                .catch(function (err) {
+                    console.log(err);
+                    assert.isNull(err);
+                    done();
+                });
+        });
+        it('type 8: training bid', function (done) {
+            let data = {object: 'shl001', actor: ['teau/0007'], time: Date.now(), attribute: {parameter_type : 'شماره جلسه', parameter_value : 2}};
+            learnX.addStatement(basedb, 'تنظیم صورتحساب تدریس', data)
+                .then(function (res) {
+                    assert.equal(res.length, 'مدرس  teau/0007 روکش تنظیم شد صورتحساب تدریس shl001'.length);
                     done();
                 })
                 .catch(function (err) {
@@ -399,44 +437,6 @@ describe('learnX', function() {
 
         /*
 
-        data = {
-            object: 'D12',
-            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
-            time: Date.now(),
-            attribute: {}
-        };
-        learnX.addStatement(basedb, 'خاتمه کلاس آموزشی', data)
-            .then(function (res) {
-                done();
-            })
-            .catch(function (err) {
-                console.log(err);
-                assert.isNull(err);
-                done();
-            });
-
-        data = {
-            object: 'D12',
-            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
-            time: Date.now(),
-            attribute: {}
-        };
-        learnX.addStatement(basedb, 'غیبت در کلاس آموزشی', data)
-            .then(function (res) {
-                done();
-            })
-            .catch(function (err) {
-                console.log(err);
-                assert.isNull(err);
-                done();
-            });
-
-        data = {
-            object: 'D12',
-            actor: ['teau/0001', 'teau/0004', 'teau/0005', 'teau/0006', 'teau/0007'],
-            time: Date.now(),
-            attribute: {}
-        };
         learnX.addStatement(basedb, 'تنظیم روکش حق التدریس', data)
             .then(function (res) {
                 done();
@@ -607,6 +607,10 @@ describe('learnX', function() {
                 })
                 .then(function (res) {
                     assert.equal(res.code, 'cur/0002');
+                    return basedb.getRecord('tblActor', {code: 'teau/0007'});
+                })
+                .then(function (res) {
+                    assert.equal(res.code, 'teau/0007');
                     done();
                 })
                 .catch(function (err) {

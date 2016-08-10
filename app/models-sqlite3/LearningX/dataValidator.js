@@ -5,8 +5,7 @@ exports.validateForInsert = function (tablename, data) {
     return new Promise((resolve, reject) => {
         if (data.hasOwnProperty('attribute')) {
             try {
-                JSON.parse(data.attribute);
-                resolve(data);
+                resolve(JSON.parse(data.attribute));
             } catch (err) {
                 reject('validateForInsert failed with : ' + err);
             }
