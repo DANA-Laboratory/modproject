@@ -92,7 +92,7 @@ module.exports = function (app, db, readAppConfig, initialize) {
             }
         } else {
             if (req.params.whattodo === 'insert') {
-                if ((req.body.isItUser && !req.user.isItAdmin) || (req.body.isMaliAdmin && !req.user.isMaliUser) || ((req.body.isGuest || req.body.isTeacher) && !req.user.isKarshenas) || ((req.body.isSysAdmin || req.body.isMaliAdmin || req.body.isItAdmin) && !req.user.isSysAdmin)) {
+                if ((req.body.isItUser && !req.user.isItAdmin) || (req.body.isMaliUser && !req.user.isMaliAdmin) || ((req.body.isGuest || req.body.isTeacher) && !req.user.isKarshenas) || ((req.body.isSysAdmin || req.body.isMaliAdmin || req.body.isItAdmin) && !req.user.isSysAdmin)) {
                     console.log('permission denied');
                     res.sendStatus(403);
                 } else {
@@ -107,27 +107,26 @@ module.exports = function (app, db, readAppConfig, initialize) {
                     } 
                     if (req.body.isItAdmin == null) {
                         req.body.isItAdmin = 0;
-                    } else {
-                        if (!req.user.isSysAdmin) {
-                            req.body.isItUser = 1;
-                        }
                     }
                     if (req.body.isMaliAdmin == null) {
                         req.body.isMaliAdmin = 0;
-                    } else {
-                        if (!req.user.isSysAdmin) {
-                            req.body.isMaliUser = 1;
-                        }
                     }
                     if (req.body.isKarshenas == null) {
                         req.body.isKarshenas = 0;
-                    } else {
-                        if (!req.user.isSysAdmin) {
-                            req.body.isGuest = 1;
-                        }
                     }
                     if (req.body.isTeacher == null) {
                         req.body.isTeacher = 0;
+                    }
+                    if (!req.user.isSysAdmin) {
+                      if (req.body.isItAdmin) {
+                          req.body.isItUser = 1;
+                      }
+                      if (req.user.isMaliAdmin) {
+                          req.body.isMaliUser = 1;
+                      }
+                      if (req.user.isKarshenas) {
+                          req.body.isGuest = 1;
+                      }
                     }
                     db().run('INSERT INTO users (username, password, name, family, melicode, pid, email, defaultpass, isGuest, isItUser, isMaliUser, isItAdmin, isMaliAdmin, isKarshenas, isTeacher) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [req.body.username, req.body.password, req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.body.password, req.body.isGuest, req.body.isItUser, req.body.isMaliUser, req.body.isItAdmin, req.body.isMaliAdmin, req.body.isKarshenas, req.body.isTeacher], callback);
                 }
