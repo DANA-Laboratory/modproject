@@ -52,7 +52,7 @@ Licensed under the MIT license.
 [https://gist.github.com/onlinemad/6373852]: https://gist.github.com/onlinemad/6373852
 [Istanbul]: https://github.com/gotwarlost/istanbul
 [Jade]: http://jade-lang.com/
-[Jasmine]: http://pivotal.github.io/jasmine/
+[Jasmine]: https://jasmine.github.io/
 [Javascript]: https://developer.mozilla.org/en-US/docs/Web/JavaScript
 [Karma]: http://karma-runner.github.io/
 [log4js]: https://github.com/nomiddlename/log4js-node
