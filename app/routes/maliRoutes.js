@@ -106,7 +106,7 @@ module.exports = function (app, dbma) {
                                     texdef += '\\def\\yc{' + val  + '}\n';
                                 }
                             } else {
-                                (clms[clmno])[j++] = (stmdata.header[i]).replace('%','\\pct') + ' & ' + val;
+                                (clms[clmno])[j++] = (stmdata.header[i]).replace('%', '\\pct') + ' & ' + val;
                             }
                         }
                         if (stmdata.header[i] === 'جمع مزایا') {

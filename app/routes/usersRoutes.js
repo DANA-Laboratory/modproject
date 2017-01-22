@@ -104,7 +104,7 @@ module.exports = function (app, db, readAppConfig, initialize) {
                     }
                     if (req.body.isMaliUser == null) {
                         req.body.isMaliUser = 0;
-                    } 
+                    }
                     if (req.body.isItAdmin == null) {
                         req.body.isItAdmin = 0;
                     }
@@ -118,15 +118,15 @@ module.exports = function (app, db, readAppConfig, initialize) {
                         req.body.isTeacher = 0;
                     }
                     if (!req.user.isSysAdmin) {
-                      if (req.body.isItAdmin) {
-                          req.body.isItUser = 1;
-                      }
-                      if (req.user.isMaliAdmin) {
-                          req.body.isMaliUser = 1;
-                      }
-                      if (req.user.isKarshenas) {
-                          req.body.isGuest = 1;
-                      }
+                        if (req.body.isItAdmin) {
+                            req.body.isItUser = 1;
+                        }
+                        if (req.user.isMaliAdmin) {
+                            req.body.isMaliUser = 1;
+                        }
+                        if (req.user.isKarshenas) {
+                            req.body.isGuest = 1;
+                        }
                     }
                     db().run('INSERT INTO users (username, password, name, family, melicode, pid, email, defaultpass, isGuest, isItUser, isMaliUser, isItAdmin, isMaliAdmin, isKarshenas, isTeacher) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [req.body.username, req.body.password, req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.body.password, req.body.isGuest, req.body.isItUser, req.body.isMaliUser, req.body.isItAdmin, req.body.isMaliAdmin, req.body.isKarshenas, req.body.isTeacher], callback);
                 }
@@ -146,7 +146,7 @@ module.exports = function (app, db, readAppConfig, initialize) {
                         db().run('UPDATE users SET password=? where id=?', [req.body.password, req.body.id]);
                     }
                 } else {
-                    db().run('UPDATE users SET name=?, family=?, melicode=?, pid=?, email=? WHERE (id=? AND ((isItUser=1 AND ?) OR (isMaliUser=1 AND ?) OR (isTeacher+isGuest>0 AND ?))', [req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.body.id, req.user.isItAdmin, req.user.isMaliAdmin, req.user.isKarshenas], callback);
+                    db().run('UPDATE users SET name=?, family=?, melicode=?, pid=?, email=? WHERE (id=? AND ((isItUser=1 AND ?) OR (isMaliUser=1 AND ?) OR (isTeacher+isGuest>0 AND ?)))', [req.body.name, req.body.family, req.body.melicode, req.body.pid, req.body.email, req.body.id, req.user.isItAdmin, req.user.isMaliAdmin, req.user.isKarshenas], callback);
                     if (req.body.password !== '***') {
                         db().run('UPDATE users SET password=? where id=?', [req.body.password, req.body.id]);
                     }
