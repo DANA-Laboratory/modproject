@@ -74,6 +74,10 @@ module.exports = function (app, dbma) {
             pid = req.user.pid;
         }
         var callback = function (err, row) {
+            if (row === undefined) {
+                console.log('undefiend');
+                return;
+            }
             var stmdata = JSON.parse(row.data);
             if (stmdata.newformat) {
                 var clm1 = [];
