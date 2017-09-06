@@ -58,7 +58,7 @@ Licensed under the MIT license.
 [log4js]: https://github.com/nomiddlename/log4js-node
 [Matan Eine]: https://github.com/mataneine
 [matchdep]: https://npmjs.org/package/matchdep
-[Mocha]: http://visionmedia.github.io/mocha/
+[Mocha]: https://mochajs.org/
 [MongoDB]: http://www.mongodb.org/
 [MongoHQ]: https://www.mongohq.com
 [MongoLab]: https://mongolab.com
