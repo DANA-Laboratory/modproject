@@ -32,6 +32,7 @@ include head.jade
             include config.jade
     div(ng-if='pageroute==="intro" || pageroute==="welcome"')
       include jumbotron.jade
+      include traineesSignUp.jade
     if (user)
       include dashboard.jade
       if (user.isMaliUser || user.isMaliAdmin)

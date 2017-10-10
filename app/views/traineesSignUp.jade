@@ -1,0 +1,70 @@
+#traineesSignUp.modal.fade(role='dialog', ng-controller='traineesSignUpCont', ng-init = 'data={id:0}; requestLevel=0; pathtoimage=""; attachments=["عکس", "صفحه اول شناسنامه", "کارت ملی"]')
+  .modal-dialog
+    // Modal content
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal')
+          span
+            | &times;
+        h4.modal-title فرم مشخصات کارآموزی
+      .modal-body
+        .row.form-group
+          .col-md-4
+            label(for='name') نام:
+            input#name.form-control(type='string')
+          .col-md-4
+            label(for='fname') نام خانوادگی:
+            input#fname.form-control(type='string')
+          .col-md-4
+            label(for='fname') نام پدر:
+            input#fname.form-control(type='string')
+        .row.form-group
+          .col-md-4
+            label(for='nid') کد ملی:
+            input#nid.form-control(type='number')
+          .col-md-4
+            label(for='phone') همراه:
+            input#phone.form-control(type='number')
+          .col-md-3
+            label(for='byear') سال تولد:
+            input#byear.form-control(type='number')
+        .row.form-group
+          .col-md-5
+            label(for='email') پست الکترونیک:
+            input#email.form-control(type='email')
+        .row.form-group
+          .col-sm-3.col-md-2(ng-repeat='n in [0,1,2]')
+            span.label.label-default {{attachments[n]}} 
+            a(ng-if='requestLevel<3', href='', ng-click='removeattachment(n)')
+              span.glyphicon.glyphicon-remove
+            a.thumbnail(ng-if='requestLevel<3', href='', data-toggle='modal', data-target='#fileman', ng-click='$emit("thumbnailclick", {requestid: data.id, attachmentid: n})')
+              img(ng-src='/fileman/contract/attachment/{{data.id}}/{{n}}?cb={{random[n]}}', alt='{{attachments[n]}}')
+            a.thumbnail(ng-if='requestLevel>2')
+              img(ng-src='/fileman/contract/attachment/{{data.id}}/{{n}}?cb={{random[n]}}', alt='{{attachments[n]}}')
+        .row.form-group
+          .col-sm-6.col-md-10
+            P مدرس محترم!
+            P جهت تکمیل قرارداد لازم است تصویر مدارک فهرست شده در این صفحه را با اشاره
+              | به محل در نظر گرفته شده، به فضای کاربری خود منتقل و سپس پیوست این قرارداد فرمایید.
+          .col-sm-6.col-md-2(ng-repeat='n in [6]')
+            span.label.label-default {{attachments[n]}} 
+            a(ng-if='requestLevel<3', href='', ng-click='removeattachment(n)')
+              span.glyphicon.glyphicon-remove
+            a.thumbnail(ng-if='requestLevel<3', href='', data-toggle='modal', data-target='#fileman', ng-click='$emit("thumbnailclick", {requestid: data.id, attachmentid: n})')
+              img(ng-src='/fileman/contract/attachment/{{data.id}}/{{n}}?cb={{random[n]}}', alt='{{attachments[n]}}')
+            a.thumbnail(ng-if='requestLevel>2')
+              img(ng-src='/fileman/contract/attachment/{{data.id}}/{{n}}?cb={{random[n]}}', alt='{{attachments[n]}}')
+      .modal-footer    
+          .col-md-8
+            .col-md-9
+              .input-group
+                span.input-group-addon
+                  label(for='pwd') کلمه عبور:
+                input.form-control(type="password", disabled='true')
+            .col-md-3
+              .checkbox
+                label
+                  input(type='checkbox', checked="true")
+                  |  پیشفرض
+          button.btn.btn-success(type='submit') ثبت
+          button.btn.btn-default(type='button', data-dismiss='modal') لغو
